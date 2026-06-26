@@ -1,0 +1,119 @@
+# .gitignore para una API (multilenguaje / común)
+# Ajusta según tu stack (Node, Python, Java, Go, Ruby, Rust, etc.)
+
+# Entornos y secretos
+.env
+.env.*.local
+.env.local
+*.key
+*.pem
+*.crt
+secret-*.json
+
+# Dependencias y builds
+node_modules/
+vendor/
+target/
+build/
+dist/
+out/
+bin/
+obj/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+venv/
+.venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Java/Gradle/Maven
+*.class
+*.jar
+*.war
+*.ear
+.gradle/
+build/
+target/
+
+# Go
+*.exe
+*.test
+pkg/
+Godeps/
+vendor/
+
+# Rust / Cargo
+/target/
+**/*.rs.bk
+
+# Ruby / Rails
+log/
+tmp/
+.bundle/
+vendor/bundle/
+*.gem
+
+# PHP / Composer
+composer.lock
+vendor/
+
+# Node / JS
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-lock.yaml
+
+# Test coverage
+coverage/
+.nyc_output/
+coverage-final.json
+lcov-report/
+
+# Docker
+docker-compose.override.yml
+docker-compose.*.yml
+.dockerignore
+
+# IDEs y editores
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+*.iml
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs y bases de datos locales
+*.log
+logs/
+*.sqlite
+*.sqlite3
+*.db
+*.pid
+
+# CI/CD
+ci.output/
+.replit/
+.circleci/*-local.yml
+
+# Kubernetes / Helm / Terraform local files
+*.tfstate
+*.tfstate.*
+.terraform/
+helmfile.d/
+.kube/
+
+# Misc
+*.cache
+*.bak
+*.swp
+*.tmp
