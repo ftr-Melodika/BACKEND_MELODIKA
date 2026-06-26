@@ -10,9 +10,19 @@ const router = Router();
 router.get("/ranking", verificarToken, async (req, res) => {
     try {
         const resultado = await perfilService.obtenerRanking();
-        return res.status(200).json(resultado);
+        
+        return res.status(status.OK).json({ 
+            success: true, 
+            data: resultado 
+        });
     } catch (error) {
-        return res.status(500).json({ error: "Error al cargar el ranking" });
+        console.error("🔥 Error en GET /ranking:", error);
+        
+        const { codigoEstado, mensajeUsuario } = mapPerfilError(error);
+        return res.status(codigoEstado).json({ 
+            success: false, 
+            message: mensajeUsuario 
+        });
     }
 });
 
@@ -21,17 +31,22 @@ router.post("/:id/racha", verificarToken, async (req, res) => {
         const { id } = req.params;
         const resultado = await perfilService.chequearRacha(id);
         
-        if (!resultado.exito) {
-            return res.status(404).json({ error: resultado.mensaje });
-        }
-
-        return res.status(200).json(resultado);
+        return res.status(status.OK).json({ 
+            success: true, 
+            data: resultado 
+        });
     } catch (error) {
-        return res.status(500).json({ error: "Error procesando la racha diaria" });
+        console.error("🔥 Error en POST /racha:", error);
+        
+        const { codigoEstado, mensajeUsuario } = mapPerfilError(error);
+        return res.status(codigoEstado).json({ 
+            success: false, 
+            message: mensajeUsuario 
+        });
     }
 });
 
-//VERIFICAR ESTO
+
 router.get("/", verificarToken, async (req, res) => {
     try {
         const authId = req.user.id; 
@@ -57,7 +72,7 @@ router.get("/", verificarToken, async (req, res) => {
     }
 });
 
-//VERIFICAR ESTO
+
 router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
     try {
         const authId = req.user.id;

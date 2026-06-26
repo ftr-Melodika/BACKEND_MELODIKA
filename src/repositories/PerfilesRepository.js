@@ -114,7 +114,8 @@ class PerfilRepository {
             return resultado.rows;
         } catch (error) {
             console.error("Error al obtener el ranking:", error);
-            return [];
+            // Hacemos que el error suba al Service y luego al Controller
+            throw new Error("Error al cargar el ranking"); 
         }
     }
 }

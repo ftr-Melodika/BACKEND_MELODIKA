@@ -102,6 +102,10 @@ export function mapPerfilError(error) {
                 mensajeUsuario = "No se pudo conectar con la base de datos. Intentá de nuevo más tarde.";
                 codigoEstado = status.SERVICE_UNAVAILABLE;
                 break;
+            case "22P02":
+                mensajeUsuario = "El ID del perfil proporcionado no tiene un formato válido.";
+                codigoEstado = status.BAD_REQUEST; // 400
+                break;
         }
     }
 
@@ -128,6 +132,15 @@ export function mapPerfilError(error) {
             case "Ya tienes un perfil con este nombre":
                 mensajeUsuario = "Ya tienes un perfil con este nombre. Elegí otro nombre para tu nuevo perfil.";
                 codigoEstado = status.CONFLICT;
+                break;
+            case "Perfil no encontrado para racha":
+                mensajeUsuario = "No se encontró el perfil para actualizar la racha.";
+                codigoEstado = status.NOT_FOUND;
+                break;
+            case "No se pudo procesar la racha.":
+            case "Error al cargar el ranking":
+                mensajeUsuario = "Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.";
+                codigoEstado = status.INTERNAL_SERVER_ERROR;
                 break;
             default:
                 if (codigoEstado >= 500) {

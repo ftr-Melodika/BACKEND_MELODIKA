@@ -23,7 +23,7 @@
             }
             return perfiles;
         }
-        //VERIFICAR ESTO
+        
         async crearPerfil(authId, datosPerfil) {
             const cuenta = await cuentaRepository.encontrarPorAuthId(authId);
             const MAX_PERFILES = 4;
@@ -47,17 +47,17 @@
                 throw new Error("Ya tienes un perfil con este nombre");
             }
 
-            // Deberíamos validar formato también, pero lo ideal es hacerlo en un middleware como hiciste con validarRegistro.
             const nuevoPerfil = await perfilRepository.crearPerfil(cuenta.id, datosPerfil);
             return nuevoPerfil;
         }
     
 
         async chequearRacha(perfilId) {
-            const resultado = await perfilesRepository.actualizarRachaDiaria(perfilId);
+            const resultado = await perfilRepository.actualizarRachaDiaria(perfilId);
             
             if (!resultado) {
-                return { exito: false, mensaje: "Perfil no encontrado" };
+                // Lanzamos el error literal para que lo ataje tu Helper
+                throw new Error("Perfil no encontrado para racha");
             }
 
             let mensajeApp = "";
@@ -78,7 +78,7 @@
 
         // Lógica de Ranking
         async obtenerRanking() {
-            const top10 = await perfilesRepository.obtenerTopRanking();
+            const top10 = await perfilRepository.obtenerTopRanking();
             return {
                 total_jugadores: top10.length,
                 ranking: top10
