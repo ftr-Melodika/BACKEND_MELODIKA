@@ -35,19 +35,14 @@ router.post("/:id/racha", verificarToken, async (req, res) => {
 router.get("/", verificarToken, async (req, res) => {
     try {
         const authId = req.user.id; 
-        
+        let mensajeExtra;
         const perfiles = await perfilService.obtenerPerfiles(authId);
-        
-        if (perfiles.length === 0) {
-            return res.status(status.OK).json({
-                success: true,
-                data: [],
-                message: "Aún no tienes perfiles creados. Muestra la pantalla de creación de perfil."
-            });
-        }
 
-        
+        if (perfiles == null) mensajeExtra = "No tenes perfiles creados";
+        else mensajeExtra = "Tiene perfiles"
+
         res.status(status.OK).json({
+            mensajeExtra: mensajeExtra,
             success: true,
             data: perfiles,
         });

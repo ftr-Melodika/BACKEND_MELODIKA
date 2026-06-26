@@ -4,8 +4,16 @@ import validadores from "../helpers/validadores.js";
 export function mapLoginError(error) {
     let codigoEstado = error.status || status.INTERNAL_SERVER_ERROR;
     let mensajeUsuario;
-
-    if (codigoEstado === 400 || codigoEstado === 401) {
+    const codigoDb = validadores.obtenerCodigoDb(error);
+    if (codigoDb) {
+        if (codigoDb === "23505") {
+            return { codigoEstado: status.CONFLICT, mensajeUsuario: "El correo electrónico ya está registrado en la base de datos." };
+        }
+        if (["ECONNREFUSED", "ENOTFOUND", "ETIMEDOUT"].includes(codigoDb)) {
+            return { codigoEstado: status.SERVICE_UNAVAILABLE, mensajeUsuario: "No se pudo conectar con la base de datos. Intentá más tarde." };
+        }
+    }
+    if (codigoEstado === 400 || codigoEstado === 401 || codigoEstado == 422) {
         switch (error.message) {
             case "Invalid login credentials":
                 mensajeUsuario = "El correo electrónico o la contraseña son incorrectos.";
@@ -21,9 +29,14 @@ export function mapLoginError(error) {
                 mensajeUsuario = "No se pudo iniciar sesión. Verificá tus datos.";
                 break;
         }
+    }   else if (error.status === 429 || error.message?.includes("rate limit")) { // <-- Agregado (Anti-Spam)
+        codigoEstado = status.TOO_MANY_REQUESTS; // 429
+        mensajeUsuario = "Demasiados intentos de registro. Por favor, esperá unos minutos.";
+    } else if (codigoEstado >= 500) {
+        mensajeUsuario = "Hubo un error interno en el servidor.";
     } else {
-        mensajeUsuario = "Hubo un error interno en el servidor";
-    }
+        mensajeUsuario = "No se pudo registrar la cuenta.";
+    } 
 
     return { codigoEstado, mensajeUsuario };
 }
