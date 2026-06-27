@@ -8,15 +8,20 @@
         
         async obtenerPerfiles(authId) {
             // Usamos tu método exacto
+            console.log('PerfilService.obtenerPerfiles - authId recibido:', authId);
             const cuenta = await cuentaRepository.encontrarPorAuthId(authId);
-            
+
             if (!cuenta) {
                 // Este texto exacto es el que tu helper va a atajar
+                console.warn('PerfilService: no se encontró cuenta local para authId:', authId);
                 throw new Error("Cuenta no encontrada");
             }
 
+            console.log('PerfilService: cuenta encontrada id=', cuenta.id);
+
             const perfiles = await perfilRepository.obtenerPorCuentaId(cuenta.id);
-            
+
+            console.log('PerfilService: perfiles encontrados count=', perfiles ? perfiles.length : 0);
 
             if (perfiles.length === 0) {
                 return null;

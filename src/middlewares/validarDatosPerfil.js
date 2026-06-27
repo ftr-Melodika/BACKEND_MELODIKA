@@ -2,11 +2,14 @@ import StatusCodes from 'http-status-codes';
 import validadores from '../helpers/validadores.js';
 
 const validarDatosCrearPerfil = (req, res, next) => {
-    const { nombre, username, pais } = req.body;
+    const { nombre, username, pais, fecha_nacimiento, genero } = req.body;
 
-    // 1. Validar campos obligatorios
-    if (!nombre || !username) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'El nombre y el username son campos obligatorios.' });
+    if (!nombre) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'El nombre es obligatorio.' });
+    }
+
+    if (!username) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'El username es obligatorio.' });
     }
     
     // 2. Validar formato del Nombre usando tu helper existente
@@ -24,10 +27,20 @@ const validarDatosCrearPerfil = (req, res, next) => {
         return res.status(StatusCodes.BAD_REQUEST).json({ error: 'El formato del país no es válido.' });
     }
 
+    if (fecha_nacimiento && !validadores.esFechaValida(fecha_nacimiento)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Formato de fecha inválido (debe ser AAAA-MM-DD).' });
+    }
+
+    if (genero && !validadores.esGeneroValido(genero)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Género no válido.' });
+    }
+
     // 5. Limpieza de datos (Opcional pero muy recomendado)
     // Esto asegura que si el usuario mandó "  Facu  ", a tu Service llegue "Facu" limpio.
     req.body.nombre = nombre.trim();
     req.body.username = username.trim().toLowerCase(); // El username siempre en minúsculas
+    if (fecha_nacimiento) req.body.fecha_nacimiento = fecha_nacimiento;
+    if (genero) req.body.genero = genero;
     if (pais) {
         req.body.pais = pais.trim();
     }

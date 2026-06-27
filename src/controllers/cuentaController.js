@@ -56,18 +56,15 @@ router.post("/registrar", validarRegistro, async (req, res) => {
         const datosRegistro = req.body;
         const resultado = await cuentaService.registrar(datosRegistro);
         const usuarioSupabase = resultado.user;
+        const cuentaCreada = resultado.cuenta;
 
         res.status(status.CREATED).json({
             mensaje: "¡Usuario registrado con éxito!",
-            usuario: new Cuenta(
-                null, 
-                usuarioSupabase.id, 
-                datosRegistro.nombre, 
-                datosRegistro.apellido, 
-                datosRegistro.telefono, 
-                false, 
-                "alumno" 
-            )
+            usuario: {
+                id: usuarioSupabase.id,
+                email: usuarioSupabase.email,
+            },
+            cuenta: cuentaCreada
         });
 
     } catch (error) {

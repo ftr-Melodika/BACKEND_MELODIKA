@@ -76,7 +76,12 @@ router.get("/", verificarToken, async (req, res) => {
 router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
     try {
         const authId = req.user.id;
-        const datosPerfil = req.body; 
+
+        // Extraemos explícitamente solo lo que necesitamos (¡Buena práctica de seguridad!)
+        const { nombre, username, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
+        
+        // Lo empaquetamos de nuevo para dárselo a tu servicio
+        const datosPerfil = { nombre, username, fecha_nacimiento, genero, pais, avatarUrl };
 
         const nuevoPerfil = await perfilService.crearPerfil(authId, datosPerfil);
 
@@ -86,11 +91,15 @@ router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
             data: nuevoPerfil
         });
     } catch (error) {
+
+        console.error("🔥 ERROR DETALLADO EN EL BACKEND:", error);
+
         const { codigoEstado, mensajeUsuario } = mapPerfilError(error);
 
         res.status(codigoEstado).json({
             success: false,
-            message: mensajeUsuario
+            message: mensajeUsuario,
+            debug: error.message
         });
     }
 });

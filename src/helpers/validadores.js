@@ -61,6 +61,17 @@ const esPaisValido = (pais) => {
     return regex.test(pais.trim());
 };
 
+// Validar formato fecha simple YYYY-MM-DD
+const esFechaValida = (fecha) => {
+    return /^\d{4}-\d{2}-\d{2}$/.test(fecha);
+}
+
+// Validar que el género esté en nuestra lista permitida
+const esGeneroValido = (genero) => {
+    const generosPermitidos = ['Masculino', 'Femenino', 'No binario'];
+    return generosPermitidos.includes(genero);
+}   
+
 // Exportamos todas las herramientas para que el middleware las pueda usar
 export default { 
     esEmailValido, 
@@ -73,5 +84,7 @@ export default {
     esTelefonoValido,
     obtenerCodigoDb,
     esUsernameValido,
-    esPaisValido
+    esPaisValido,
+    esFechaValida,
+    esGeneroValido
 };

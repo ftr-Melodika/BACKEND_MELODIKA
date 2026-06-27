@@ -1,5 +1,8 @@
 import { supabase } from '../database/db.js';
 import CuentaRepository from '../repositories/cuentaRepository.js';
+import Cuenta from '../entities/Cuenta.js';
+
+const cuentaRepository = new CuentaRepository();
 
 class CuentaService {
     async login(email, password) {
@@ -20,10 +23,30 @@ class CuentaService {
             throw err; 
         }
 
-        // 3. Si pasó limpio, devolvemos los datos del usuario logueado
+        // 3. Si pasó limpio, nos aseguramos de tener la cuenta local persistida
+        const user = data.user;
+
+        try {
+            const cuentaExistente = await cuentaRepository.encontrarPorAuthId(user.id);
+            if (!cuentaExistente) {
+                // Intentamos crear la cuenta local usando metadata si está disponible
+                const datos = {
+                    nombre: user.user_metadata?.nombre || null,
+                    apellido: user.user_metadata?.apellido || null,
+                    telefono: user.user_metadata?.telefono || null,
+                    rol: 'alumno'
+                };
+                await cuentaRepository.crearCuenta(user.id, datos);
+            }
+        } catch (err) {
+            // No bloqueamos el login por error en la persistencia local, solo logueamos
+            console.error('Warning: no se pudo asegurar cuenta local tras login:', err);
+        }
+
+        // 4. Devolvemos los datos del usuario logueado
         return {
             token: data.session.access_token,
-            user: data.user
+            user: user
         }
 
     
@@ -45,7 +68,10 @@ class CuentaService {
         if (error) {
             throw new Error(error.message); 
         }
-        return data;
+        // Persistimos la cuenta localmente para poder asociar perfiles a ella
+        const createdCuenta = await cuentaRepository.crearCuenta(data.user.id, cuentaData);
+
+        return { user: data.user, cuenta: createdCuenta };
     }
 }
 

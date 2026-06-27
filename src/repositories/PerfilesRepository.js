@@ -17,6 +17,8 @@ class PerfilRepository {
                 row.username,
                 row.avatar_url,
                 row.pais,
+                row.fecha_nacimiento,
+                row.genero,
                 row.xp,
                 row.racha,
                 row.instrumento_actual_id,
@@ -34,8 +36,8 @@ class PerfilRepository {
     async crearPerfil(cuentaId, datosPerfil) {
         try {
             const query = `
-                INSERT INTO perfiles (cuenta_id, nombre, username, avatar_url, pais) 
-                VALUES ($1, $2, $3, $4, $5) 
+                INSERT INTO perfiles (cuenta_id, nombre, username, avatar_url, pais, fecha_nacimiento, genero) 
+                VALUES ($1, $2, $3, $4, $5, $6, $7) 
                 RETURNING *;
             `;
             
@@ -44,7 +46,9 @@ class PerfilRepository {
                 datosPerfil.nombre, 
                 datosPerfil.username, 
                 datosPerfil.avatarUrl || null, 
-                datosPerfil.pais 
+                datosPerfil.pais,
+                datosPerfil.fecha_nacimiento || null,
+                datosPerfil.genero || null
             ];
             
             const resultado = await pool.query(query, values);
@@ -57,6 +61,8 @@ class PerfilRepository {
                 perfil.username,
                 perfil.avatar_url,
                 perfil.pais,
+                perfil.fecha_nacimiento,
+                perfil.genero,
                 perfil.xp,
                 perfil.racha,
                 perfil.instrumento_actual_id,
