@@ -13,7 +13,7 @@ export function mapLoginError(error) {
             return { codigoEstado: status.SERVICE_UNAVAILABLE, mensajeUsuario: "No se pudo conectar con la base de datos. Intentá más tarde." };
         }
     }
-    if (codigoEstado === 400 || codigoEstado === 401 || codigoEstado == 422) {
+    if (codigoEstado === 400 || codigoEstado === 401 || codigoEstado == 422 || codigoEstado == 403) {
         switch (error.message) {
             case "Invalid login credentials":
                 mensajeUsuario = "El correo electrónico o la contraseña son incorrectos.";
@@ -24,6 +24,10 @@ export function mapLoginError(error) {
             case "Too many requests":
                 mensajeUsuario = "Demasiados intentos fallidos. Por favor, intentá de nuevo más tarde.";
                 codigoEstado = status.TOO_MANY_REQUESTS;
+                break;
+            case "Email not confirmed":
+                mensajeUsuario = "Tenés que confirmar tu correo electrónico antes de iniciar sesión. Revisá tu bandeja de entrada.";
+                codigoEstado = status.FORBIDDEN; // 403
                 break;
             default:
                 mensajeUsuario = "No se pudo iniciar sesión. Verificá tus datos.";
@@ -45,6 +49,18 @@ export function mapRegisterError(error) {
     // Para registro asumimos BAD_REQUEST si no viene status
     let codigoEstado = error.status || status.BAD_REQUEST;
     let mensajeUsuario;
+
+    console.log("======= ERROR OCULTO =======");
+    console.log("Mensaje original:", error.message);
+    console.log("Status original:", error.status);
+    console.log("============================");
+
+    if (codigoEstado === 429 || error.message?.includes("rate limit")) {
+        return { 
+            codigoEstado: status.TOO_MANY_REQUESTS, 
+            mensajeUsuario: "Demasiados intentos de registro. Por favor, esperá unos minutos." 
+        };
+    }
 
     if (codigoEstado === 400) {
         switch (error.message) {
