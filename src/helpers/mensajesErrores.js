@@ -2,6 +2,10 @@ import status from "http-status-codes";
 import validadores from "../helpers/validadores.js";
 
 export function mapLoginError(error) {
+    console.log("======= ERROR OCULTO =======");
+    console.log("Mensaje original:", error.message);
+    console.log("Status original:", error.status);
+    console.log("============================");
     let codigoEstado = error.status || status.INTERNAL_SERVER_ERROR;
     let mensajeUsuario;
     const codigoDb = validadores.obtenerCodigoDb(error);
@@ -85,6 +89,10 @@ export function mapRegisterError(error) {
 }
 
 export function mapPerfilError(error) {
+    console.log("======= ERROR OCULTO =======");
+    console.log("Mensaje original:", error.message);
+    console.log("Status original:", error.status);
+    console.log("============================");
     let codigoEstado = error.status || status.INTERNAL_SERVER_ERROR;
     let mensajeUsuario;
 
