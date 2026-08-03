@@ -139,6 +139,10 @@ export function mapPerfilError(error) {
                 mensajeUsuario = "Tu sesión expiró. Volvé a iniciar sesión.";
                 codigoEstado = status.UNAUTHORIZED;
                 break;
+            case "Perfil no encontrado o no autorizado":
+            mensajeUsuario = "El perfil que intentas eliminar no existe o no tienes permisos para hacerlo.";
+            codigoEstado = status.NOT_FOUND; // 404
+                break;
             case "Cuenta no encontrada":
                 mensajeUsuario = "No encontramos una cuenta asociada a tu usuario.";
                 codigoEstado = status.NOT_FOUND;

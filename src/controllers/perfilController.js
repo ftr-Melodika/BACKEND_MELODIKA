@@ -104,4 +104,35 @@ router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
     }
 });
 
+    // Reemplaza tu actual router.delete al final del archivo por este:
+    router.delete("/:id", verificarToken, async (req, res) => {
+        try {
+            // 1. Extraemos el authId del usuario logueado (inyectado por verificarToken)
+            const authId = req.user.id;
+            
+            // 2. Extraemos el ID del perfil de los parámetros de la URL
+            const { id } = req.params;
+
+            // 3. Llamamos al servicio
+            await perfilService.eliminarPerfil(authId, id);
+
+            // 4. Respondemos con éxito
+            return res.status(status.OK).json({
+                success: true,
+                message: "Perfil eliminado exitosamente."
+            });
+        } catch (error) {
+            console.error("🚨 Error en DELETE /perfiles/:id:", error);
+            
+            // 5. Manejamos el error usando tu helper centralizado
+            const { codigoEstado, mensajeUsuario } = mapPerfilError(error);
+            return res.status(codigoEstado).json({
+                success: false,
+                message: mensajeUsuario
+            });
+        }
+    });
+
+
+
 export default router;

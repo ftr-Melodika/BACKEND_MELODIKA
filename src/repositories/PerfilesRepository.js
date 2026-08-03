@@ -124,6 +124,29 @@ class PerfilRepository {
             throw new Error("Error al cargar el ranking"); 
         }
     }
+
+    // Realiza un borrado lógico del perfil
+    async eliminarPerfil(perfilId, cuentaId) {
+        try {
+            const query = `
+                UPDATE perfiles 
+                SET activo = false
+                WHERE id = $1 AND cuenta_id = $2 AND activo = true
+                RETURNING id;
+            `;
+            
+            const resultado = await pool.query(query, [perfilId, cuentaId]);
+            
+            // Si rowCount > 0 significa que encontró el perfil y lo actualizó.
+            // Si es 0, significa que el perfil no existía, ya estaba borrado o es de otra cuenta.
+            return resultado.rowCount > 0;
+        } catch (error) {
+            console.error("Error eliminando perfil en la base de datos:", error);
+            const err = new Error("No se pudo eliminar el perfil en la base de datos", { cause: error });
+            err.code = error.code;
+            throw err;
+        }
+    }
 }
 
 export default PerfilRepository;

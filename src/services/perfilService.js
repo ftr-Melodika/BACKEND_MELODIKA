@@ -89,7 +89,20 @@
                 ranking: top10
             };
         }
-}
+        
+        async eliminarPerfil(authId, perfilId) {
+            const cuenta = await cuentaRepository.encontrarPorAuthId(authId);
+            if (!cuenta) {
+                throw new Error("Cuenta no encontrada");
+            }
+            const fueEliminado = await perfilRepository.eliminarPerfil(perfilId, cuenta.id);
+            if (!fueEliminado) {
+                throw new Error("Perfil no encontrado o no autorizado");
+            }   
+            return { exito: true };
+        }
+
+    }
 
 
 export default new PerfilService();
