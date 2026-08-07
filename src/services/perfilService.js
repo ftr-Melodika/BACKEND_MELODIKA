@@ -58,28 +58,48 @@
     
 
         async chequearRacha(perfilId) {
-            const resultado = await perfilRepository.actualizarRachaDiaria(perfilId);
-            
-            if (!resultado) {
-                // Lanzamos el error literal para que lo ataje tu Helper
-                throw new Error("Perfil no encontrado para racha");
-            }
+    const resultado = await perfilRepository.actualizarRachaDiaria(perfilId);
 
-            let mensajeApp = "";
-            if (resultado.dias_pasados === 0) {
-                mensajeApp = "¡Ya habías sumado tu racha de hoy! 🔥";
-            } else if (resultado.dias_pasados <= 3) {
-                mensajeApp = `¡Excelente! Tu racha subió a ${resultado.racha} 🔥`;
-            } else {
-                mensajeApp = "¡Qué bueno verte de nuevo! Empezamos una nueva racha 🔥";
-            }
+    if (!resultado) {
+        throw new Error("Perfil no encontrado para racha");
+    }
 
-            return { 
-                exito: true, 
-                rachaActual: resultado.racha, 
-                mensaje: mensajeApp 
-            };
-        }
+    let mensajeApp = "";
+    let mostrarAnimacion = false;
+    let rachaAnterior = resultado.racha;
+
+    if (resultado.dias_pasados === 0) {
+
+        mensajeApp = "¡Ya habías sumado tu racha de hoy! 🔥";
+
+    } else if (resultado.dias_pasados <= 3) {
+
+        mensajeApp = `¡Excelente! Tu racha subió a ${resultado.racha} 🔥`;
+
+        mostrarAnimacion = true;
+
+        rachaAnterior = resultado.racha - 1;
+
+    } else {
+
+        mensajeApp = "¡Qué bueno verte de nuevo! Empezamos una nueva racha 🔥";
+
+        mostrarAnimacion = true;
+
+        // Venía de una racha perdida, la nueva empieza en 1.
+        // Para la animación podemos mostrar 0 → 1.
+        rachaAnterior = 0;
+
+    }
+
+    return {
+        exito: true,
+        mostrarAnimacion,
+        rachaAnterior,
+        rachaActual: resultado.racha,
+        mensaje: mensajeApp
+    };
+}
 
         // Lógica de Ranking
         async obtenerRanking() {
