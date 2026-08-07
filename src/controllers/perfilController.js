@@ -4,6 +4,7 @@ import perfilService from "../services/perfilService.js";
 import { mapPerfilError } from "../helpers/mensajesErrores.js";
 import verificarToken from "../middlewares/authMiddleware.js"; 
 import validarDatosCrearPerfil from "../middlewares/validarDatosPerfil.js";
+import validadores from "../helpers/validadores.js";
 
 const router = Router();
 
@@ -104,23 +105,27 @@ router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
     }
 });
 
-    // Reemplaza tu actual router.delete al final del archivo por este:
     router.delete("/:id", verificarToken, async (req, res) => {
         try {
-            // 1. Extraemos el authId del usuario logueado (inyectado por verificarToken)
+
             const authId = req.user.id;
-            
-            // 2. Extraemos el ID del perfil de los parámetros de la URL
             const { id } = req.params;
 
-            // 3. Llamamos al servicio
+            if (!validadores.esIdValido(id)) {
+            return res.status(status.BAD_REQUEST).json({
+                success: false,
+                message: "El formato del ID no es válido."
+            });
+        }
+
             await perfilService.eliminarPerfil(authId, id);
 
             // 4. Respondemos con éxito
             return res.status(status.OK).json({
-                success: true,
+                success: true,  
                 message: "Perfil eliminado exitosamente."
             });
+
         } catch (error) {
             console.error("🚨 Error en DELETE /perfiles/:id:", error);
             
