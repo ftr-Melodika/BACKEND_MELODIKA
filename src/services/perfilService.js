@@ -110,15 +110,37 @@
             };
         }
         
-        async eliminarPerfil(authId, perfilId) {
+       async eliminarPerfil(authId, perfilId) {
+            // 1. Buscamos la cuenta local
             const cuenta = await cuentaRepository.encontrarPorAuthId(authId);
             if (!cuenta) {
                 throw new Error("Cuenta no encontrada");
             }
+
+            // 2. Buscamos el perfil en la base de datos para examinar su estado
+            const perfilExistente = await perfilRepository.obtenerPorId(perfilId);
+
+            // 3. Evaluamos TODOS los escenarios posibles con errores específicos
+            if (!perfilExistente) {
+                throw new Error("El perfil no existe"); // 404
+            }
+
+            if (perfilExistente.cuentaId !== cuenta.id) {
+                throw new Error("Acceso denegado al perfil"); // 403
+            }
+
+            if (perfilExistente.activo === false) {
+                throw new Error("El perfil se encuentra eliminado"); // 400
+            }
+
+            // 4. Si pasó todos los filtros, es seguro ejecutar el borrado lógico
             const fueEliminado = await perfilRepository.eliminarPerfil(perfilId, cuenta.id);
+            
+            // Check de seguridad final por si ocurre un error a nivel base de datos
             if (!fueEliminado) {
-                throw new Error("Perfil no encontrado o no autorizado");
-            }   
+                throw new Error("No se pudo completar la operación con los perfiles.");
+            }
+
             return { exito: true };
         }
 
