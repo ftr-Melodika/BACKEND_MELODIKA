@@ -3,7 +3,7 @@ import { Router } from "express";
 import perfilService from "../services/perfilService.js";
 import { mapPerfilError } from "../helpers/mensajesErrores.js";
 import verificarToken from "../middlewares/authMiddleware.js"; 
-import validarDatosCrearPerfil from "../middlewares/validarDatosPerfil.js";
+import { validarDatosCrearPerfil, validarDatosActualizarPerfil } from "../middlewares/validarDatosPerfil.js";
 import validadores from "../helpers/validadores.js";
 
 const router = Router();
@@ -137,6 +137,38 @@ router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
             });
         }
     });
+
+    router.put("/:id", verificarToken, validarDatosActualizarPerfil, async (req, res) => {
+    try {
+        const authId = req.user.id; // Lo inyecta verificarToken
+        const { id } = req.params;  // El ID del perfil desde la URL
+        
+        // Extraemos explícitamente solo lo que permitimos actualizar en esta ruta
+        // Si mandan un "username" acá, lo ignoramos por completo
+        const { nombre, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
+        
+        // Empaquetamos los datos limpios para el servicio
+        const datosPerfil = { nombre, fecha_nacimiento, genero, pais, avatarUrl };
+
+        const perfilActualizado = await perfilService.actualizarPerfil(authId, id, datosPerfil);
+
+        return res.status(status.OK).json({
+            success: true,
+            message: "Perfil actualizado correctamente.",
+            data: perfilActualizado
+        });
+
+    } catch (error) {
+        console.error(" Error en PUT /perfiles/:id:", error);
+        
+        // Manejamos el error usando tu helper centralizado
+        const { codigoEstado, mensajeUsuario } = mapPerfilError(error);
+        return res.status(codigoEstado).json({
+            success: false,
+            message: mensajeUsuario
+        });
+    }
+});
 
 
 

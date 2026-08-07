@@ -48,4 +48,30 @@ const validarDatosCrearPerfil = (req, res, next) => {
     next(); 
 };
 
-export default validarDatosCrearPerfil;
+const validarDatosActualizarPerfil = (req, res, next) => {
+    const { nombre, pais, fecha_nacimiento, genero } = req.body;
+
+    // Solo validamos los campos que el usuario mande
+    if (nombre && !validadores.esNombreValido(nombre)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'El nombre debe tener al menos 3 letras y no contener números ni símbolos.' });
+    }
+    
+    if (pais && !validadores.esPaisValido(pais)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'El formato del país no es válido.' });
+    }
+
+    if (fecha_nacimiento && !validadores.esFechaValida(fecha_nacimiento)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Formato de fecha inválido (debe ser AAAA-MM-DD).' });
+    }
+
+    if (genero && !validadores.esGeneroValido(genero)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ error: 'Género no válido.' });
+    }
+
+    if (nombre) req.body.nombre = nombre.trim();
+    if (pais) req.body.pais = pais.trim();
+
+    next();
+};
+
+export { validarDatosCrearPerfil, validarDatosActualizarPerfil };

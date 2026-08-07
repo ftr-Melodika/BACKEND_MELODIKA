@@ -170,6 +170,18 @@ export function mapPerfilError(error) {
                 mensajeUsuario = "Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.";
                 codigoEstado = status.INTERNAL_SERVER_ERROR;
                 break;
+            case "El perfil no existe":
+                mensajeUsuario = "No pudimos encontrar el perfil solicitado.";
+                codigoEstado = status.NOT_FOUND; // 404
+                break;
+            case "Acceso denegado al perfil":
+                mensajeUsuario = "No tienes permisos para modificar este perfil.";
+                codigoEstado = status.FORBIDDEN; // 403
+                break;
+            case "El perfil se encuentra eliminado":
+                mensajeUsuario = "Esta acción no se puede realizar porque el perfil ya fue eliminado.";
+                codigoEstado = status.BAD_REQUEST; // 400
+                break;
             default:
                 if (codigoEstado >= 500) {
                     mensajeUsuario = "Hubo un error interno en el servidor";

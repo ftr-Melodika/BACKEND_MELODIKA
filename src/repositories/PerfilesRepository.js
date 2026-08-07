@@ -31,7 +31,7 @@ class PerfilRepository {
             throw err;
         }
     }
-    //VERIFICAR ESTO
+    
     // Inserta un nuevo perfil en la base de datos
     async crearPerfil(cuentaId, datosPerfil) {
         try {
@@ -147,6 +147,96 @@ class PerfilRepository {
             throw err;
         }
     }
+
+    async actualizarPerfil(perfilId, cuentaId, datosPerfil) {
+        try {
+            const query = `
+                UPDATE perfiles 
+                SET 
+                    nombre = COALESCE($1, nombre),
+                    avatar_url = COALESCE($2, avatar_url),
+                    pais = COALESCE($3, pais),
+                    fecha_nacimiento = COALESCE($4, fecha_nacimiento),
+                    genero = COALESCE($5, genero),
+                    updated_at = NOW()
+                WHERE id = $6 AND cuenta_id = $7 AND activo = true
+                RETURNING *;
+            `;
+            
+            const values = [
+                datosPerfil.nombre || null,
+                datosPerfil.avatarUrl || null,
+                datosPerfil.pais || null,
+                datosPerfil.fecha_nacimiento || null,
+                datosPerfil.genero || null,
+                perfilId,
+                cuentaId
+            ];
+
+            const resultado = await pool.query(query, values);
+            
+            if (resultado.rows.length === 0) {
+                return null; // No encontró el perfil o no es de esa cuenta
+            }
+
+            const perfil = resultado.rows[0];
+            return new Perfil(
+                perfil.id,
+                perfil.cuenta_id,
+                perfil.nombre,
+                perfil.username,
+                perfil.avatar_url,
+                perfil.pais,
+                perfil.fecha_nacimiento,
+                perfil.genero,
+                perfil.xp,
+                perfil.racha,
+                perfil.instrumento_actual_id,
+                perfil.activo
+            );
+        } catch (error) {
+            console.error("Error actualizando perfil en la base de datos:", error);
+            const err = new Error("No se pudo actualizar el perfil en la base de datos", { cause: error });
+            err.code = error.code;
+            err.constraint = error.constraint;
+            throw err;
+        }
+    }
+
+    // Busca un perfil específico por su ID sin importar su estado
+    async obtenerPorId(perfilId) {
+        try {
+            const query = 'SELECT * FROM perfiles WHERE id = $1';
+            const resultado = await pool.query(query, [perfilId]);
+            
+            if (resultado.rows.length === 0) {
+                return null;
+            }
+            
+            const row = resultado.rows[0];
+            // Mapeamos a tu entidad Perfil
+            return new Perfil(
+                row.id,
+                row.cuenta_id,
+                row.nombre,
+                row.username,
+                row.avatar_url,
+                row.pais,
+                row.fecha_nacimiento,
+                row.genero,
+                row.xp,
+                row.racha,
+                row.instrumento_actual_id,
+                row.activo
+            );
+        } catch (error) {
+            console.error("Error buscando perfil por ID:", error);
+            const err = new Error("Error al conectar con la base de datos", { cause: error });
+            err.code = error.code;
+            throw err;
+        }
+    }
+
 }
 
 export default PerfilRepository;

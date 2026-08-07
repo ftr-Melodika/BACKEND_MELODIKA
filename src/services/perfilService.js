@@ -102,6 +102,35 @@
             return { exito: true };
         }
 
+        // Actualiza los datos generales del perfil (sin tocar username)
+        async actualizarPerfil(authId, perfilId, datosPerfil) {
+            // 1. Buscamos la cuenta local
+            const cuenta = await cuentaRepository.encontrarPorAuthId(authId);
+            if (!cuenta) {
+                throw new Error("Cuenta no encontrada");
+            }
+
+            // 2. Buscamos el perfil en la base de datos
+            const perfilExistente = await perfilRepository.obtenerPorId(perfilId);
+
+            // 3. Evaluamos TODOS los escenarios posibles
+            if (!perfilExistente) {
+                throw new Error("El perfil no existe"); // Error 404
+            }
+
+            if (perfilExistente.cuentaId !== cuenta.id) {
+                throw new Error("Acceso denegado al perfil"); // Error 403 (No es el dueño)
+            }
+
+            if (perfilExistente.activo === false) {
+                throw new Error("El perfil se encuentra eliminado"); // Error 400
+            }
+
+            // 4. Si pasó todos los filtros, es seguro actualizarlo
+            const perfilActualizado = await perfilRepository.actualizarPerfil(perfilId, cuenta.id, datosPerfil);
+            return perfilActualizado;
+        }
+
     }
 
 
