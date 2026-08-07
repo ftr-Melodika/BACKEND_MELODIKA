@@ -72,6 +72,12 @@ const esGeneroValido = (genero) => {
     return generosPermitidos.includes(genero);
 }   
 
+const esIdValido = (id) => {
+    // Expresión regular que verifica el formato de UUID
+    const regex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
+    return regex.test(id);
+}
+
 // Exportamos todas las herramientas para que el middleware las pueda usar
 export default { 
     esEmailValido, 
@@ -86,5 +92,6 @@ export default {
     esUsernameValido,
     esPaisValido,
     esFechaValida,
-    esGeneroValido
+    esGeneroValido,
+    esIdValido
 };
