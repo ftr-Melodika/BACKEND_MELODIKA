@@ -3,7 +3,7 @@ import { Router } from "express";
 import perfilService from "../services/perfilService.js";
 import { mapPerfilError } from "../helpers/mensajesErrores.js";
 import verificarToken from "../middlewares/authMiddleware.js"; 
-import { validarDatosCrearPerfil, validarDatosActualizarPerfil } from "../middlewares/validarDatosPerfil.js";
+import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil } from "../middlewares/validarDatosPerfil.js";
 import validadores from "../helpers/validadores.js";
 
 const router = Router();
@@ -105,18 +105,11 @@ router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
     }
 });
 
-    router.delete("/:id", verificarToken, async (req, res) => {
+    router.delete("/:id", verificarToken, validarIdPerfil, async (req, res) => {
         try {
 
             const authId = req.user.id;
             const { id } = req.params;
-
-            if (!validadores.esIdValido(id)) {
-            return res.status(status.BAD_REQUEST).json({
-                success: false,
-                message: "El formato del ID no es válido."
-            });
-        }
 
             await perfilService.eliminarPerfil(authId, id);
 
@@ -138,7 +131,7 @@ router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
         }
     });
 
-    router.put("/:id", verificarToken, validarDatosActualizarPerfil, async (req, res) => {
+    router.put("/:id", verificarToken, validarIdPerfil, validarDatosActualizarPerfil, async (req, res) => {
     try {
         const authId = req.user.id; // Lo inyecta verificarToken
         const { id } = req.params;  // El ID del perfil desde la URL
