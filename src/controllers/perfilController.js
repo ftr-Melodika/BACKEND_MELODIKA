@@ -4,7 +4,6 @@ import perfilService from "../services/perfilService.js";
 import { mapPerfilError } from "../helpers/mensajesErrores.js";
 import verificarToken from "../middlewares/authMiddleware.js"; 
 import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil } from "../middlewares/validarDatosPerfil.js";
-import validadores from "../helpers/validadores.js";
 
 const router = Router();
 
