@@ -1,13 +1,12 @@
-import status from "http-status-codes";
+import httpStatus from "http-status-codes";
 import { Router } from "express";
-import { StatusCodes } from "http-status-codes";
+const { status } = httpStatus;
 import CuentaService from "../services/cuentaService.js";
 import Cuenta from "../entities/Cuenta.js";
 import validarRegistro from "../middlewares/validarDatosRegistro.js";
 import validarLogin from "../middlewares/validarDatosLogin.js";
-import verificarToken from "../middlewares/authMiddleware.js"; // <-- Importamos el middleware de protección
-import { mapLoginError, mapRegisterError } from "../helpers/mensajesErrores.js";
-
+import verificarToken from "../middlewares/authMiddleware.js";
+import { mapLoginError, mapRegisterError } from "../helpers/errores/cuentaErrores.js";
 
 const router = Router();
 const cuentaService = new CuentaService();

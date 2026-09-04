@@ -1,7 +1,7 @@
 import status from "http-status-codes";
 import { Router } from "express";
 import perfilService from "../services/perfilService.js";
-import { mapPerfilError } from "../helpers/mensajesErrores.js";
+import { mapPerfilError } from "../helpers/errores/perfilErrores.js";
 import verificarToken from "../middlewares/authMiddleware.js"; 
 import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil } from "../middlewares/validarDatosPerfil.js";
 
