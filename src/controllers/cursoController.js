@@ -2,85 +2,107 @@ import status from "http-status-codes";
 import { Router } from "express";
 import CursoService from "../services/cursoService.js";
 import verificarToken from "../middlewares/authMiddleware.js";
+import { mapCursoError } from "../helpers/errores/cursoErrores.js";
+import { manejarErrorRespuesta } from "../helpers/manejarErrorRespuesta.js";
 
 const router = Router();
 const cursoService = new CursoService();
 
-// Endpoint protegido para obtener la lista de cursos de un perfil
+// GET: Lista todos los cursos del perfil
 router.get("/perfil/:perfilId", verificarToken, async (req, res) => {
     try {
         const { perfilId } = req.params;
 
         if (!perfilId) {
-            return res.status(status.BAD_REQUEST).json({ error: "El ID del perfil es requerido." });
+            throw new Error("El ID del perfil es requerido.");
         }
 
-        // Llamamos al servicio que tiene la lógica del Mock
         const datosCursos = await cursoService.listarCursos(perfilId);
         
-        return res.status(status.OK).json(datosCursos);
-    } catch (error) {
-        console.error("Error al obtener los cursos:", error);
-        return res.status(status.INTERNAL_SERVER_ERROR).json({ 
-            error: "Hubo un problema al cargar los cursos." 
+        return res.status(status.OK).json({
+            success: true,
+            message: "Cursos obtenidos exitosamente.",
+            data: datosCursos
         });
+    } catch (error) {
+        return manejarErrorRespuesta(res, error, mapCursoError);
     }
 });
 
+// GET: Detalle de un curso con sus lecciones
 router.get("/:cursoId", verificarToken, async (req, res) => {
     try {
         const { cursoId } = req.params;
-        const { perfilId } = req.query; // Lo sacamos de la URL
+        const { perfilId } = req.query;
 
         if (!cursoId) {
-            return res.status(status.BAD_REQUEST).json({ error: "El ID del curso es requerido." });
+            throw new Error("El ID del curso es requerido.");
         }
-
         if (!perfilId) {
-            return res.status(status.BAD_REQUEST).json({ error: "El ID del perfil es requerido como parámetro de consulta (?perfilId=...)." });
+            throw new Error("El ID del perfil es requerido como parámetro de consulta (?perfilId=...).");
         }
 
         const detalleCurso = await cursoService.obtenerDetalleCurso(cursoId, perfilId);
         
         if (!detalleCurso) {
-            return res.status(status.NOT_FOUND).json({ error: "Curso no encontrado." });
-        }
-
-        return res.status(status.OK).json(detalleCurso);
-    } catch (error) {
-        console.error("Error al obtener detalle del curso:", error);
-        return res.status(status.INTERNAL_SERVER_ERROR).json({ 
-            error: "Hubo un problema al cargar el detalle del curso." 
-        });
-    }
-});
-
-// POST: Cuando el alumno toca el botón "Terminado"
-router.post("/:cursoId/lecciones/:leccionId/completar", verificarToken, async (req, res) => {
-    try {
-        const { cursoId, leccionId } = req.params;
-        const { perfilId } = req.body; // El frontend nos manda quién es el perfil en el body
-
-        if (!perfilId) {
-            return res.status(status.BAD_REQUEST).json({ error: "Falta el ID del perfil." });
-        }
-
-        // Llamamos al servicio
-        const resultado = await cursoService.completarLeccion(perfilId, cursoId, leccionId);
-
-        if (!resultado.exito) {
-            return res.status(status.BAD_REQUEST).json({ error: resultado.mensaje });
+            throw new Error("Curso no encontrado.");
         }
 
         return res.status(status.OK).json({
-            mensaje: "¡Ejercicio completado!",
-            xpGanada: resultado.xpGanada,
-            xpTotal: resultado.xpTotal
+            success: true,
+            message: "Detalle del curso obtenido exitosamente.",
+            data: detalleCurso
+        });
+    } catch (error) {
+        return manejarErrorRespuesta(res, error, mapCursoError);
+    }
+});
+
+// POST: Completar una lección
+router.post("/:cursoId/lecciones/:leccionId/completar", verificarToken, async (req, res) => {
+    try {
+        const { cursoId, leccionId } = req.params;
+        const { perfilId } = req.body;
+
+        if (!perfilId) {
+            throw new Error("Falta el ID del perfil.");
+        }
+
+        const resultado = await cursoService.completarLeccion(perfilId, cursoId, leccionId);
+
+        return res.status(status.OK).json({
+            success: true,
+            message: "¡Ejercicio completado!",
+            data: {
+                xpGanada: resultado.xpGanada,
+                xpTotal: resultado.xpTotal
+            }
         });
 
     } catch (error) {
-        console.error("Error en POST completar:", error);
-        return res.status(status.INTERNAL_SERVER_ERROR).json({ error: "Error al guardar el progreso." });
+        return manejarErrorRespuesta(res, error, mapCursoError);
+    }
+});
+
+router.post("/:cursoId/completar", verificarToken, async (req, res) => {
+    try {
+        const { cursoId } = req.params;
+        const { perfilId } = req.body;
+
+        if (!perfilId) {
+            throw new Error("Falta el ID del perfil.");
+        }
+
+        const resultado = await cursoService.completarCurso(perfilId, cursoId);
+
+        return res.status(status.OK).json({
+            success: true,
+            message: resultado.mensaje,
+            data: null
+        });
+
+    } catch (error) {
+        return manejarErrorRespuesta(res, error, mapCursoError);
     }
 });
 

@@ -6,11 +6,11 @@ export function mapPerfilError(error) {
     console.log("Mensaje original:", error.message);
     console.log("Status original:", error.status);
     console.log("============================");
-
+    
     let codigoEstado = error.status || status.INTERNAL_SERVER_ERROR;
     let mensajeUsuario;
     const codigoDb = validadores.obtenerCodigoDb(error);
-
+    
     if (codigoDb) {
         switch (codigoDb) {
             case "23505":
@@ -45,7 +45,7 @@ export function mapPerfilError(error) {
                 break;
         }
     }
-
+    
     if (!mensajeUsuario) {
         switch (error.message) {
             case "Sesion expirada":
@@ -104,6 +104,5 @@ export function mapPerfilError(error) {
                 break;
         }
     }
-
     return { codigoEstado, mensajeUsuario };
 }

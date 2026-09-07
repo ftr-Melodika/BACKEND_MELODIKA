@@ -1,7 +1,7 @@
 export function mapCursoError(error) {
-    let codigoEstado = error.status || 500; 
+    let codigoEstado = error.status || 500;
     let mensajeUsuario;
-
+    
     switch (error.message) {
         case "Falta el ID del perfil.":
         case "El ID del curso es requerido.":
@@ -23,6 +23,6 @@ export function mapCursoError(error) {
             mensajeUsuario = "Hubo un problema interno al procesar los cursos o lecciones.";
             break;
     }
-
+    
     return { codigoEstado, mensajeUsuario };
 }

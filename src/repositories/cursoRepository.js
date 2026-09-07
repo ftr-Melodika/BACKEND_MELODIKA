@@ -141,6 +141,20 @@ class CursoRepository {
             client.release();
         }
     }
+
+    async registrarCursoCompletado(perfilId, cursoId) {
+        try {
+            const query = `
+                INSERT INTO progreso_cursos (perfil_id, curso_id, completado)
+                VALUES ($1, $2, true)
+            `;
+            await pool.query(query, [perfilId, cursoId]);
+            return true;
+        } catch (error) {
+            console.error("Error al registrar curso completado:", error);
+            throw new Error("No se pudo registrar el curso completado.");
+        }
+    }
 }
 
 export default CursoRepository;

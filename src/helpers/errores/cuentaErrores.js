@@ -6,11 +6,11 @@ export function mapLoginError(error) {
     console.log("Mensaje original:", error.message);
     console.log("Status original:", error.status);
     console.log("============================");
-
+    
     let codigoEstado = error.status || status.INTERNAL_SERVER_ERROR;
     let mensajeUsuario;
     const codigoDb = validadores.obtenerCodigoDb(error);
-
+    
     if (codigoDb) {
         if (codigoDb === "23505") {
             return { codigoEstado: status.CONFLICT, mensajeUsuario: "El correo electrónico ya está registrado en la base de datos." };
@@ -19,7 +19,7 @@ export function mapLoginError(error) {
             return { codigoEstado: status.SERVICE_UNAVAILABLE, mensajeUsuario: "No se pudo conectar con la base de datos. Intentá más tarde." };
         }
     }
-
+    
     if (codigoEstado === 400 || codigoEstado === 401 || codigoEstado == 422 || codigoEstado == 403) {
         switch (error.message) {
             case "Invalid login credentials":
@@ -48,26 +48,26 @@ export function mapLoginError(error) {
     } else {
         mensajeUsuario = "No se pudo registrar la cuenta.";
     }
-
+    
     return { codigoEstado, mensajeUsuario };
 }
 
 export function mapRegisterError(error) {
     let codigoEstado = error.status || status.BAD_REQUEST;
     let mensajeUsuario;
-
+    
     console.log("======= ERROR OCULTO =======");
     console.log("Mensaje original:", error.message);
     console.log("Status original:", error.status);
     console.log("============================");
-
+    
     if (codigoEstado === 429 || error.message?.includes("rate limit")) {
         return {
             codigoEstado: status.TOO_MANY_REQUESTS,
             mensajeUsuario: "Demasiados intentos de registro. Por favor, esperá unos minutos."
         };
     }
-
+    
     if (codigoEstado === 400) {
         switch (error.message) {
             case "User already registered":
@@ -86,6 +86,6 @@ export function mapRegisterError(error) {
     } else {
         mensajeUsuario = "No se pudo registrar la cuenta";
     }
-
+    
     return { codigoEstado, mensajeUsuario };
 }

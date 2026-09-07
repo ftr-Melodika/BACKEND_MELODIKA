@@ -7,6 +7,7 @@ import validarRegistro from "../middlewares/validarDatosRegistro.js";
 import validarLogin from "../middlewares/validarDatosLogin.js";
 import verificarToken from "../middlewares/authMiddleware.js";
 import { mapLoginError, mapRegisterError } from "../helpers/errores/cuentaErrores.js";
+import {manejarErrorRespuesta} from "../helpers/manejarErrorRespuesta.js"
 
 const router = Router();
 const cuentaService = new CuentaService();
@@ -41,12 +42,7 @@ router.post("/login", validarLogin, async (req, res) => {
         });
 
     } catch (error) {
-        const { codigoEstado, mensajeUsuario } = mapLoginError(error);
-
-        res.status(codigoEstado).json({
-            message: mensajeUsuario,
-            codigoEstado: codigoEstado,
-        });
+        return manejarErrorRespuesta(res, error, mapLoginError);
     }
 });
 
@@ -67,12 +63,7 @@ router.post("/registrar", validarRegistro, async (req, res) => {
         });
 
     } catch (error) {
-        const { codigoEstado, mensajeUsuario } = mapRegisterError(error);
-
-        res.status(codigoEstado).json({
-            message: mensajeUsuario,
-            codigoEstado: codigoEstado,
-        });
+        return manejarErrorRespuesta(res, error, mapRegisterError);
     }
 });
 
