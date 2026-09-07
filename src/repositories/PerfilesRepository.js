@@ -1,5 +1,7 @@
 import { pool } from '../database/db.js';
 import Perfil from '../entities/Perfiles.js';
+import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
+import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
 
 class PerfilRepository {
     
@@ -25,10 +27,7 @@ class PerfilRepository {
                 row.activo
             ));
         } catch (error) {
-            console.error("Error buscando perfiles en la base de datos:", error);
-            const err = new Error("Error al conectar con la base de datos para buscar perfiles", { cause: error });
-            err.code = error.code;
-            throw err;
+            manejarErrorDB(error, MENSAJES_ERROR_DB.BUSCAR_PERFILES);
         }
     }
     
@@ -69,11 +68,7 @@ class PerfilRepository {
                 perfil.activo
             );
         } catch (error) {
-            console.error("Error creando perfil en la base de datos:", error);
-            const err = new Error("No se pudo crear el perfil en la base de datos", { cause: error });
-            err.code = error.code;
-            err.constraint = error.constraint;
-            throw err;
+            manejarErrorDB(error, MENSAJES_ERROR_DB.CREAR_PERFIL);
         }
     }
 
@@ -101,8 +96,7 @@ class PerfilRepository {
             const resultado = await pool.query(query, [perfilId]);
             return resultado.rows[0]; 
         } catch (error) {
-            console.error("Error al actualizar la racha:", error);
-            throw new Error("No se pudo procesar la racha.");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.ACTUALIZAR_RACHA);
         }
     }
 
@@ -119,9 +113,7 @@ class PerfilRepository {
             const resultado = await pool.query(query);
             return resultado.rows;
         } catch (error) {
-            console.error("Error al obtener el ranking:", error);
-            // Hacemos que el error suba al Service y luego al Controller
-            throw new Error("Error al cargar el ranking"); 
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_RANKING);
         }
     }
 
@@ -141,10 +133,7 @@ class PerfilRepository {
             // Si es 0, significa que el perfil no existía, ya estaba borrado o es de otra cuenta.
             return resultado.rowCount > 0;
         } catch (error) {
-            console.error("Error eliminando perfil en la base de datos:", error);
-            const err = new Error("No se pudo eliminar el perfil en la base de datos", { cause: error });
-            err.code = error.code;
-            throw err;
+            manejarErrorDB(error, MENSAJES_ERROR_DB.ELIMINAR_PERFIL);
         }
     }
 
@@ -195,11 +184,7 @@ class PerfilRepository {
                 perfil.activo
             );
         } catch (error) {
-            console.error("Error actualizando perfil en la base de datos:", error);
-            const err = new Error("No se pudo actualizar el perfil en la base de datos", { cause: error });
-            err.code = error.code;
-            err.constraint = error.constraint;
-            throw err;
+            manejarErrorDB(error, MENSAJES_ERROR_DB.ACTUALIZAR_PERFIL);
         }
     }
 
@@ -230,10 +215,7 @@ class PerfilRepository {
                 row.activo
             );
         } catch (error) {
-            console.error("Error buscando perfil por ID:", error);
-            const err = new Error("Error al conectar con la base de datos", { cause: error });
-            err.code = error.code;
-            throw err;
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_PERFIL_POR_ID);
         }
     }
 

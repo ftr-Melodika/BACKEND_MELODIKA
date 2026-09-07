@@ -1,6 +1,6 @@
-import { mapLoginError, mapRegisterError } from "../helpers/errores/cuentaErrores.js";
-import { mapCursoError } from "../helpers/errores/cursoErrores.js";
-import { mapPerfilError } from "../helpers/errores/perfilErrores.js";
+import { mapLoginError, mapRegisterError } from "../helpers/mapperErrores/cuentaErrores.js";
+import { mapCursoError } from "../helpers/mapperErrores/cursoErrores.js";
+import { mapPerfilError } from "../helpers/mapperErrores/perfilErrores.js";
 
 const resolveErrorMapper = (req) => {
     const path = req.originalUrl || "";

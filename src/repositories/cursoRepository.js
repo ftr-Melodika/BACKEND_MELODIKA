@@ -1,54 +1,130 @@
 import { pool } from '../database/db.js';
+import Curso from '../entities/Curso.js';
+import Ejercicio from '../entities/Ejercicio.js';
+
 
 class CursoRepository {
 
-    // Obtener todos los cursos (contenido real, ya no mock)
     async obtenerCursos() {
-        const query = `SELECT id, nombre, descripcion, nivel, orden FROM cursos ORDER BY orden ASC`;
-        const resultado = await pool.query(query);
-        return resultado.rows;
+        try {
+            const query = `SELECT id, nombre, descripcion, instrumento_id, camino_id, nivel, orden, obligatorio FROM cursos ORDER BY orden ASC`;
+            const resultado = await pool.query(query);
+            return resultado.rows.map(row => new Curso(
+                row.id,
+                row.nombre,
+                row.descripcion,
+                row.instrumento_id,
+                row.camino_id,
+                row.nivel,
+                row.orden,
+                row.obligatorio
+            ));
+        } catch (error) {
+            manejarErrorDB(error, "Error al obtener cursos:");
+        }
     }
 
-    // Obtener un curso puntual
     async obtenerCursoPorId(cursoId) {
-        const query = `SELECT id, nombre, descripcion, nivel, orden FROM cursos WHERE id = $1`;
-        const resultado = await pool.query(query, [cursoId]);
-        return resultado.rows[0] || null;
+        try {
+            const query = `SELECT id, nombre, descripcion, instrumento_id, camino_id, nivel, orden, obligatorio FROM cursos WHERE id = $1`;
+            const resultado = await pool.query(query, [cursoId]);
+            
+            if (resultado.rows.length === 0) {
+                return null;
+            }
+
+            const row = resultado.rows[0];
+            return new Curso(
+                row.id,
+                row.nombre,
+                row.descripcion,
+                row.instrumento_id,
+                row.camino_id,
+                row.nivel,
+                row.orden,
+                row.obligatorio
+            );
+        } catch (error) {
+            manejarErrorDB(error, "Error al obtener el curso por ID:");
+        }
     }
 
-    // Obtener los ejercicios de un curso (contenido real, ya no mock)
-    // Nota: la columna real en la tabla se llama "nombre" (no "titulo"); la
-    // traducimos acá con AS para no tener que renombrar todo el resto del código.
     async obtenerEjerciciosDeCurso(cursoId) {
-        const query = `
-            SELECT id, curso_id, nombre AS titulo, descripcion, tipo, orden, xp_recompensa,
-                   youtube_id, duracion_segundos,
-                   cuerda, traste_objetivo, nota_esperada, dot_left, dot_bottom,
-                   texto_teoria, texto_destacado, instrucciones
-            FROM ejercicios
-            WHERE curso_id = $1
-            ORDER BY orden ASC
-        `;
-        const resultado = await pool.query(query, [cursoId]);
-        return resultado.rows;
+        try {
+            const query = `
+                SELECT id, curso_id, nombre AS titulo, descripcion, tipo, orden, xp_recompensa,
+                       youtube_id, duracion_segundos,
+                       cuerda, traste_objetivo, nota_esperada, dot_left, dot_bottom,
+                       texto_teoria, texto_destacado, instrucciones
+                FROM ejercicios
+                WHERE curso_id = $1
+                ORDER BY orden ASC
+            `;
+            const resultado = await pool.query(query, [cursoId]);
+            return resultado.rows.map(row => new Ejercicio(
+                row.id,
+                row.curso_id,
+                row.titulo,
+                row.descripcion,
+                row.tipo,
+                row.orden,
+                row.xp_recompensa,
+                row.youtube_id,
+                row.duracion_segundos,
+                row.cuerda,
+                row.traste_objetivo,
+                row.nota_esperada,
+                row.dot_left,
+                row.dot_bottom,
+                row.texto_teoria,
+                row.texto_destacado,
+                row.instrucciones
+            ));
+        } catch (error) {
+            manejarErrorDB(error, "Error al obtener ejercicios del curso:");
+        }
     }
 
-    // Todos los ejercicios de todos los cursos, con el nombre del curso (para el endpoint plano que usa el frontend)
     async obtenerTodosLosEjerciciosConCurso() {
-        const query = `
-            SELECT e.id, e.curso_id, c.nombre AS curso_nombre, e.nombre AS titulo, e.descripcion, e.tipo, e.orden,
-                   e.xp_recompensa, e.youtube_id, e.duracion_segundos,
-                   e.cuerda, e.traste_objetivo, e.nota_esperada, e.dot_left, e.dot_bottom,
-                   e.texto_teoria, e.texto_destacado, e.instrucciones
-            FROM ejercicios e
-            JOIN cursos c ON c.id = e.curso_id
-            ORDER BY c.orden ASC, e.orden ASC
-        `;
-        const resultado = await pool.query(query);
-        return resultado.rows;
+        try {
+            const query = `
+                SELECT e.id, e.curso_id, c.nombre AS curso_nombre, e.nombre AS titulo, e.descripcion, e.tipo, e.orden,
+                       e.xp_recompensa, e.youtube_id, e.duracion_segundos,
+                       e.cuerda, e.traste_objetivo, e.nota_esperada, e.dot_left, e.dot_bottom,
+                       e.texto_teoria, e.texto_destacado, e.instrucciones
+                FROM ejercicios e
+                JOIN cursos c ON c.id = e.curso_id
+                ORDER BY c.orden ASC, e.orden ASC
+            `;
+            const resultado = await pool.query(query);
+            return resultado.rows.map(row => {
+                const ejercicio = new Ejercicio(
+                    row.id,
+                    row.curso_id,
+                    row.titulo,
+                    row.descripcion,
+                    row.tipo,
+                    row.orden,
+                    row.xp_recompensa,
+                    row.youtube_id,
+                    row.duracion_segundos,
+                    row.cuerda,
+                    row.traste_objetivo,
+                    row.nota_esperada,
+                    row.dot_left,
+                    row.dot_bottom,
+                    row.texto_teoria,
+                    row.texto_destacado,
+                    row.instrucciones
+                );
+                ejercicio.cursoNombre = row.curso_nombre;
+                return ejercicio;
+            });
+        } catch (error) {
+            manejarErrorDB(error, "Error al obtener todos los ejercicios:");
+        }
     }
 
-    // Obtener los cursos que ya hizo
     async obtenerProgresoCursos(perfilId) {
         try {
             const query = `
@@ -59,12 +135,10 @@ class CursoRepository {
             const resultado = await pool.query(query, [perfilId]);
             return resultado.rows;
         } catch (error) {
-            console.error("Error buscando progresos en la BD:", error);
-            return [];
+            manejarErrorDB(error, "Error buscando progresos en la BD:");
         }
     }
 
-    // Obtener los ejercicios que ya hizo de un curso específico
     async obtenerEjerciciosCompletados(perfilId, cursoId) {
         try {
             const query = `
@@ -76,12 +150,10 @@ class CursoRepository {
             const resultado = await pool.query(query, [perfilId, cursoId]);
             return resultado.rows;
         } catch (error) {
-            console.error("Error al obtener ejercicios:", error);
-            return [];
+            manejarErrorDB(error, "Error al obtener ejercicios completados:");
         }
     }
 
-    // Obtener TODOS los ejercicios completados de un perfil (para el endpoint plano)
     async obtenerTodosLosEjerciciosCompletados(perfilId) {
         try {
             const query = `
@@ -91,12 +163,10 @@ class CursoRepository {
             const resultado = await pool.query(query, [perfilId]);
             return resultado.rows;
         } catch (error) {
-            console.error("Error al obtener ejercicios completados:", error);
-            return [];
+            manejarErrorDB(error, "Error al obtener todos los ejercicios completados:");
         }
     }
 
-    // Verificar si ya completó este ejercicio específico
     async verificarEjercicioCompletado(perfilId, ejercicioId) {
         try {
             const query = `
@@ -106,16 +176,14 @@ class CursoRepository {
             const resultado = await pool.query(query, [perfilId, ejercicioId]);
             return resultado.rows.length > 0;
         } catch (error) {
-            return false;
+            manejarErrorDB(error, "Error al verificar ejercicio completado:");
         }
     }
 
-    // Registrar que lo terminó y sumarle el XP al perfil
     async registrarProgresoYSumarXP(perfilId, ejercicioId, xpGanada) {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
-
             const insertProgreso = `
                 INSERT INTO progreso_ejercicios (perfil_id, ejercicio_id, completado)
                 VALUES ($1, $2, true)
@@ -135,8 +203,7 @@ class CursoRepository {
             return xpTotal;
         } catch (error) {
             await client.query('ROLLBACK');
-            console.error("Error guardando progreso y XP:", error);
-            throw new Error("No se pudo registrar el progreso en la BD.");
+            manejarErrorDB(error, "Error guardando progreso y XP:", "No se pudo registrar el progreso en la BD.");
         } finally {
             client.release();
         }
@@ -151,8 +218,7 @@ class CursoRepository {
             await pool.query(query, [perfilId, cursoId]);
             return true;
         } catch (error) {
-            console.error("Error al registrar curso completado:", error);
-            throw new Error("No se pudo registrar el curso completado.");
+            manejarErrorDB(error, "Error al registrar curso completado:", "No se pudo registrar el curso completado.");
         }
     }
 }

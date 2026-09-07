@@ -1,6 +1,5 @@
-import httpStatus from "http-status-codes";
+import status from "http-status-codes";
 import { Router } from "express";
-const { status } = httpStatus;
 import CuentaService from "../services/cuentaService.js";
 import validarRegistro from "../middlewares/validarDatosRegistro.js";
 import validarLogin from "../middlewares/validarDatosLogin.js";
