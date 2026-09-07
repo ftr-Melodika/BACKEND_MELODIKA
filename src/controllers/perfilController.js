@@ -1,112 +1,82 @@
 import status from "http-status-codes";
 import { Router } from "express";
 import perfilService from "../services/perfilService.js";
-import { mapPerfilError } from "../helpers/errores/perfilErrores.js";
-import { manejarErrorRespuesta } from "../helpers/manejarErrorRespuesta.js";
-import verificarToken from "../middlewares/authMiddleware.js"; 
+import verificarToken from "../middlewares/authMiddleware.js";
+import { catchAsync } from "../helpers/catchAsync.js";
 import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil } from "../middlewares/validarDatosPerfil.js";
 
 const router = Router();
 
-router.get("/ranking", verificarToken, async (req, res) => {
-    try {
-        const resultado = await perfilService.obtenerRanking();
-        
-        return res.status(status.OK).json({ 
-            success: true, 
-            data: resultado 
-        });
-    } catch (error) {
-        return manejarErrorRespuesta(res, error, mapPerfilError);
-    }
-});
+router.get("/ranking", verificarToken, catchAsync(async (req, res) => {
+    const resultado = await perfilService.obtenerRanking();
 
-router.post("/:id/racha", verificarToken, async (req, res) => {
-    try {
-        const { id } = req.params;
-        const resultado = await perfilService.chequearRacha(id);
-        
-        return res.status(status.OK).json({ 
-            success: true, 
-            data: resultado 
-        });
-    } catch (error) {
-        return manejarErrorRespuesta(res, error, mapPerfilError);
-    }
-});
+    return res.status(status.OK).json({
+        success: true,
+        data: resultado
+    });
+}));
 
-router.get("/", verificarToken, async (req, res) => {
-    try {
-        const authId = req.user.id; 
-        let mensajeExtra;
-        const perfiles = await perfilService.obtenerPerfiles(authId);
+router.post("/:id/racha", verificarToken, catchAsync(async (req, res) => {
+    const { id } = req.params;
+    const resultado = await perfilService.chequearRacha(id);
 
-        if (perfiles == null) mensajeExtra = "No tenes perfiles creados";
-        else mensajeExtra = "Tiene perfiles";
+    return res.status(status.OK).json({
+        success: true,
+        data: resultado
+    });
+}));
 
-        res.status(status.OK).json({
-            mensajeExtra: mensajeExtra,
-            success: true,
-            data: perfiles,
-        });
-    } catch (error) {
-        return manejarErrorRespuesta(res, error, mapPerfilError);
-    }
-});
+router.get("/", verificarToken, catchAsync(async (req, res) => {
+    const authId = req.user.id;
+    const perfiles = await perfilService.obtenerPerfiles(authId);
+    const mensajeExtra = perfiles == null ? "No tenes perfiles creados" : "Tiene perfiles";
 
-router.post("/", verificarToken, validarDatosCrearPerfil, async (req, res) => {
-    try {
-        const authId = req.user.id;
-        const { nombre, username, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
-        const datosPerfil = { nombre, username, fecha_nacimiento, genero, pais, avatarUrl };
+    res.status(status.OK).json({
+        success: true,
+        message: mensajeExtra,
+        data: perfiles,
+    });
+}));
 
-        const nuevoPerfil = await perfilService.crearPerfil(authId, datosPerfil);
+router.post("/", verificarToken, validarDatosCrearPerfil, catchAsync(async (req, res) => {
+    const authId = req.user.id;
+    const { nombre, username, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
+    const datosPerfil = { nombre, username, fecha_nacimiento, genero, pais, avatarUrl };
 
-        res.status(status.CREATED).json({
-            success: true,
-            message: "Perfil creado exitosamente",
-            data: nuevoPerfil
-        });
-    } catch (error) {
-        return manejarErrorRespuesta(res, error, mapPerfilError);
-    }
-});
+    const nuevoPerfil = await perfilService.crearPerfil(authId, datosPerfil);
 
-router.delete("/:id", verificarToken, validarIdPerfil, async (req, res) => {
-    try {
-        const authId = req.user.id;
-        const { id } = req.params;
+    res.status(status.CREATED).json({
+        success: true,
+        message: "Perfil creado exitosamente",
+        data: nuevoPerfil
+    });
+}));
 
-        await perfilService.eliminarPerfil(authId, id);
+router.delete("/:id", verificarToken, validarIdPerfil, catchAsync(async (req, res) => {
+    const authId = req.user.id;
+    const { id } = req.params;
 
-        return res.status(status.OK).json({
-            success: true,
-            message: "Perfil eliminado exitosamente."
-        });
+    await perfilService.eliminarPerfil(authId, id);
 
-    } catch (error) {
-        return manejarErrorRespuesta(res, error, mapPerfilError);
-    }
-});
+    return res.status(status.OK).json({
+        success: true,
+        message: "Perfil eliminado exitosamente."
+    });
+}));
 
-router.put("/:id", verificarToken, validarIdPerfil, validarDatosActualizarPerfil, async (req, res) => {
-    try {
-        const authId = req.user.id;
-        const { id } = req.params;
-        const { nombre, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
-        const datosPerfil = { nombre, fecha_nacimiento, genero, pais, avatarUrl };
+router.put("/:id", verificarToken, validarIdPerfil, validarDatosActualizarPerfil, catchAsync(async (req, res) => {
+    const authId = req.user.id;
+    const { id } = req.params;
+    const { nombre, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
+    const datosPerfil = { nombre, fecha_nacimiento, genero, pais, avatarUrl };
 
-        const perfilActualizado = await perfilService.actualizarPerfil(authId, id, datosPerfil);
+    const perfilActualizado = await perfilService.actualizarPerfil(authId, id, datosPerfil);
 
-        return res.status(status.OK).json({
-            success: true,
-            message: "Perfil actualizado correctamente.",
-            data: perfilActualizado
-        });
-
-    } catch (error) {
-        return manejarErrorRespuesta(res, error, mapPerfilError);
-    }
-});
+    return res.status(status.OK).json({
+        success: true,
+        message: "Perfil actualizado correctamente.",
+        data: perfilActualizado
+    });
+}));
 
 export default router;
