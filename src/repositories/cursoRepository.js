@@ -1,9 +1,10 @@
 import { pool } from '../database/db.js';
 import Curso from '../entities/Curso.js';
 import Ejercicio from '../entities/Ejercicio.js';
+import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
 
 
-class CursoRepository {
+    class CursoRepository {
 
     async obtenerCursos() {
         try {
