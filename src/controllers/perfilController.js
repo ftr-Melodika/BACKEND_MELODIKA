@@ -8,6 +8,10 @@ import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil 
 const router = Router();
 
 router.get("/ranking", verificarToken, catchAsync(async (req, res) => {
+    
+        /* #swagger.tags = ['Perfiles']
+       #swagger.summary = 'Obtener ranking global' */
+
     const resultado = await perfilService.obtenerRanking();
 
     return res.status(status.OK).json({
@@ -17,6 +21,10 @@ router.get("/ranking", verificarToken, catchAsync(async (req, res) => {
 }));
 
 router.post("/:id/racha", verificarToken, catchAsync(async (req, res) => {
+    
+    /* #swagger.tags = ['Perfiles']
+       #swagger.summary = 'Actualizar racha diaria' */
+
     const { id } = req.params;
     const resultado = await perfilService.chequearRacha(id);
 
@@ -27,6 +35,10 @@ router.post("/:id/racha", verificarToken, catchAsync(async (req, res) => {
 }));
 
 router.get("/", verificarToken, catchAsync(async (req, res) => {
+    
+        /* #swagger.tags = ['Perfiles']
+       #swagger.summary = 'Obtener perfiles de la cuenta' */
+    
     const authId = req.user.id;
     const perfiles = await perfilService.obtenerPerfiles(authId);
     const mensajeExtra = perfiles == null ? "No tenes perfiles creados" : "Tiene perfiles";
@@ -39,6 +51,14 @@ router.get("/", verificarToken, catchAsync(async (req, res) => {
 }));
 
 router.post("/", verificarToken, validarDatosCrearPerfil, catchAsync(async (req, res) => {
+    
+    /* #swagger.tags = ['Perfiles']
+       #swagger.summary = 'Crear nuevo perfil'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/CrearPerfil" } } }
+       } */
+    
     const authId = req.user.id;
     const { nombre, username, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
     const datosPerfil = { nombre, username, fecha_nacimiento, genero, pais, avatarUrl };
@@ -53,6 +73,10 @@ router.post("/", verificarToken, validarDatosCrearPerfil, catchAsync(async (req,
 }));
 
 router.delete("/:id", verificarToken, validarIdPerfil, catchAsync(async (req, res) => {
+    
+    /* #swagger.tags = ['Perfiles']
+       #swagger.summary = 'Eliminar perfil (Lógico)' */
+
     const authId = req.user.id;
     const { id } = req.params;
 
@@ -65,6 +89,14 @@ router.delete("/:id", verificarToken, validarIdPerfil, catchAsync(async (req, re
 }));
 
 router.put("/:id", verificarToken, validarIdPerfil, validarDatosActualizarPerfil, catchAsync(async (req, res) => {
+    
+    /* #swagger.tags = ['Perfiles']
+       #swagger.summary = 'Actualizar datos de perfil'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/ActualizarPerfil" } } }
+       } */
+
     const authId = req.user.id;
     const { id } = req.params;
     const { nombre, fecha_nacimiento, genero, pais, avatarUrl } = req.body;

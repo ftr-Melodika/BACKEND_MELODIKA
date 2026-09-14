@@ -9,6 +9,10 @@ const cursoService = new CursoService();
 
 // GET: Lista todos los cursos del perfil
 router.get("/perfil/:perfilId", verificarToken, catchAsync(async (req, res) => {
+    
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Listar catálogo de cursos' */
+    
     const { perfilId } = req.params;
 
     if (!perfilId) {
@@ -26,6 +30,10 @@ router.get("/perfil/:perfilId", verificarToken, catchAsync(async (req, res) => {
 
 // GET: Detalle de un curso con sus lecciones
 router.get("/:cursoId", verificarToken, catchAsync(async (req, res) => {
+    
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Detalle de curso y lecciones' */
+    
     const { cursoId } = req.params;
     const { perfilId } = req.query;
 
@@ -51,6 +59,13 @@ router.get("/:cursoId", verificarToken, catchAsync(async (req, res) => {
 
 // POST: Completar una lección
 router.post("/:cursoId/lecciones/:leccionId/completar", verificarToken, catchAsync(async (req, res) => {
+    
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Completar lección / ejercicio'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/AccionCurso" } } } */
+    
     const { cursoId, leccionId } = req.params;
     const { perfilId } = req.body;
 
@@ -72,6 +87,14 @@ router.post("/:cursoId/lecciones/:leccionId/completar", verificarToken, catchAsy
 }));
 
 router.post("/:cursoId/completar", verificarToken, catchAsync(async (req, res) => {
+    
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Marcar curso como completado'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/AccionCurso" } } }
+       } */
+    
     const { cursoId } = req.params;
     const { perfilId } = req.body;
 

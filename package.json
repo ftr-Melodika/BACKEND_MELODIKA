@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --watch src/index.js",
-    "db": "node src/database/db.js"
+    "db": "node src/database/db.js",
+    "swagger": "node swagger.js"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.3",
@@ -22,6 +23,10 @@
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.21.0",
     "postgres": "^3.4.9",
-    "supabase": "^2.104.0"
+    "supabase": "^2.104.0",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "swagger-autogen": "^2.23.7"
   }
 }

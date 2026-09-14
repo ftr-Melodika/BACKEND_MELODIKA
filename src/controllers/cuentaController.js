@@ -10,6 +10,8 @@ const router = Router();
 const cuentaService = new CuentaService();
 
 router.get("/", verificarToken, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cuentas']
+       #swagger.summary = 'Ruta protegida de prueba' */
     res.status(status.OK).json({
         success: true,
         message: "¡Entraste a la zona VIP protegida!",
@@ -26,6 +28,13 @@ router.post("/login", validarLogin, catchAsync(async (req, res) => {
     const cuentaIngresada = req.body;
     const resultado = await cuentaService.login(cuentaIngresada.email, cuentaIngresada.password);
 
+    /* #swagger.tags = ['Cuentas']
+       #swagger.summary = 'Iniciar sesión'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/LoginUsuario" } } }
+       } */
+    
     res.status(status.OK).json({
         success: true,
         message: "logueado correctamente",
@@ -45,6 +54,13 @@ router.post("/registrar", validarRegistro, catchAsync(async (req, res) => {
     const resultado = await cuentaService.registrar(datosRegistro);
     const usuarioSupabase = resultado.user;
     const cuentaCreada = resultado.cuenta;
+
+    /* #swagger.tags = ['Cuentas']
+       #swagger.summary = 'Registrar nueva cuenta'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/RegistroUsuario" } } }
+       } */
 
     res.status(status.CREATED).json({
         success: true,

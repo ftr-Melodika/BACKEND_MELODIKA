@@ -1,0 +1,476 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Melodika API",
+    "description": "Documentación de los endpoints del backend de Melodika.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Servidor Local"
+    }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/cuentas/": {
+      "get": {
+        "tags": [
+          "Cuentas"
+        ],
+        "summary": "Ruta protegida de prueba",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/cuentas/login": {
+      "post": {
+        "tags": [
+          "Cuentas"
+        ],
+        "summary": "Iniciar sesión",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUsuario"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cuentas/registrar": {
+      "post": {
+        "tags": [
+          "Cuentas"
+        ],
+        "summary": "Registrar nueva cuenta",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistroUsuario"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/perfiles/ranking": {
+      "get": {
+        "tags": [
+          "Perfiles"
+        ],
+        "summary": "Obtener ranking global",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/racha": {
+      "post": {
+        "tags": [
+          "Perfiles"
+        ],
+        "summary": "Actualizar racha diaria",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/": {
+      "get": {
+        "tags": [
+          "Perfiles"
+        ],
+        "summary": "Obtener perfiles de la cuenta",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Perfiles"
+        ],
+        "summary": "Crear nuevo perfil",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearPerfil"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}": {
+      "delete": {
+        "tags": [
+          "Perfiles"
+        ],
+        "summary": "Eliminar perfil (Lógico)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Perfiles"
+        ],
+        "summary": "Actualizar datos de perfil",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActualizarPerfil"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cursos/perfil/{perfilId}": {
+      "get": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Listar catálogo de cursos",
+        "description": "",
+        "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/cursos/{cursoId}": {
+      "get": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Detalle de curso y lecciones",
+        "description": "",
+        "parameters": [
+          {
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "perfilId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/cursos/{cursoId}/lecciones/{leccionId}/completar": {
+      "post": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Completar lección / ejercicio",
+        "description": "",
+        "parameters": [
+          {
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "leccionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {}
+      }
+    },
+    "/api/cursos/{cursoId}/completar": {
+      "post": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Marcar curso como completado",
+        "description": "",
+        "parameters": [
+          {
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccionCurso"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Ingresá el token que te devuelve el login (sin la palabra Bearer)."
+      }
+    },
+    "schemas": {
+      "LoginUsuario": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "usuario@ejemplo.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Password123!"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "RegistroUsuario": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "example": "usuario@ejemplo.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "Password123!"
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Juan"
+          },
+          "apellido": {
+            "type": "string",
+            "example": "Perez"
+          },
+          "telefono": {
+            "type": "string",
+            "example": "1123456789"
+          }
+        },
+        "required": [
+          "email",
+          "password",
+          "nombre",
+          "apellido",
+          "telefono"
+        ]
+      },
+      "CrearPerfil": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Facundo"
+          },
+          "username": {
+            "type": "string",
+            "example": "facu_pro"
+          },
+          "fecha_nacimiento": {
+            "type": "string",
+            "example": "2005-11-18"
+          },
+          "genero": {
+            "type": "string",
+            "example": "Masculino"
+          },
+          "pais": {
+            "type": "string",
+            "example": "Argentina"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "example": "https://ejemplo.com/avatar.jpg"
+          }
+        },
+        "required": [
+          "nombre",
+          "username"
+        ]
+      },
+      "ActualizarPerfil": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Facundo Editado"
+          },
+          "fecha_nacimiento": {
+            "type": "string",
+            "example": "2005-11-18"
+          },
+          "genero": {
+            "type": "string",
+            "example": "Masculino"
+          },
+          "pais": {
+            "type": "string",
+            "example": "Uruguay"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "example": "https://ejemplo.com/avatar2.jpg"
+          }
+        }
+      },
+      "AccionCurso": {
+        "type": "object",
+        "properties": {
+          "perfilId": {
+            "type": "string",
+            "example": "uuid-del-perfil"
+          }
+        },
+        "required": [
+          "perfilId"
+        ]
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
+}
