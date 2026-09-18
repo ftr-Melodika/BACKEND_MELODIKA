@@ -1,8 +1,8 @@
 import status from "http-status-codes";
 import { Router } from "express";
 import CuentaService from "../services/cuentaService.js";
-import validarRegistro from "../middlewares/validarDatosRegistro.js";
-import validarLogin from "../middlewares/validarDatosLogin.js";
+import validarRegistro from "../middlewares/validadores/validarDatosRegistro.js";
+import validarLogin from "../middlewares/validadores/validarDatosLogin.js";
 import verificarToken from "../middlewares/authMiddleware.js";
 import { catchAsync } from "../helpers/catchAsync.js";
 

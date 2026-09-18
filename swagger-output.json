@@ -238,7 +238,7 @@
         }
       }
     },
-    "/api/cursos/{cursoId}": {
+    "/api/cursos/perfil/{perfilId}/curso/{cursoId}": {
       "get": {
         "tags": [
           "Cursos"
@@ -247,7 +247,7 @@
         "description": "",
         "parameters": [
           {
-            "name": "cursoId",
+            "name": "perfilId",
             "in": "path",
             "required": true,
             "schema": {
@@ -255,8 +255,9 @@
             }
           },
           {
-            "name": "perfilId",
-            "in": "query",
+            "name": "cursoId",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "string"
             }
@@ -269,7 +270,7 @@
         }
       }
     },
-    "/api/cursos/{cursoId}/lecciones/{leccionId}/completar": {
+    "/api/cursos/perfil/{perfilId}/curso/{cursoId}/lecciones/{leccionId}/completar": {
       "post": {
         "tags": [
           "Cursos"
@@ -277,6 +278,14 @@
         "summary": "Completar lección / ejercicio",
         "description": "",
         "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "cursoId",
             "in": "path",
@@ -298,11 +307,10 @@
           "default": {
             "description": ""
           }
-        },
-        "requestBody": {}
+        }
       }
     },
-    "/api/cursos/{cursoId}/completar": {
+    "/api/cursos/perfil/{perfilId}/curso/{cursoId}/completar": {
       "post": {
         "tags": [
           "Cursos"
@@ -310,6 +318,14 @@
         "summary": "Marcar curso como completado",
         "description": "",
         "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "cursoId",
             "in": "path",
@@ -322,16 +338,6 @@
         "responses": {
           "default": {
             "description": ""
-          }
-        },
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AccionCurso"
-              }
-            }
           }
         }
       }

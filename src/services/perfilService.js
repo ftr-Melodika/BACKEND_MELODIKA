@@ -8,6 +8,15 @@ const cuentaRepository = new CuentaRepository();
 const MAX_PERFILES = 4; 
 
 class PerfilService {
+
+   async validarAccesoPerfil(authId, perfilId) {
+        const cuenta = await this._obtenerCuentaValidada(authId);
+        const perfilExistente = await perfilRepository.obtenerPorId(perfilId);
+        
+        this._validarEstadoYPermisos(perfilExistente, cuenta.id);
+        
+        return { cuenta, perfilExistente };
+   }
     
     async _obtenerCuentaValidada(authId) {
         const cuenta = await cuentaRepository.encontrarPorAuthId(authId);
@@ -63,10 +72,8 @@ class PerfilService {
     }
 
     async eliminarPerfil(authId, perfilId) {
-        const cuenta = await this._obtenerCuentaValidada(authId);
-        const perfilExistente = await perfilRepository.obtenerPorId(perfilId);
 
-        this._validarEstadoYPermisos(perfilExistente, cuenta.id);
+        const { cuenta } = await this.validarAccesoPerfil(authId, perfilId);
 
         const fueEliminado = await perfilRepository.eliminarPerfil(perfilId, cuenta.id);
         
@@ -78,10 +85,8 @@ class PerfilService {
     }
 
     async actualizarPerfil(authId, perfilId, datosPerfil) {
-        const cuenta = await this._obtenerCuentaValidada(authId);
-        const perfilExistente = await perfilRepository.obtenerPorId(perfilId);
 
-        this._validarEstadoYPermisos(perfilExistente, cuenta.id);
+        const { cuenta } = await this.validarAccesoPerfil(authId, perfilId);
 
         return await perfilRepository.actualizarPerfil(perfilId, cuenta.id, datosPerfil);
     }

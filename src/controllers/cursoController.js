@@ -9,18 +9,19 @@ const cursoService = new CursoService();
 
 // GET: Lista todos los cursos del perfil
 router.get("/perfil/:perfilId", verificarToken, catchAsync(async (req, res) => {
-    
     /* #swagger.tags = ['Cursos']
        #swagger.summary = 'Listar catálogo de cursos' */
     
-    const { perfilId } = req.params;
+    const authId = req.user.id; // Extraído de la misma forma que en perfilController
+    const { perfilId } = req.params; 
 
     if (!perfilId) {
         throw new Error("El ID del perfil es requerido.");
     }
-
-    const datosCursos = await cursoService.listarCursos(perfilId);
     
+    // Al pasar authId, a futuro el service puede validar que el perfil le pertenezca a este usuario
+    const datosCursos = await cursoService.listarCursos(authId, perfilId);
+
     return res.status(status.OK).json({
         success: true,
         message: "Cursos obtenidos exitosamente.",
@@ -29,27 +30,21 @@ router.get("/perfil/:perfilId", verificarToken, catchAsync(async (req, res) => {
 }));
 
 // GET: Detalle de un curso con sus lecciones
-router.get("/:cursoId", verificarToken, catchAsync(async (req, res) => {
-    
+router.get("/perfil/:perfilId/curso/:cursoId", verificarToken, catchAsync(async (req, res) => {
     /* #swagger.tags = ['Cursos']
        #swagger.summary = 'Detalle de curso y lecciones' */
     
-    const { cursoId } = req.params;
-    const { perfilId } = req.query;
+    const authId = req.user.id;
+    const { perfilId, cursoId } = req.params; // Todo unificado en req.params
 
-    if (!cursoId) {
-        throw new Error("El ID del curso es requerido.");
-    }
-    if (!perfilId) {
-        throw new Error("El ID del perfil es requerido como parámetro de consulta (?perfilId=...).");
-    }
+    if (!cursoId) throw new Error("El ID del curso es requerido.");
+    if (!perfilId) throw new Error("El ID del perfil es requerido.");
 
-    const detalleCurso = await cursoService.obtenerDetalleCurso(cursoId, perfilId);
-    
+    const detalleCurso = await cursoService.obtenerDetalleCurso(authId, cursoId, perfilId);
+
     if (!detalleCurso) {
         throw new Error("Curso no encontrado.");
     }
-
     return res.status(status.OK).json({
         success: true,
         message: "Detalle del curso obtenido exitosamente.",
@@ -58,23 +53,17 @@ router.get("/:cursoId", verificarToken, catchAsync(async (req, res) => {
 }));
 
 // POST: Completar una lección
-router.post("/:cursoId/lecciones/:leccionId/completar", verificarToken, catchAsync(async (req, res) => {
-    
+router.post("/perfil/:perfilId/curso/:cursoId/lecciones/:leccionId/completar", verificarToken, catchAsync(async (req, res) => {
     /* #swagger.tags = ['Cursos']
-       #swagger.summary = 'Completar lección / ejercicio'
-       #swagger.requestBody = {
-           required: true,
-           content: { "application/json": { schema: { $ref: "#/components/schemas/AccionCurso" } } } */
+       #swagger.summary = 'Completar lección / ejercicio' */
     
-    const { cursoId, leccionId } = req.params;
-    const { perfilId } = req.body;
+    const authId = req.user.id;
+    const { perfilId, cursoId, leccionId } = req.params;
 
-    if (!perfilId) {
-        throw new Error("Falta el ID del perfil.");
-    }
+    if (!perfilId) throw new Error("Falta el ID del perfil.");
 
-    const resultado = await cursoService.completarLeccion(perfilId, cursoId, leccionId);
-
+    const resultado = await cursoService.completarLeccion(authId, perfilId, cursoId, leccionId);
+    
     return res.status(status.OK).json({
         success: true,
         message: "¡Ejercicio completado!",
@@ -83,33 +72,27 @@ router.post("/:cursoId/lecciones/:leccionId/completar", verificarToken, catchAsy
             xpTotal: resultado.xpTotal
         }
     });
-
 }));
 
-router.post("/:cursoId/completar", verificarToken, catchAsync(async (req, res) => {
-    
+// POST: Completar un curso
+router.post("/perfil/:perfilId/curso/:cursoId/completar", verificarToken, catchAsync(async (req, res) => {
     /* #swagger.tags = ['Cursos']
-       #swagger.summary = 'Marcar curso como completado'
-       #swagger.requestBody = {
-           required: true,
-           content: { "application/json": { schema: { $ref: "#/components/schemas/AccionCurso" } } }
-       } */
+       #swagger.summary = 'Marcar curso como completado' */
     
-    const { cursoId } = req.params;
-    const { perfilId } = req.body;
+    const authId = req.user.id;
+    const { perfilId, cursoId } = req.params;
 
-    if (!perfilId) {
-        throw new Error("Falta el ID del perfil.");
-    }
+    if (!perfilId) throw new Error("Falta el ID del perfil.");
 
-    const resultado = await cursoService.completarCurso(perfilId, cursoId);
+    
 
+    const resultado = await cursoService.completarCurso(authId, perfilId, cursoId);
+    
     return res.status(status.OK).json({
         success: true,
         message: resultado.mensaje,
         data: null
     });
-
 }));
 
 export default router;

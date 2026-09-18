@@ -47,6 +47,10 @@ export function mapCursoError(error) {
                 codigoEstado = status.BAD_REQUEST;
                 mensajeUsuario = "El progreso de este ejercicio ya fue registrado previamente.";
                 break;
+            case "No has completado todos los ejercicios del curso.":
+                codigoEstado = status.FORBIDDEN
+                mensajeUsuario = "No podés completar el curso sin haber terminado todos los ejercicios.";
+                break;
             default:
                 if (codigoEstado >= 500) {
                     mensajeUsuario = "Hubo un problema interno al procesar los cursos o lecciones.";

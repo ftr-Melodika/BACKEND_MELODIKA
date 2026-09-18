@@ -1,5 +1,5 @@
 import StatusCodes from 'http-status-codes';
-import validadores from '../helpers/validadores.js';
+import validadores from '../../helpers/validadores.js';
 
 const validarDatosCrearPerfil = (req, res, next) => {
     const { nombre, username, pais, fecha_nacimiento, genero } = req.body;

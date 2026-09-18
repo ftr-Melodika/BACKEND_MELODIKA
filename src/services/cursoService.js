@@ -1,10 +1,14 @@
 import CursoRepository from "../repositories/cursoRepository.js";
+import perfilService from "./perfilService.js"; // Importamos la instancia exportada
 
 const cursoRepository = new CursoRepository();
 
 class CursoService {
-    
-    async listarCursos(perfilId) {
+         
+    async listarCursos(authId, perfilId) {
+        // 🔒 1. Barrera de seguridad: delegamos la validación a perfilService
+        await perfilService.validarAccesoPerfil(authId, perfilId);
+
         // PASO 1: Traemos los datos crudos de la BD
         const cursos = await cursoRepository.obtenerCursos();
         const progresosBD = await cursoRepository.obtenerProgresoCursos(perfilId);
@@ -25,10 +29,8 @@ class CursoService {
         // PASO 3: Armamos la respuesta diciendo si cada curso está bloqueado o no
         const cursosFinales = cursos.map(curso => {
             const completado = idsCompletados.includes(curso.id);
-            
             // Se desbloquea si es el primero (orden 1) o si es el que le sigue al máximo completado
             const desbloqueado = (curso.orden === 1) || (curso.orden <= maxOrdenCompletado + 1);
-
             return { ...curso, completado, desbloqueado };
         });
 
@@ -39,7 +41,10 @@ class CursoService {
         };
     }
 
-    async obtenerDetalleCurso(cursoId, perfilId) {
+    async obtenerDetalleCurso(authId, cursoId, perfilId) {
+        // 🔒 1. Barrera de seguridad
+        await perfilService.validarAccesoPerfil(authId, perfilId);
+
         // PASO 1: Traemos la info del curso y sus ejercicios
         const cursoInfo = await cursoRepository.obtenerCursoPorId(cursoId);
         if (!cursoInfo) return null; // Si no existe el curso, cortamos acá
@@ -63,18 +68,20 @@ class CursoService {
         const leccionesFinales = lecciones.map(leccion => {
             const completado = idsCompletados.includes(leccion.id);
             const desbloqueado = (leccion.orden === 1) || (leccion.orden <= maxOrdenCompletado + 1);
-
             return { ...leccion, completado, desbloqueado };
         });
 
         return { 
-            ...cursoInfo, 
-            totalLecciones: lecciones.length, 
-            lecciones: leccionesFinales 
-        };
+             ...cursoInfo, 
+             totalLecciones: lecciones.length, 
+             lecciones: leccionesFinales 
+         };
     }
 
-    async completarLeccion(perfilId, cursoId, leccionId) {
+    async completarLeccion(authId, perfilId, cursoId, leccionId) {
+        // 🔒 1. Barrera de seguridad
+        await perfilService.validarAccesoPerfil(authId, perfilId);
+
         // 1. Buscamos la lección para saber cuánta XP da
         const leccionesDelCurso = await cursoRepository.obtenerEjerciciosDeCurso(cursoId);
         const leccion = leccionesDelCurso.find(l => l.id === leccionId);
@@ -91,7 +98,17 @@ class CursoService {
         return { exito: true, xpGanada, xpTotal };
     }
 
-    async completarCurso(perfilId, cursoId) {
+    async completarCurso(authId, perfilId, cursoId) {
+        // 🔒 1. Barrera de seguridad
+        await perfilService.validarAccesoPerfil(authId, perfilId);
+
+        // 1. Verificamos que haya completado todos los ejercicios del curso
+        const leccionesDelCurso = await cursoRepository.obtenerEjerciciosDeCurso(cursoId);
+        const ejerciciosCompletados = await cursoRepository.obtenerEjerciciosCompletados(perfilId, cursoId);
+        if (leccionesDelCurso.length !== ejerciciosCompletados.length) {
+            throw new Error("No has completado todos los ejercicios del curso.");
+        }
+
         // Podrías validar acá si realmente hizo todos los ejercicios antes de dejarlo terminar
         await cursoRepository.registrarCursoCompletado(perfilId, cursoId);
         return { exito: true, mensaje: "Curso completado con éxito." };

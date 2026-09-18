@@ -3,7 +3,7 @@ import { Router } from "express";
 import perfilService from "../services/perfilService.js";
 import verificarToken from "../middlewares/authMiddleware.js";
 import { catchAsync } from "../helpers/catchAsync.js";
-import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil } from "../middlewares/validarDatosPerfil.js";
+import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil } from "../middlewares/validadores/validarDatosPerfil.js";
 
 const router = Router();
 

@@ -1,5 +1,5 @@
 import  StatusCodes from 'http-status-codes';
-import validadores from '../helpers/validadores.js';
+import validadores from '../../helpers/validadores.js';
 
 const validarLogin = (req, res, next) => {
     const cuentaIngresada = req.body;
