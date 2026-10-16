@@ -2,86 +2,97 @@ import status from "http-status-codes";
 import { Router } from "express";
 import CursoService from "../services/cursoService.js";
 import verificarToken from "../middlewares/authMiddleware.js";
+import { catchAsync } from "../helpers/catchAsync.js";
 
 const router = Router();
 const cursoService = new CursoService();
 
-// Endpoint protegido para obtener la lista de cursos de un perfil
-router.get("/perfil/:perfilId", verificarToken, async (req, res) => {
-    try {
-        const { perfilId } = req.params;
+// GET: Lista todos los cursos del perfil
+router.get("/perfil/:perfilId", verificarToken, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Listar catálogo de cursos' */
+    
+    const authId = req.user.id; // Extraído de la misma forma que en perfilController
+    const { perfilId } = req.params; 
 
-        if (!perfilId) {
-            return res.status(status.BAD_REQUEST).json({ error: "El ID del perfil es requerido." });
-        }
-
-        // Llamamos al servicio que tiene la lógica del Mock
-        const datosCursos = await cursoService.listarCursos(perfilId);
-        
-        return res.status(status.OK).json(datosCursos);
-    } catch (error) {
-        console.error("Error al obtener los cursos:", error);
-        return res.status(status.INTERNAL_SERVER_ERROR).json({ 
-            error: "Hubo un problema al cargar los cursos." 
-        });
+    if (!perfilId) {
+        throw new Error("El ID del perfil es requerido.");
     }
-});
+    
+    // Al pasar authId, a futuro el service puede validar que el perfil le pertenezca a este usuario
+    const datosCursos = await cursoService.listarCursos(authId, perfilId);
 
-router.get("/:cursoId", verificarToken, async (req, res) => {
-    try {
-        const { cursoId } = req.params;
-        const { perfilId } = req.query; // Lo sacamos de la URL
+    return res.status(status.OK).json({
+        success: true,
+        message: "Cursos obtenidos exitosamente.",
+        data: datosCursos
+    });
+}));
 
-        if (!cursoId) {
-            return res.status(status.BAD_REQUEST).json({ error: "El ID del curso es requerido." });
-        }
+// GET: Detalle de un curso con sus lecciones
+router.get("/perfil/:perfilId/curso/:cursoId", verificarToken, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Detalle de curso y lecciones' */
+    
+    const authId = req.user.id;
+    const { perfilId, cursoId } = req.params; // Todo unificado en req.params
 
-        if (!perfilId) {
-            return res.status(status.BAD_REQUEST).json({ error: "El ID del perfil es requerido como parámetro de consulta (?perfilId=...)." });
-        }
+    if (!cursoId) throw new Error("El ID del curso es requerido.");
+    if (!perfilId) throw new Error("El ID del perfil es requerido.");
 
-        const detalleCurso = await cursoService.obtenerDetalleCurso(cursoId, perfilId);
-        
-        if (!detalleCurso) {
-            return res.status(status.NOT_FOUND).json({ error: "Curso no encontrado." });
-        }
+    const detalleCurso = await cursoService.obtenerDetalleCurso(authId, cursoId, perfilId);
 
-        return res.status(status.OK).json(detalleCurso);
-    } catch (error) {
-        console.error("Error al obtener detalle del curso:", error);
-        return res.status(status.INTERNAL_SERVER_ERROR).json({ 
-            error: "Hubo un problema al cargar el detalle del curso." 
-        });
+    if (!detalleCurso) {
+        throw new Error("Curso no encontrado.");
     }
-});
+    return res.status(status.OK).json({
+        success: true,
+        message: "Detalle del curso obtenido exitosamente.",
+        data: detalleCurso
+    });
+}));
 
-// POST: Cuando el alumno toca el botón "Terminado"
-router.post("/:cursoId/lecciones/:leccionId/completar", verificarToken, async (req, res) => {
-    try {
-        const { cursoId, leccionId } = req.params;
-        const { perfilId } = req.body; // El frontend nos manda quién es el perfil en el body
+// POST: Completar una lección
+router.post("/perfil/:perfilId/curso/:cursoId/lecciones/:leccionId/completar", verificarToken, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Completar lección / ejercicio' */
+    
+    const authId = req.user.id;
+    const { perfilId, cursoId, leccionId } = req.params;
 
-        if (!perfilId) {
-            return res.status(status.BAD_REQUEST).json({ error: "Falta el ID del perfil." });
-        }
+    if (!perfilId) throw new Error("Falta el ID del perfil.");
 
-        // Llamamos al servicio
-        const resultado = await cursoService.completarLeccion(perfilId, cursoId, leccionId);
-
-        if (!resultado.exito) {
-            return res.status(status.BAD_REQUEST).json({ error: resultado.mensaje });
-        }
-
-        return res.status(status.OK).json({
-            mensaje: "¡Ejercicio completado!",
+    const resultado = await cursoService.completarLeccion(authId, perfilId, cursoId, leccionId);
+    
+    return res.status(status.OK).json({
+        success: true,
+        message: "¡Ejercicio completado!",
+        data: {
             xpGanada: resultado.xpGanada,
             xpTotal: resultado.xpTotal
-        });
+        }
+    });
+}));
 
-    } catch (error) {
-        console.error("Error en POST completar:", error);
-        return res.status(status.INTERNAL_SERVER_ERROR).json({ error: "Error al guardar el progreso." });
-    }
-});
+// POST: Completar un curso
+router.post("/perfil/:perfilId/curso/:cursoId/completar", verificarToken, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Marcar curso como completado' */
+    
+    const authId = req.user.id;
+    const { perfilId, cursoId } = req.params;
+
+    if (!perfilId) throw new Error("Falta el ID del perfil.");
+
+    
+
+    const resultado = await cursoService.completarCurso(authId, perfilId, cursoId);
+    
+    return res.status(status.OK).json({
+        success: true,
+        message: resultado.mensaje,
+        data: null
+    });
+}));
 
 export default router;

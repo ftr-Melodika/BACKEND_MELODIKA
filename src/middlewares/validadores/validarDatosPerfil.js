@@ -1,5 +1,5 @@
 import StatusCodes from 'http-status-codes';
-import validadores from '../helpers/validadores.js';
+import validadores from '../../helpers/validadores.js';
 
 const validarDatosCrearPerfil = (req, res, next) => {
     const { nombre, username, pais, fecha_nacimiento, genero } = req.body;
@@ -74,4 +74,17 @@ const validarDatosActualizarPerfil = (req, res, next) => {
     next();
 };
 
-export { validarDatosCrearPerfil, validarDatosActualizarPerfil };
+const validarIdPerfil = (req, res, next) => {
+    const { id } = req.params;
+
+    if (!validadores.esIdValido(id)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            success: false,
+            message: "El formato del ID no es válido."
+        });
+    }
+
+    next();
+};
+
+export { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil };

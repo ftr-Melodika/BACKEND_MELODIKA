@@ -1,5 +1,7 @@
 import { pool } from '../database/db.js';
-import Cuenta from '../entities/Cuenta.js'; 
+import Cuenta from '../entities/Cuenta.js';
+import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
+import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js'; 
 
 class CuentaRepository {
     async encontrarPorAuthId(authId) {
@@ -22,13 +24,10 @@ class CuentaRepository {
                 row.rol
             );
         } catch (error) {
-            console.error("Error buscando en la base de datos:", error);
             if (error.message === "No hay usuarios asignados") {
                 throw error;
             }
-            const err = new Error("Error al conectar con la base de datos", { cause: error });
-            err.code = error.code;
-            throw err;
+            manejarErrorDB(error, MENSAJES_ERROR_DB.BUSCAR_CUENTA_AUTH);
         }
     }
 

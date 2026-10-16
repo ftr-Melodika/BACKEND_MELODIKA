@@ -1,5 +1,5 @@
 import  StatusCodes from 'http-status-codes';
-import validadores from '../helpers/validadores.js';
+import validadores from '../../helpers/validadores.js';
 
 const validarRegistro = (req, res, next) => {
     const { email, password, nombre, apellido, telefono } = req.body;
