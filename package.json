@@ -13,12 +13,13 @@
     "swagger": "node swagger.js"
   },
   "dependencies": {
+    "@expo/ngrok": "^4.1.0",
     "@supabase/ssr": "^0.10.3",
     "@supabase/supabase-js": "^2.107.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "expo": "^54.0.8",
+    "expo": "^57.0.0",
     "express": "^5.2.1",
     "http-status-codes": "^2.3.0",
     "jsonwebtoken": "^9.0.3",
