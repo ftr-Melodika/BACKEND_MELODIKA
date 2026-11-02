@@ -5,9 +5,9 @@ const validarLogin = (req, res, next) => {
     const cuentaIngresada = req.body;
     if (!validadores.tieneEmail(cuentaIngresada.email) || !validadores.tienePassword(cuentaIngresada.password)) {
         if(!validadores.tieneEmail(cuentaIngresada.email)){
-            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Email mal ingresado" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Email mal ingresado" });
         } else if(!validadores.tienePassword(cuentaIngresada.password)){
-            return res.status(StatusCodes.BAD_REQUEST).json({ message: "Contraseña mal ingresada" });
+            return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "Contraseña mal ingresada" });
         }
     }
     next();

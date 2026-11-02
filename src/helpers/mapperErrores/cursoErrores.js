@@ -47,6 +47,26 @@ export function mapCursoError(error) {
                 codigoEstado = status.BAD_REQUEST;
                 mensajeUsuario = "El progreso de este ejercicio ya fue registrado previamente.";
                 break;
+            case "La lección todavía está bloqueada.":
+                codigoEstado = status.FORBIDDEN;
+                mensajeUsuario = "Completá las lecciones anteriores antes de hacer esta.";
+                break;
+            case "El perfil no existe":
+                codigoEstado = status.NOT_FOUND;
+                mensajeUsuario = "No pudimos encontrar el perfil solicitado.";
+                break;
+            case "Acceso denegado al perfil":
+                codigoEstado = status.FORBIDDEN;
+                mensajeUsuario = "No tienes permisos sobre este perfil.";
+                break;
+            case "El perfil se encuentra eliminado":
+                codigoEstado = status.BAD_REQUEST;
+                mensajeUsuario = "Esta acción no se puede realizar porque el perfil fue eliminado.";
+                break;
+            case "Cuenta no encontrada":
+                codigoEstado = status.NOT_FOUND;
+                mensajeUsuario = "No encontramos una cuenta asociada a tu usuario.";
+                break;
             case "No has completado todos los ejercicios del curso.":
                 codigoEstado = status.FORBIDDEN
                 mensajeUsuario = "No podés completar el curso sin haber terminado todos los ejercicios.";

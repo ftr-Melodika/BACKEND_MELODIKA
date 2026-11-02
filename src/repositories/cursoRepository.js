@@ -210,6 +210,20 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
         }
     }
 
+    async verificarCursoCompletado(perfilId, cursoId) {
+        try {
+            const query = `
+                SELECT 1 FROM progreso_cursos
+                WHERE perfil_id = $1 AND curso_id = $2 AND completado = true
+                LIMIT 1
+            `;
+            const resultado = await pool.query(query, [perfilId, cursoId]);
+            return resultado.rows.length > 0;
+        } catch (error) {
+            manejarErrorDB(error, "Error al verificar curso completado:");
+        }
+    }
+
     async registrarCursoCompletado(perfilId, cursoId) {
         try {
             const query = `

@@ -42,8 +42,9 @@ class CuentaService {
             }
         });
         if (error) {
-            throw new Error(error.message);
-            console.log(error.cause + error.code + error.message) 
+            const err = new Error(error.message);
+            err.status = error.status;
+            throw err;
         }
 
         return { user: data.user };

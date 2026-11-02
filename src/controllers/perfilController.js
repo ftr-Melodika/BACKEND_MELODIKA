@@ -20,13 +20,13 @@ router.get("/ranking", verificarToken, catchAsync(async (req, res) => {
     });
 }));
 
-router.post("/:id/racha", verificarToken, catchAsync(async (req, res) => {
+router.post("/:id/racha", verificarToken, validarIdPerfil, catchAsync(async (req, res) => {
     
     /* #swagger.tags = ['Perfiles']
        #swagger.summary = 'Actualizar racha diaria' */
 
     const { id } = req.params;
-    const resultado = await perfilService.chequearRacha(id);
+    const resultado = await perfilService.chequearRacha(req.user.id, id);
 
     return res.status(status.OK).json({
         success: true,
@@ -47,6 +47,20 @@ router.get("/", verificarToken, catchAsync(async (req, res) => {
         success: true,
         message: mensajeExtra,
         data: perfiles,
+    });
+}));
+
+router.get("/:id", verificarToken, validarIdPerfil, catchAsync(async (req, res) => {
+
+    /* #swagger.tags = ['Perfiles']
+       #swagger.summary = 'Obtener un perfil por ID' */
+
+    const perfil = await perfilService.obtenerPerfil(req.user.id, req.params.id);
+
+    return res.status(status.OK).json({
+        success: true,
+        message: "Perfil obtenido correctamente.",
+        data: perfil
     });
 }));
 

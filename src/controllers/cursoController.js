@@ -29,6 +29,23 @@ router.get("/perfil/:perfilId", verificarToken, catchAsync(async (req, res) => {
     });
 }));
 
+// GET: Resumen de progreso del perfil (XP, racha, lecciones y curso actual)
+router.get("/perfil/:perfilId/progreso", verificarToken, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cursos']
+       #swagger.summary = 'Resumen de progreso del perfil' */
+
+    const authId = req.user.id;
+    const { perfilId } = req.params;
+
+    const progreso = await cursoService.obtenerProgreso(authId, perfilId);
+
+    return res.status(status.OK).json({
+        success: true,
+        message: "Progreso obtenido exitosamente.",
+        data: progreso
+    });
+}));
+
 // GET: Detalle de un curso con sus lecciones
 router.get("/perfil/:perfilId/curso/:cursoId", verificarToken, catchAsync(async (req, res) => {
     /* #swagger.tags = ['Cursos']
@@ -69,7 +86,8 @@ router.post("/perfil/:perfilId/curso/:cursoId/lecciones/:leccionId/completar", v
         message: "¡Ejercicio completado!",
         data: {
             xpGanada: resultado.xpGanada,
-            xpTotal: resultado.xpTotal
+            xpTotal: resultado.xpTotal,
+            cursoCompletado: resultado.cursoCompletado
         }
     });
 }));

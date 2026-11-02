@@ -1,4 +1,4 @@
-import PerfilRepository from '../repositories/perfilesRepository.js';
+import PerfilRepository from '../repositories/PerfilesRepository.js';
 import CuentaRepository from '../repositories/cuentaRepository.js';
 
 const perfilRepository = new PerfilRepository();
@@ -40,6 +40,11 @@ class PerfilService {
         }
     }
 
+
+    async obtenerPerfil(authId, perfilId) {
+        const { perfilExistente } = await this.validarAccesoPerfil(authId, perfilId);
+        return perfilExistente;
+    }
 
     async obtenerPerfiles(authId) {
         const cuenta = await this._obtenerCuentaValidada(authId);
@@ -91,7 +96,8 @@ class PerfilService {
         return await perfilRepository.actualizarPerfil(perfilId, cuenta.id, datosPerfil);
     }
 
-    async chequearRacha(perfilId) {
+    async chequearRacha(authId, perfilId) {
+        await this.validarAccesoPerfil(authId, perfilId);
         const resultado = await perfilRepository.actualizarRachaDiaria(perfilId);
 
         if (!resultado) {
@@ -127,7 +133,7 @@ class PerfilService {
         const top10 = await perfilRepository.obtenerTopRanking();
         return {
             total_jugadores: top10.length,
-            ranking: top10
+            ranking: top10.map((jugador, index) => ({ posicion: index + 1, ...jugador }))
         };
     }
 }

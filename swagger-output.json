@@ -159,6 +159,28 @@
       }
     },
     "/api/perfiles/{id}": {
+      "get": {
+        "tags": [
+          "Perfiles"
+        ],
+        "summary": "Obtener un perfil por ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
       "delete": {
         "tags": [
           "Perfiles"
@@ -220,6 +242,30 @@
           "Cursos"
         ],
         "summary": "Listar catálogo de cursos",
+        "description": "",
+        "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/cursos/perfil/{perfilId}/progreso": {
+      "get": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Resumen de progreso del perfil",
         "description": "",
         "parameters": [
           {
