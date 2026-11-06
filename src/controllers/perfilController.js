@@ -3,7 +3,7 @@ import { Router } from "express";
 import perfilService from "../services/perfilService.js";
 import verificarToken from "../middlewares/authMiddleware.js";
 import { catchAsync } from "../helpers/catchAsync.js";
-import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil } from "../middlewares/validadores/validarDatosPerfil.js";
+import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil, validarDatosMensaje } from "../middlewares/validadores/validarDatosPerfil.js";
 
 const router = Router();
 
@@ -30,6 +30,21 @@ router.post("/:id/racha", verificarToken, validarIdPerfil, catchAsync(async (req
 
     return res.status(status.OK).json({
         success: true,
+        data: resultado
+    });
+}));
+
+router.post("/:id/mensajes", verificarToken, validarIdPerfil, validarDatosMensaje, catchAsync(async (req, res) => {
+
+    /* #swagger.tags = ['Perfiles']
+       #swagger.summary = 'Enviar feedback, reporte de error o consulta de contacto' */
+
+    const { tipo, categoria, mensaje } = req.body;
+    const resultado = await perfilService.registrarMensaje(req.user.id, req.params.id, tipo, { categoria, mensaje });
+
+    return res.status(status.CREATED).json({
+        success: true,
+        message: "Mensaje recibido.",
         data: resultado
     });
 }));
@@ -113,8 +128,8 @@ router.put("/:id", verificarToken, validarIdPerfil, validarDatosActualizarPerfil
 
     const authId = req.user.id;
     const { id } = req.params;
-    const { nombre, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
-    const datosPerfil = { nombre, fecha_nacimiento, genero, pais, avatarUrl };
+    const { nombre, fecha_nacimiento, genero, pais, avatarUrl, esPublico } = req.body;
+    const datosPerfil = { nombre, fecha_nacimiento, genero, pais, avatarUrl, esPublico };
 
     const perfilActualizado = await perfilService.actualizarPerfil(authId, id, datosPerfil);
 

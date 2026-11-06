@@ -6,6 +6,7 @@ import swaggerUi from "swagger-ui-express";
 
 import cuentaController from "./controllers/cuentaController.js";
 import perfilController from "./controllers/perfilController.js";
+import amistadController from "./controllers/amistadController.js";
 import cursoController from "./controllers/cursoController.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 
@@ -19,6 +20,7 @@ app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 
 app.use("/api/cuentas", cuentaController);
+app.use("/api/perfiles", amistadController);
 app.use("/api/perfiles", perfilController);
 app.use("/api/cursos", cursoController);
 

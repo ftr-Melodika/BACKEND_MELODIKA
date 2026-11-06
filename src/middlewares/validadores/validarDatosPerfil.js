@@ -49,7 +49,11 @@ const validarDatosCrearPerfil = (req, res, next) => {
 };
 
 const validarDatosActualizarPerfil = (req, res, next) => {
-    const { nombre, pais, fecha_nacimiento, genero } = req.body;
+    const { nombre, pais, fecha_nacimiento, genero, esPublico } = req.body;
+
+    if (esPublico !== undefined && typeof esPublico !== 'boolean') {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'esPublico debe ser verdadero o falso.' });
+    }
 
     // Solo validamos los campos que el usuario mande
     if (nombre && !validadores.esNombreValido(nombre)) {
@@ -74,6 +78,27 @@ const validarDatosActualizarPerfil = (req, res, next) => {
     next();
 };
 
+const TIPOS_MENSAJE = ['feedback', 'reporte_error', 'contacto'];
+
+const validarDatosMensaje = (req, res, next) => {
+    const { tipo, categoria, mensaje } = req.body;
+
+    if (!TIPOS_MENSAJE.includes(tipo)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'Tipo de mensaje no válido.' });
+    }
+
+    if (typeof mensaje !== 'string' || mensaje.trim().length < 10 || mensaje.trim().length > 2000) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'El mensaje debe tener entre 10 y 2000 caracteres.' });
+    }
+
+    if (categoria !== undefined && (typeof categoria !== 'string' || categoria.length > 50)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'La categoría no es válida.' });
+    }
+
+    req.body.mensaje = mensaje.trim();
+    next();
+};
+
 const validarIdPerfil = (req, res, next) => {
     const { id } = req.params;
 
@@ -87,4 +112,43 @@ const validarIdPerfil = (req, res, next) => {
     next();
 };
 
-export { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil };
+const validarOtroIdPerfil = (req, res, next) => {
+    if (!validadores.esIdValido(req.params.otroId)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "El formato del ID no es válido." });
+    }
+    next();
+};
+
+const validarAmistadId = (req, res, next) => {
+    if (!validadores.esIdValido(req.params.amistadId)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "El formato del ID de la solicitud no es válido." });
+    }
+    next();
+};
+
+const validarDatosSolicitud = (req, res, next) => {
+    const { destinoId } = req.body ?? {};
+    if (typeof destinoId !== 'string' || !validadores.esIdValido(destinoId)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "El perfil de destino no es válido." });
+    }
+    next();
+};
+
+const validarAccionSolicitud = (req, res, next) => {
+    const { accion } = req.body ?? {};
+    if (accion !== 'aceptar' && accion !== 'rechazar') {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "La acción debe ser 'aceptar' o 'rechazar'." });
+    }
+    next();
+};
+
+export {
+    validarDatosCrearPerfil,
+    validarDatosActualizarPerfil,
+    validarIdPerfil,
+    validarDatosMensaje,
+    validarOtroIdPerfil,
+    validarAmistadId,
+    validarDatosSolicitud,
+    validarAccionSolicitud,
+};

@@ -129,6 +129,11 @@ class PerfilService {
         };
     }
 
+    async registrarMensaje(authId, perfilId, tipo, datos) {
+        await this.validarAccesoPerfil(authId, perfilId);
+        return await perfilRepository.registrarMensaje(perfilId, tipo, datos);
+    }
+
     async obtenerRanking() {
         const top10 = await perfilRepository.obtenerTopRanking();
         return {

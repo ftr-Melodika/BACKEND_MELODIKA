@@ -1,5 +1,5 @@
 class Perfil {
-    constructor(id, cuentaId, nombre, username, avatarUrl, pais, fechaNacimiento, genero, xp, racha, instrumentoActualId, activo) {
+    constructor(id, cuentaId, nombre, username, avatarUrl, pais, fechaNacimiento, genero, xp, racha, instrumentoActualId, activo, esPublico) {
         this.id = id;
         this.cuentaId = cuentaId;
         this.nombre = nombre;
@@ -12,6 +12,7 @@ class Perfil {
         this.racha = racha;
         this.instrumentoActualId = instrumentoActualId;
         this.activo = activo;
+        this.esPublico = esPublico;
     }
 }
 

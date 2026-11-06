@@ -145,7 +145,18 @@ class CursoService {
     // Resumen del progreso del perfil para la pantalla "Tu Progreso"
     async obtenerProgreso(authId, perfilId) {
         const { perfilExistente } = await perfilService.validarAccesoPerfil(authId, perfilId);
+        const resumen = await this.resumirProgreso(perfilId);
 
+        return {
+            perfilId,
+            xp: perfilExistente.xp ?? 0,
+            racha: perfilExistente.racha ?? 0,
+            ...resumen
+        };
+    }
+
+    // No valida acceso: quien la llama decide si puede ver el progreso de este perfil
+    async resumirProgreso(perfilId) {
         const cursos = await cursoRepository.obtenerCursos();
         const progresoCursos = await cursoRepository.obtenerProgresoCursos(perfilId);
         const ejercicios = await cursoRepository.obtenerTodosLosEjerciciosConCurso();
@@ -179,9 +190,6 @@ class CursoService {
             null;
 
         return {
-            perfilId,
-            xp: perfilExistente.xp ?? 0,
-            racha: perfilExistente.racha ?? 0,
             leccionesCompletadas: idsCompletados.length,
             totalLecciones: ejercicios.length,
             cursosCompletados: idsCursosCompletados.length,
