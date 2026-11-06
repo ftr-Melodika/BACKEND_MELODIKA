@@ -72,22 +72,28 @@ router.get("/perfil/:perfilId/curso/:cursoId", verificarToken, catchAsync(async 
 // POST: Completar una lección
 router.post("/perfil/:perfilId/curso/:cursoId/lecciones/:leccionId/completar", verificarToken, catchAsync(async (req, res) => {
     /* #swagger.tags = ['Cursos']
-       #swagger.summary = 'Completar lección / ejercicio' */
+       #swagger.summary = 'Completar lección / ejercicio'
+       #swagger.description = 'Body opcional: { "omitida": true } saltea la lección: desbloquea la siguiente sin dar XP. Si después se llama sin omitida, gana el XP una sola vez.' */
     
     const authId = req.user.id;
     const { perfilId, cursoId, leccionId } = req.params;
 
     if (!perfilId) throw new Error("Falta el ID del perfil.");
 
-    const resultado = await cursoService.completarLeccion(authId, perfilId, cursoId, leccionId);
-    
+    // Express deja req.body en undefined cuando el POST no trae body
+    const omitir = req.body?.omitida;
+    if (omitir !== undefined && typeof omitir !== "boolean") throw new Error("El campo omitida debe ser true o false.");
+
+    const resultado = await cursoService.completarLeccion(authId, perfilId, cursoId, leccionId, { omitir: omitir === true });
+
     return res.status(status.OK).json({
         success: true,
-        message: "¡Ejercicio completado!",
+        message: resultado.omitida ? "Lección omitida." : "¡Ejercicio completado!",
         data: {
             xpGanada: resultado.xpGanada,
             xpTotal: resultado.xpTotal,
-            cursoCompletado: resultado.cursoCompletado
+            cursoCompletado: resultado.cursoCompletado,
+            omitida: resultado.omitida
         }
     });
 }));

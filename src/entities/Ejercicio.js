@@ -17,7 +17,8 @@ class Ejercicio {
         dotBottom, 
         textoTeoria, 
         textoDestacado, 
-        instrucciones
+        instrucciones,
+        practica = null
     ) {
         this.id = id;
         this.cursoId = cursoId;
@@ -36,6 +37,7 @@ class Ejercicio {
         this.textoTeoria = textoTeoria;
         this.textoDestacado = textoDestacado;
         this.instrucciones = instrucciones;
+        this.practica = practica;
     }
 }
 

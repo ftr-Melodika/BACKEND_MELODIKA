@@ -56,7 +56,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                 SELECT id, curso_id, nombre AS titulo, descripcion, tipo, orden, xp_recompensa,
                        youtube_id, duracion_segundos,
                        cuerda, traste_objetivo, nota_esperada, dot_left, dot_bottom,
-                       texto_teoria, texto_destacado, instrucciones
+                       texto_teoria, texto_destacado, instrucciones, practica
                 FROM ejercicios
                 WHERE curso_id = $1
                 ORDER BY orden ASC
@@ -79,7 +79,8 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                 row.dot_bottom,
                 row.texto_teoria,
                 row.texto_destacado,
-                row.instrucciones
+                row.instrucciones,
+                row.practica
             ));
         } catch (error) {
             manejarErrorDB(error, "Error al obtener ejercicios del curso:");
@@ -92,7 +93,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                 SELECT e.id, e.curso_id, c.nombre AS curso_nombre, e.nombre AS titulo, e.descripcion, e.tipo, e.orden,
                        e.xp_recompensa, e.youtube_id, e.duracion_segundos,
                        e.cuerda, e.traste_objetivo, e.nota_esperada, e.dot_left, e.dot_bottom,
-                       e.texto_teoria, e.texto_destacado, e.instrucciones
+                       e.texto_teoria, e.texto_destacado, e.instrucciones, e.practica
                 FROM ejercicios e
                 JOIN cursos c ON c.id = e.curso_id
                 ORDER BY c.orden ASC, e.orden ASC
@@ -116,7 +117,8 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                     row.dot_bottom,
                     row.texto_teoria,
                     row.texto_destacado,
-                    row.instrucciones
+                    row.instrucciones,
+                    row.practica
                 );
                 ejercicio.cursoNombre = row.curso_nombre;
                 return ejercicio;
@@ -143,7 +145,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
     async obtenerEjerciciosCompletados(perfilId, cursoId) {
         try {
             const query = `
-                SELECT progreso_ejercicios.ejercicio_id 
+                SELECT progreso_ejercicios.ejercicio_id, progreso_ejercicios.omitida
                 FROM progreso_ejercicios
                 JOIN ejercicios ON progreso_ejercicios.ejercicio_id = ejercicios.id
                 WHERE progreso_ejercicios.perfil_id = $1 AND ejercicios.curso_id = $2 AND progreso_ejercicios.completado = true
@@ -165,19 +167,6 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             return resultado.rows;
         } catch (error) {
             manejarErrorDB(error, "Error al obtener todos los ejercicios completados:");
-        }
-    }
-
-    async verificarEjercicioCompletado(perfilId, ejercicioId) {
-        try {
-            const query = `
-                SELECT id FROM progreso_ejercicios 
-                WHERE perfil_id = $1 AND ejercicio_id = $2 AND completado = true
-            `;
-            const resultado = await pool.query(query, [perfilId, ejercicioId]);
-            return resultado.rows.length > 0;
-        } catch (error) {
-            manejarErrorDB(error, "Error al verificar ejercicio completado:");
         }
     }
 
@@ -205,6 +194,51 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
         } catch (error) {
             await client.query('ROLLBACK');
             manejarErrorDB(error, "Error guardando progreso y XP:", "No se pudo registrar el progreso en la BD.");
+        } finally {
+            client.release();
+        }
+    }
+
+    // La lección salteada cuenta como completada para desbloquear la siguiente, pero no suma XP
+    async registrarOmision(perfilId, ejercicioId) {
+        try {
+            const query = `
+                INSERT INTO progreso_ejercicios (perfil_id, ejercicio_id, completado, omitida)
+                VALUES ($1, $2, true, true)
+            `;
+            await pool.query(query, [perfilId, ejercicioId]);
+        } catch (error) {
+            manejarErrorDB(error, "Error al registrar la lección omitida:");
+        }
+    }
+
+    // Da el XP de una lección salteada que ahora sí tocó. Devuelve null si ya no estaba omitida,
+    // así dos pedidos simultáneos no pueden cobrar el XP dos veces.
+    async recuperarXPDeOmision(perfilId, ejercicioId, xpGanada) {
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+            const actualizacion = await client.query(`
+                UPDATE progreso_ejercicios
+                SET omitida = false
+                WHERE perfil_id = $1 AND ejercicio_id = $2 AND omitida = true
+                RETURNING id
+            `, [perfilId, ejercicioId]);
+
+            if (actualizacion.rows.length === 0) {
+                await client.query('ROLLBACK');
+                return null;
+            }
+
+            const resXP = await client.query(
+                'UPDATE perfiles SET xp = xp + $1 WHERE id = $2 RETURNING xp',
+                [xpGanada, perfilId]
+            );
+            await client.query('COMMIT');
+            return resXP.rows[0] ? resXP.rows[0].xp : xpGanada;
+        } catch (error) {
+            await client.query('ROLLBACK');
+            manejarErrorDB(error, "Error al recuperar el XP de la lección omitida:");
         } finally {
             client.release();
         }

@@ -52,7 +52,10 @@ class CursoService {
         const ejerciciosCompletadosBD = await cursoRepository.obtenerEjerciciosCompletados(perfilId, cursoId);
         const idsCompletados = ejerciciosCompletadosBD.map(e => e.ejercicio_id);
 
-        const leccionesFinales = marcarEstados(lecciones, idsCompletados);
+        const idsOmitidas = ejerciciosCompletadosBD.filter(e => e.omitida).map(e => e.ejercicio_id);
+
+        const leccionesFinales = marcarEstados(lecciones, idsCompletados)
+            .map(leccion => ({ ...leccion, omitida: estaEn(idsOmitidas, leccion.id) }));
 
         return {
             ...cursoInfo,
@@ -63,37 +66,58 @@ class CursoService {
         };
     }
 
-    async completarLeccion(authId, perfilId, cursoId, leccionId) {
+    // omitir = true: la lección cuenta para desbloquear la siguiente, pero no da XP.
+    // Si la omitió y después la completa normalmente, gana el XP una sola vez.
+    async completarLeccion(authId, perfilId, cursoId, leccionId, { omitir = false } = {}) {
         // 🔒 Barrera de seguridad
-        await perfilService.validarAccesoPerfil(authId, perfilId);
+        const { perfilExistente } = await perfilService.validarAccesoPerfil(authId, perfilId);
 
         // 1. Buscamos la lección para saber cuánta XP da
         const leccionesDelCurso = await cursoRepository.obtenerEjerciciosDeCurso(cursoId);
         const leccion = leccionesDelCurso.find(l => mismoId(l.id, leccionId));
         if (!leccion) throw new Error("Ejercicio no encontrado.");
 
-        // 2. Verificamos que no haga trampa pidiendo la XP dos veces
-        const yaCompletada = await cursoRepository.verificarEjercicioCompletado(perfilId, leccion.id);
-        if (yaCompletada) throw new Error("Ya habías reclamado el XP de este ejercicio.");
-
-        // 3. Verificamos que la lección esté desbloqueada (no se pueden saltar lecciones)
         const completadosBD = await cursoRepository.obtenerEjerciciosCompletados(perfilId, cursoId);
         const idsCompletados = completadosBD.map(e => e.ejercicio_id);
-        const estado = marcarEstados(leccionesDelCurso, idsCompletados).find(l => mismoId(l.id, leccion.id));
-        if (!estado.desbloqueado) throw new Error("La lección todavía está bloqueada.");
+        const registro = completadosBD.find(e => mismoId(e.ejercicio_id, leccion.id));
+
+        // 2. Verificamos que no haga trampa pidiendo la XP dos veces
+        // (una lección omitida todavía no cobró su XP; omitir una ya registrada no cambia nada)
+        if (registro && !registro.omitida && !omitir) throw new Error("Ya habías reclamado el XP de este ejercicio.");
+
+        // 3. Verificamos que la lección esté desbloqueada (no se pueden saltar lecciones)
+        if (!registro) {
+            const estado = marcarEstados(leccionesDelCurso, idsCompletados).find(l => mismoId(l.id, leccion.id));
+            if (!estado.desbloqueado) throw new Error("La lección todavía está bloqueada.");
+        }
 
         // 4. Guardamos el progreso y sumamos la XP (la entidad usa camelCase: xpRecompensa)
-        const xpGanada = leccion.xpRecompensa ?? 0;
-        const xpTotal = await cursoRepository.registrarProgresoYSumarXP(perfilId, leccion.id, xpGanada);
+        const xpRecompensa = leccion.xpRecompensa ?? 0;
+        let xpGanada = 0;
+        let xpTotal = perfilExistente.xp ?? 0;
+        let omitida = omitir;
 
-        // 5. Si con esta lección terminó todas las del curso, marcamos el curso como completado
-        const cursoCompletado = idsCompletados.length + 1 >= leccionesDelCurso.length;
+        if (omitir) {
+            if (registro) omitida = registro.omitida;
+            else await cursoRepository.registrarOmision(perfilId, leccion.id);
+        } else if (registro) {
+            xpTotal = await cursoRepository.recuperarXPDeOmision(perfilId, leccion.id, xpRecompensa);
+            if (xpTotal === null) throw new Error("Ya habías reclamado el XP de este ejercicio.");
+            xpGanada = xpRecompensa;
+        } else {
+            xpTotal = await cursoRepository.registrarProgresoYSumarXP(perfilId, leccion.id, xpRecompensa);
+            xpGanada = xpRecompensa;
+        }
+
+        // 5. Si ya están todas las lecciones del curso, marcamos el curso como completado
+        // (completar un curso no da XP, así que omitir la última no regala nada)
+        const cursoCompletado = leccionesDelCurso.every(l => mismoId(l.id, leccion.id) || estaEn(idsCompletados, l.id));
         if (cursoCompletado) {
             const yaRegistrado = await cursoRepository.verificarCursoCompletado(perfilId, cursoId);
             if (!yaRegistrado) await cursoRepository.registrarCursoCompletado(perfilId, cursoId);
         }
 
-        return { exito: true, xpGanada, xpTotal, cursoCompletado };
+        return { exito: true, xpGanada, xpTotal, cursoCompletado, omitida };
     }
 
     async completarCurso(authId, perfilId, cursoId) {

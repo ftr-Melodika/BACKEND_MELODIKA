@@ -32,6 +32,7 @@ export function mapCursoError(error) {
     if (!mensajeUsuario) {
         switch (error.message) {
             case "Falta el ID del perfil.":
+            case "El campo omitida debe ser true o false.":
             case "El ID del curso es requerido.":
             case "El ID del perfil es requerido.":
             case "El ID del perfil es requerido como parámetro de consulta (?perfilId=...).":
