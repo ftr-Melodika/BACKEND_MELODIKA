@@ -43,6 +43,10 @@ export function mapPerfilError(error) {
                 mensajeUsuario = "El ID del perfil proporcionado no tiene un formato válido.";
                 codigoEstado = status.BAD_REQUEST;
                 break;
+            case "42703":
+                mensajeUsuario = "Esta función todavía no está disponible. Intentá de nuevo más tarde.";
+                codigoEstado = status.SERVICE_UNAVAILABLE;
+                break;
             case "25006":
                 mensajeUsuario = "La base de datos no está aceptando cambios en este momento. Intentá de nuevo más tarde.";
                 codigoEstado = status.SERVICE_UNAVAILABLE;
@@ -85,6 +89,7 @@ export function mapPerfilError(error) {
             case "No se pudo procesar la racha.":
             case "No se pudo guardar el mensaje.":
             case "No se pudo procesar la solicitud de amistad.":
+            case "No se pudo procesar la operación del grupo.":
             case "Error al cargar el ranking":
                 mensajeUsuario = "Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.";
                 codigoEstado = status.INTERNAL_SERVER_ERROR;
@@ -124,6 +129,22 @@ export function mapPerfilError(error) {
             case "No podés eliminar esta solicitud":
                 mensajeUsuario = "No tenés permisos para eliminar esta solicitud.";
                 codigoEstado = status.FORBIDDEN;
+                break;
+            case "Grupo no encontrado":
+                mensajeUsuario = "No encontramos ese grupo.";
+                codigoEstado = status.NOT_FOUND;
+                break;
+            case "Ya existe un grupo con ese nombre":
+                mensajeUsuario = "Ya existe un grupo con ese nombre. Elegí otro.";
+                codigoEstado = status.CONFLICT;
+                break;
+            case "No sos miembro de este grupo":
+                mensajeUsuario = "Tenés que unirte al grupo para ver y enviar mensajes.";
+                codigoEstado = status.FORBIDDEN;
+                break;
+            case "Mensaje no encontrado":
+                mensajeUsuario = "No encontramos ese mensaje en este grupo.";
+                codigoEstado = status.NOT_FOUND;
                 break;
             case "El perfil no existe":
                 mensajeUsuario = "No pudimos encontrar el perfil solicitado.";
