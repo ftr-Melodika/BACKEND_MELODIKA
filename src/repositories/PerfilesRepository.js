@@ -27,7 +27,8 @@ class PerfilRepository {
                 row.xp,
                 row.racha,
                 row.instrumento_actual_id,
-                row.activo
+                row.activo,
+                row.es_publico === true
             ));
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.BUSCAR_PERFILES);
@@ -68,7 +69,8 @@ class PerfilRepository {
                 perfil.xp,
                 perfil.racha,
                 perfil.instrumento_actual_id,
-                perfil.activo
+                perfil.activo,
+                perfil.es_publico === true
             );
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.CREAR_PERFIL);
@@ -130,6 +132,19 @@ class PerfilRepository {
         }
     }
 
+    // Feedback, reportes y consultas se guardan como eventos: nombre = tipo, datos = { categoria, mensaje }
+    async registrarMensaje(perfilId, tipo, datos) {
+        try {
+            const resultado = await pool.query(
+                'INSERT INTO eventos (perfil_id, nombre, datos) VALUES ($1, $2, $3) RETURNING id, created_at',
+                [perfilId, tipo, JSON.stringify(datos)]
+            );
+            return resultado.rows[0];
+        } catch (error) {
+            manejarErrorDB(error, MENSAJES_ERROR_DB.GUARDAR_MENSAJE);
+        }
+    }
+
     // Ranking Global
     async obtenerTopRanking() {
         try {
@@ -169,19 +184,22 @@ class PerfilRepository {
 
     async actualizarPerfil(perfilId, cuentaId, datosPerfil) {
         try {
+            // es_publico solo entra si lo mandaron: `false` es un valor válido y COALESCE con `|| null` lo perdería
+            const cambiaPrivacidad = datosPerfil.esPublico !== undefined;
             const query = `
-                UPDATE perfiles 
-                SET 
+                UPDATE perfiles
+                SET
                     nombre = COALESCE($1, nombre),
                     avatar_url = COALESCE($2, avatar_url),
                     pais = COALESCE($3, pais),
                     fecha_nacimiento = COALESCE($4, fecha_nacimiento),
                     genero = COALESCE($5, genero),
+                    ${cambiaPrivacidad ? 'es_publico = $8,' : ''}
                     updated_at = NOW()
                 WHERE id = $6 AND cuenta_id = $7 AND activo = true
                 RETURNING *;
             `;
-            
+
             const values = [
                 datosPerfil.nombre || null,
                 datosPerfil.avatarUrl || null,
@@ -191,6 +209,7 @@ class PerfilRepository {
                 perfilId,
                 cuentaId
             ];
+            if (cambiaPrivacidad) values.push(datosPerfil.esPublico);
 
             const resultado = await pool.query(query, values);
             
@@ -211,7 +230,8 @@ class PerfilRepository {
                 perfil.xp,
                 perfil.racha,
                 perfil.instrumento_actual_id,
-                perfil.activo
+                perfil.activo,
+                perfil.es_publico === true
             );
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.ACTUALIZAR_PERFIL);
@@ -242,7 +262,8 @@ class PerfilRepository {
                 row.xp,
                 row.racha,
                 row.instrumento_actual_id,
-                row.activo
+                row.activo,
+                row.es_publico === true
             );
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_PERFIL_POR_ID);

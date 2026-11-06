@@ -43,6 +43,10 @@ export function mapPerfilError(error) {
                 mensajeUsuario = "El ID del perfil proporcionado no tiene un formato válido.";
                 codigoEstado = status.BAD_REQUEST;
                 break;
+            case "25006":
+                mensajeUsuario = "La base de datos no está aceptando cambios en este momento. Intentá de nuevo más tarde.";
+                codigoEstado = status.SERVICE_UNAVAILABLE;
+                break;
         }
     }
     
@@ -79,9 +83,47 @@ export function mapPerfilError(error) {
                 codigoEstado = status.NOT_FOUND;
                 break;
             case "No se pudo procesar la racha.":
+            case "No se pudo guardar el mensaje.":
+            case "No se pudo procesar la solicitud de amistad.":
             case "Error al cargar el ranking":
                 mensajeUsuario = "Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.";
                 codigoEstado = status.INTERNAL_SERVER_ERROR;
+                break;
+            case "No podés enviarte una solicitud a vos mismo":
+                mensajeUsuario = "No podés enviarte una solicitud de amistad a vos mismo.";
+                codigoEstado = status.BAD_REQUEST;
+                break;
+            case "Ya son amigos":
+                mensajeUsuario = "Ya son amigos.";
+                codigoEstado = status.CONFLICT;
+                break;
+            case "Ya le enviaste una solicitud a este perfil":
+                mensajeUsuario = "Ya le enviaste una solicitud a este perfil.";
+                codigoEstado = status.CONFLICT;
+                break;
+            case "Este perfil ya te envió una solicitud":
+                mensajeUsuario = "Este perfil ya te envió una solicitud. Podés aceptarla desde tus solicitudes.";
+                codigoEstado = status.CONFLICT;
+                break;
+            case "Ya existe una solicitud o amistad con este perfil":
+                mensajeUsuario = "Ya existe una solicitud o amistad con este perfil.";
+                codigoEstado = status.CONFLICT;
+                break;
+            case "Solicitud no encontrada":
+                mensajeUsuario = "No encontramos esa solicitud.";
+                codigoEstado = status.NOT_FOUND;
+                break;
+            case "No podés responder esta solicitud":
+                mensajeUsuario = "Solo quien recibió la solicitud puede responderla.";
+                codigoEstado = status.FORBIDDEN;
+                break;
+            case "La solicitud ya fue respondida":
+                mensajeUsuario = "Esta solicitud ya fue respondida.";
+                codigoEstado = status.CONFLICT;
+                break;
+            case "No podés eliminar esta solicitud":
+                mensajeUsuario = "No tenés permisos para eliminar esta solicitud.";
+                codigoEstado = status.FORBIDDEN;
                 break;
             case "El perfil no existe":
                 mensajeUsuario = "No pudimos encontrar el perfil solicitado.";
