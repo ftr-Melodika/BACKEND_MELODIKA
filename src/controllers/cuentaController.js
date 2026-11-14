@@ -40,11 +40,38 @@ router.post("/login", validarLogin, catchAsync(async (req, res) => {
         message: "logueado correctamente",
         data: {
             token: resultado.token,
+            refreshToken: resultado.refreshToken,
+            expiresAt: resultado.expiresAt,
             cuenta: {
                 id: resultado.user.id,
                 email: resultado.user.email,
                 metadata: resultado.user.user_metadata,
             }
+        }
+    });
+}));
+
+router.post("/refresh", catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cuentas']
+       #swagger.summary = 'Renovar la sesión usando el refresh token'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { type: "object", properties: { refreshToken: { type: "string" } } } } }
+       } */
+    const { refreshToken } = req.body ?? {};
+    if (typeof refreshToken !== "string" || !refreshToken.trim()) {
+        return res.status(status.BAD_REQUEST).json({ success: false, message: "refreshToken requerido" });
+    }
+
+    const resultado = await cuentaService.refrescarSesion(refreshToken.trim());
+
+    res.status(status.OK).json({
+        success: true,
+        message: "sesión renovada",
+        data: {
+            token: resultado.token,
+            refreshToken: resultado.refreshToken,
+            expiresAt: resultado.expiresAt,
         }
     });
 }));

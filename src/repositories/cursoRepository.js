@@ -8,7 +8,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
 
     async obtenerCursos() {
         try {
-            const query = `SELECT id, nombre, descripcion, instrumento_id, camino_id, nivel, orden, obligatorio FROM cursos ORDER BY orden ASC`;
+            const query = `SELECT id, nombre, descripcion, instrumento_id, camino_id, nivel, orden, obligatorio FROM cursos ORDER BY orden ASC, nombre ASC`;
             const resultado = await pool.query(query);
             return resultado.rows.map(row => new Curso(
                 row.id,
@@ -96,7 +96,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                        e.texto_teoria, e.texto_destacado, e.instrucciones, e.practica
                 FROM ejercicios e
                 JOIN cursos c ON c.id = e.curso_id
-                ORDER BY c.orden ASC, e.orden ASC
+                ORDER BY c.orden ASC, c.nombre ASC, e.orden ASC
             `;
             const resultado = await pool.query(query);
             return resultado.rows.map(row => {

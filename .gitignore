@@ -117,3 +117,5 @@ helmfile.d/
 *.bak
 *.swp
 *.tmp
+# Backups de datos (pueden tener progreso de usuarios)
+backups/

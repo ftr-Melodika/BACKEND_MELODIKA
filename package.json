@@ -10,7 +10,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node --watch src/index.js",
     "db": "node src/database/db.js",
-    "swagger": "node swagger.js"
+    "swagger": "node swagger.js",
+    "seed:cursos": "node src/database/seeds/seedCursos.js",
+    "migrar": "node src/database/migrations/aplicar.js"
   },
   "dependencies": {
     "@expo/ngrok": "^4.1.0",
