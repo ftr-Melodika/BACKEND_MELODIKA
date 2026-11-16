@@ -12,6 +12,7 @@
     "db": "node src/database/db.js",
     "swagger": "node swagger.js",
     "seed:cursos": "node src/database/seeds/seedCursos.js",
+    "seed:canciones": "node src/database/seeds/seedCanciones.js",
     "migrar": "node src/database/migrations/aplicar.js"
   },
   "dependencies": {

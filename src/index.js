@@ -9,6 +9,7 @@ import perfilController from "./controllers/perfilController.js";
 import amistadController from "./controllers/amistadController.js";
 import grupoController from "./controllers/grupoController.js";
 import cursoController from "./controllers/cursoController.js";
+import cancionController from "./controllers/cancionController.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -25,6 +26,7 @@ app.use("/api/perfiles", amistadController);
 app.use("/api/perfiles", grupoController);
 app.use("/api/perfiles", perfilController);
 app.use("/api/cursos", cursoController);
+app.use("/api/canciones", cancionController);
 
 app.get('/', (req, res) => {
     res.send('Hello World!');
