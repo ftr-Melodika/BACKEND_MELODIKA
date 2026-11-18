@@ -68,7 +68,7 @@ const esFechaValida = (fecha) => {
 
 // Validar que el género esté en nuestra lista permitida
 const esGeneroValido = (genero) => {
-    const generosPermitidos = ['Masculino', 'Femenino', 'No binario'];
+    const generosPermitidos = ['Masculino', 'Femenino', 'No binario', 'Otros/Prefiero no decir'];
     return generosPermitidos.includes(genero);
 }   
 

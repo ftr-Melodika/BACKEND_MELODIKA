@@ -2,7 +2,11 @@ import StatusCodes from 'http-status-codes';
 import validadores from '../../helpers/validadores.js';
 
 const validarDatosCrearPerfil = (req, res, next) => {
-    const { nombre, username, pais, fecha_nacimiento, genero } = req.body;
+    const { nombre, username, pais, fecha_nacimiento, genero, esZurdo } = req.body;
+
+    if (esZurdo !== undefined && typeof esZurdo !== 'boolean') {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'esZurdo debe ser verdadero o falso.' });
+    }
 
     if (!nombre) {
         return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'El nombre es obligatorio.' });
@@ -49,7 +53,11 @@ const validarDatosCrearPerfil = (req, res, next) => {
 };
 
 const validarDatosActualizarPerfil = (req, res, next) => {
-    const { nombre, pais, fecha_nacimiento, genero, esPublico } = req.body;
+    const { nombre, pais, fecha_nacimiento, genero, esPublico, esZurdo } = req.body;
+
+    if (esZurdo !== undefined && typeof esZurdo !== 'boolean') {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'esZurdo debe ser verdadero o falso.' });
+    }
 
     if (esPublico !== undefined && typeof esPublico !== 'boolean') {
         return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'esPublico debe ser verdadero o falso.' });

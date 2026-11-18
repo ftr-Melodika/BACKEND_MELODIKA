@@ -89,8 +89,8 @@ router.post("/", verificarToken, validarDatosCrearPerfil, catchAsync(async (req,
        } */
     
     const authId = req.user.id;
-    const { nombre, username, fecha_nacimiento, genero, pais, avatarUrl } = req.body;
-    const datosPerfil = { nombre, username, fecha_nacimiento, genero, pais, avatarUrl };
+    const { nombre, username, fecha_nacimiento, genero, pais, avatarUrl, esZurdo } = req.body;
+    const datosPerfil = { nombre, username, fecha_nacimiento, genero, pais, avatarUrl, esZurdo };
 
     const nuevoPerfil = await perfilService.crearPerfil(authId, datosPerfil);
 
@@ -128,8 +128,8 @@ router.put("/:id", verificarToken, validarIdPerfil, validarDatosActualizarPerfil
 
     const authId = req.user.id;
     const { id } = req.params;
-    const { nombre, fecha_nacimiento, genero, pais, avatarUrl, esPublico } = req.body;
-    const datosPerfil = { nombre, fecha_nacimiento, genero, pais, avatarUrl, esPublico };
+    const { nombre, fecha_nacimiento, genero, pais, avatarUrl, esPublico, esZurdo } = req.body;
+    const datosPerfil = { nombre, fecha_nacimiento, genero, pais, avatarUrl, esPublico, esZurdo };
 
     const perfilActualizado = await perfilService.actualizarPerfil(authId, id, datosPerfil);
 

@@ -41,7 +41,7 @@ const conRasgueo = (rasgueo, compases) => compases.map((acordes) => ({ acordes, 
 
 export const CANCIONES = [
   {
-    id: 'de-musica-ligera', titulo: 'De música ligera', artista: 'Soda Stereo', bpm: 124, capo: 0,
+    id: 'de-musica-ligera', titulo: 'De música ligera', artista: 'Soda Stereo', bpm: 112, capo: 0, // bajado de 124 para practicar
     // En semicorcheas, 2 tiempos cada acorde. El primero: ↓ en el 1 y ↓ en el 2. El segundo, más
     // rápido: ↑ ↑ ↓ ↓ ↓ ↑ desde la "e" del 3, que se completa con el ↓ del acorde siguiente.
     //            1 e y a 2 e y a 3 e y a 4 e y a

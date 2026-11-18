@@ -28,7 +28,8 @@ class PerfilRepository {
                 row.racha,
                 row.instrumento_actual_id,
                 row.activo,
-                row.es_publico === true
+                row.es_publico === true,
+                row.es_zurdo === true
             ));
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.BUSCAR_PERFILES);
@@ -39,8 +40,8 @@ class PerfilRepository {
     async crearPerfil(cuentaId, datosPerfil) {
         try {
             const query = `
-                INSERT INTO perfiles (cuenta_id, nombre, username, avatar_url, pais, fecha_nacimiento, genero) 
-                VALUES ($1, $2, $3, $4, $5, $6, $7) 
+                INSERT INTO perfiles (cuenta_id, nombre, username, avatar_url, pais, fecha_nacimiento, genero, es_zurdo)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
                 RETURNING *;
             `;
             
@@ -51,7 +52,8 @@ class PerfilRepository {
                 datosPerfil.avatarUrl || null, 
                 datosPerfil.pais,
                 datosPerfil.fecha_nacimiento || null,
-                datosPerfil.genero || null
+                datosPerfil.genero || null,
+                datosPerfil.esZurdo === true
             ];
             
             const resultado = await pool.query(query, values);
@@ -70,7 +72,8 @@ class PerfilRepository {
                 perfil.racha,
                 perfil.instrumento_actual_id,
                 perfil.activo,
-                perfil.es_publico === true
+                perfil.es_publico === true,
+                perfil.es_zurdo === true
             );
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.CREAR_PERFIL);
@@ -186,6 +189,9 @@ class PerfilRepository {
         try {
             // es_publico solo entra si lo mandaron: `false` es un valor válido y COALESCE con `|| null` lo perdería
             const cambiaPrivacidad = datosPerfil.esPublico !== undefined;
+            // es_zurdo, igual: solo entra si lo mandaron ($8 o $9 según haya o no privacidad)
+            const cambiaZurdo = datosPerfil.esZurdo !== undefined;
+            const posZurdo = cambiaPrivacidad ? 9 : 8;
             const query = `
                 UPDATE perfiles
                 SET
@@ -195,6 +201,7 @@ class PerfilRepository {
                     fecha_nacimiento = COALESCE($4, fecha_nacimiento),
                     genero = COALESCE($5, genero),
                     ${cambiaPrivacidad ? 'es_publico = $8,' : ''}
+                    ${cambiaZurdo ? `es_zurdo = $${posZurdo},` : ''}
                     updated_at = NOW()
                 WHERE id = $6 AND cuenta_id = $7 AND activo = true
                 RETURNING *;
@@ -210,6 +217,7 @@ class PerfilRepository {
                 cuentaId
             ];
             if (cambiaPrivacidad) values.push(datosPerfil.esPublico);
+            if (cambiaZurdo) values.push(datosPerfil.esZurdo);
 
             const resultado = await pool.query(query, values);
             
@@ -231,7 +239,8 @@ class PerfilRepository {
                 perfil.racha,
                 perfil.instrumento_actual_id,
                 perfil.activo,
-                perfil.es_publico === true
+                perfil.es_publico === true,
+                perfil.es_zurdo === true
             );
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.ACTUALIZAR_PERFIL);
@@ -263,7 +272,8 @@ class PerfilRepository {
                 row.racha,
                 row.instrumento_actual_id,
                 row.activo,
-                row.es_publico === true
+                row.es_publico === true,
+                row.es_zurdo === true
             );
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_PERFIL_POR_ID);

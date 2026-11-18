@@ -127,14 +127,14 @@ const curso1 = {
       'La app toca dos notas y vos decís si la segunda es más alta (más aguda) o más baja (más grave) que la primera.'),
 
     teoria('1.2 · Postura y púa',
-      'Sentate derecho, con la guitarra apoyada en la pierna y el mástil apenas levantado. El brazo derecho abraza el cuerpo de la guitarra. La púa se sostiene entre el pulgar y el costado del índice, con la punta asomando poco.',
+      'Sentate derecho, con la guitarra apoyada en la pierna y el mástil apenas levantado. El brazo de la mano que rasguea abraza el cuerpo de la guitarra. La púa se sostiene entre el pulgar y el costado del índice, con la punta asomando poco.',
       { destacado: 'Checklist frente al espejo: hacé cada punto antes de tocar.',
-        instrucciones: ['Espalda derecha y hombros sueltos.', 'La guitarra apoyada firme, sin que se resbale.', 'El pulgar izquierdo detrás del mástil.', 'La púa entre el pulgar y el costado del índice, asomando poco.', 'La muñeca derecha suelta, sin apretar.'] }),
+        instrucciones: ['Espalda derecha y hombros sueltos.', 'La guitarra apoyada firme, sin que se resbale.', 'El pulgar de la mano que pisa, detrás del mástil.', 'La púa entre el pulgar y el costado del índice, asomando poco.', 'La muñeca de la mano que rasguea, suelta, sin apretar.'] }),
     practica('1.2 · Púa estable', ritmo('Púa estable', [[60, 4]]),
       { texto: '16 golpes parejos en la cuerda 6 al aire, a 60 BPM: uno por cada pulso del metrónomo (el clic o, en iPhone, la luz), todos con el mismo volumen.' }),
 
     teoria('1.3 · Trastes, notas y dedos',
-      'Un traste es cada una de las barritas de metal del mástil. Al pisar, la cuerda se acorta y suena más aguda: cada traste sube un poquito la nota. Las notas se llaman Do, Re, Mi, Fa, Sol, La, Si. Los dedos de la mano izquierda tienen número: índice 1, medio 2, anular 3 y meñique 4. El pulgar va detrás del mástil y no lleva número.',
+      'Un traste es cada una de las barritas de metal del mástil. Al pisar, la cuerda se acorta y suena más aguda: cada traste sube un poquito la nota. Las notas se llaman Do, Re, Mi, Fa, Sol, La, Si. Los dedos de la mano que pisa tienen número: índice 1, medio 2, anular 3 y meñique 4. El pulgar va detrás del mástil y no lleva número.',
       { destacado: 'Índice 1 · Medio 2 · Anular 3 · Meñique 4',
         practica: { tipo: 'quiz', nombre: 'Los dedos', preguntas: [
           { pregunta: '¿Qué número tiene el índice?', opciones: ['1', '2', '3', '4'], correcta: 0 },
@@ -317,7 +317,7 @@ const curso4 = {
   lecciones: [
     teoria('4.1 · Negras', 'Una negra es un golpe por tiempo: 1, 2, 3, 4. Rasgueá hacia abajo con la muñeca suelta.', { practica: QUIZZES['Tu primer rasgueo'] }),
     practica('4.1 · Negras con las cuerdas apagadas', ritmo('Negras', [[60, 2], [75, 2], [90, 2]]),
-      { texto: 'Rasgueá negras con la mano izquierda apoyada sobre las cuerdas (sin pisar), de 60 a 90 BPM.' }),
+      { texto: 'Rasgueá negras con la mano que pisa apoyada sobre las cuerdas, sin apretarlas, de 60 a 90 BPM.' }),
     proximamente('4.1 · Acentos', 'Primero acentuá el tiempo 1; después el 2 y el 4.'),
     practica('4.1 · Stand By Me en negras', acordes('Stand By Me', ['Sol', 'Mim', 'Do', 'Re', 'Sol']),
       { destacado: '🚧 El rasgueo en negras todavía no lo mide la app: por ahora se aprueba con los acordes.' }),
@@ -348,8 +348,8 @@ const curso4 = {
     proximamente('4.4 · Crescendo', 'Un crescendo de 4 compases: de muy suave a fuerte.'),
     proximamente('4.4 · Zombie con dinámica', 'Zombie con la estrofa suave y el estribillo fuerte.'),
 
-    teoria('4.5 · Golpe percusivo', 'El golpe percusivo es un rasgueo apagado que suena como un tambor. Se hace apoyando la mano izquierda (o la palma derecha) sobre las cuerdas en el momento del golpe.'),
-    proximamente('4.5 · Acorde y golpe', 'Acorde en 1 y 3, golpe apagado en 2 y 4. Primero apagando con la mano izquierda, después con la derecha.'),
+    teoria('4.5 · Golpe percusivo', 'El golpe percusivo es un rasgueo apagado que suena como un tambor. Se hace apoyando la mano que pisa (o la palma de la que rasguea) sobre las cuerdas en el momento del golpe.'),
+    proximamente('4.5 · Acorde y golpe', 'Acorde en 1 y 3, golpe apagado en 2 y 4. Primero apagando con la mano que pisa, después con la que rasguea.'),
     proximamente('4.5 · Three Little Birds con golpe', 'Three Little Birds con el golpe percusivo en 2 y 4.'),
 
     teoria('4.6 · 3/4 y 6/8', 'No todas las canciones van en 4. En 3/4 (vals) se cuenta 1-2-3 con acento en el 1. En 6/8 se cuenta 1-2-3-4-5-6 con acento en el 1 y en el 4.'),
@@ -499,7 +499,7 @@ const id = (n) => `b0000000-0000-4000-a000-0000000000${n}`;
 const DIVISION = [
   { id: curso1.id, bloque: curso1, parte: 'I', clases: ['1.1', '1.2'], descripcion: 'Conocé tu guitarra: sus partes, el nombre de cada cuerda, cómo afinarla, la postura y la púa.' },
   { id: id(11), bloque: curso1, parte: 'II', clases: ['1.3', '1.4'], descripcion: 'Trastes, notas y el número de cada dedo. Aprendé a leer el mástil de Melodika y tocá tu primer acorde.' },
-  { id: id(12), bloque: curso1, parte: 'III', clases: ['1.5', '1.6', '1.7'], prueba: true, descripcion: 'Soltá la mano izquierda, llevá el pulso con el metrónomo y tocá tus primeras melodías.' },
+  { id: id(12), bloque: curso1, parte: 'III', clases: ['1.5', '1.6', '1.7'], prueba: true, descripcion: 'Soltá la mano que pisa, llevá el pulso con el metrónomo y tocá tus primeras melodías.' },
   { id: curso2.id, bloque: curso2, parte: 'I', clases: ['2.1', '2.2'], descripcion: 'Cómo se arma un acorde. Tus primeros tres: Em, Am y D.' },
   { id: id(21), bloque: curso2, parte: 'II', clases: ['2.3', '2.4'], descripcion: 'Cuatro acordes más (A, E, C y G) y tus primeras canciones.' },
   { id: curso3.id, bloque: curso3, parte: 'I', clases: ['3.1', '3.3', '3.4'], descripcion: 'Cómo cambiar de acorde sin cortar: mover los dedos en bloque, el dedo guía y las formas que se trasladan.' },
