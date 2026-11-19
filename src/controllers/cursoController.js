@@ -3,6 +3,7 @@ import { Router } from "express";
 import CursoService from "../services/cursoService.js";
 import verificarToken from "../middlewares/authMiddleware.js";
 import { catchAsync } from "../helpers/catchAsync.js";
+import { validarOmitida } from "../middlewares/validadores/validarDatosCurso.js";
 
 const router = Router();
 const cursoService = new CursoService();
@@ -13,12 +14,8 @@ router.get("/perfil/:perfilId", verificarToken, catchAsync(async (req, res) => {
        #swagger.summary = 'Listar catálogo de cursos' */
     
     const authId = req.user.id; // Extraído de la misma forma que en perfilController
-    const { perfilId } = req.params; 
+    const { perfilId } = req.params;
 
-    if (!perfilId) {
-        throw new Error("El ID del perfil es requerido.");
-    }
-    
     // Al pasar authId, a futuro el service puede validar que el perfil le pertenezca a este usuario
     const datosCursos = await cursoService.listarCursos(authId, perfilId);
 
@@ -54,9 +51,6 @@ router.get("/perfil/:perfilId/curso/:cursoId", verificarToken, catchAsync(async 
     const authId = req.user.id;
     const { perfilId, cursoId } = req.params; // Todo unificado en req.params
 
-    if (!cursoId) throw new Error("El ID del curso es requerido.");
-    if (!perfilId) throw new Error("El ID del perfil es requerido.");
-
     const detalleCurso = await cursoService.obtenerDetalleCurso(authId, cursoId, perfilId);
 
     if (!detalleCurso) {
@@ -70,7 +64,7 @@ router.get("/perfil/:perfilId/curso/:cursoId", verificarToken, catchAsync(async 
 }));
 
 // POST: Completar una lección
-router.post("/perfil/:perfilId/curso/:cursoId/lecciones/:leccionId/completar", verificarToken, catchAsync(async (req, res) => {
+router.post("/perfil/:perfilId/curso/:cursoId/lecciones/:leccionId/completar", verificarToken, validarOmitida, catchAsync(async (req, res) => {
     /* #swagger.tags = ['Cursos']
        #swagger.summary = 'Completar lección / ejercicio'
        #swagger.description = 'Body opcional: { "omitida": true } saltea la lección: desbloquea la siguiente sin dar XP. Si después se llama sin omitida, gana el XP una sola vez.' */
@@ -78,13 +72,10 @@ router.post("/perfil/:perfilId/curso/:cursoId/lecciones/:leccionId/completar", v
     const authId = req.user.id;
     const { perfilId, cursoId, leccionId } = req.params;
 
-    if (!perfilId) throw new Error("Falta el ID del perfil.");
-
     // Express deja req.body en undefined cuando el POST no trae body
-    const omitir = req.body?.omitida;
-    if (omitir !== undefined && typeof omitir !== "boolean") throw new Error("El campo omitida debe ser true o false.");
+    const omitir = req.body?.omitida === true;
 
-    const resultado = await cursoService.completarLeccion(authId, perfilId, cursoId, leccionId, { omitir: omitir === true });
+    const resultado = await cursoService.completarLeccion(authId, perfilId, cursoId, leccionId, { omitir });
 
     return res.status(status.OK).json({
         success: true,
@@ -105,10 +96,6 @@ router.post("/perfil/:perfilId/curso/:cursoId/completar", verificarToken, catchA
     
     const authId = req.user.id;
     const { perfilId, cursoId } = req.params;
-
-    if (!perfilId) throw new Error("Falta el ID del perfil.");
-
-    
 
     const resultado = await cursoService.completarCurso(authId, perfilId, cursoId);
     

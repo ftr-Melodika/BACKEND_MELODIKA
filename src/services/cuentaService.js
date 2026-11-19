@@ -1,17 +1,10 @@
-import { createClient } from '@supabase/supabase-js';
-import { supabase } from '../database/db.js';
+import { supabase, crearClienteAuth } from '../database/supabase.js';
 import CuentaRepository from '../repositories/cuentaRepository.js';
-import Cuenta from '../entities/Cuenta.js';
 
 const cuentaRepository = new CuentaRepository();
 
-// Cliente aparte solo para login/refresh: no guarda sesión ni auto-refresca en el servidor,
-// así la sesión de un usuario no queda pegada al cliente compartido que usa el resto del backend.
-const authClient = createClient(
-    process.env.SUPABASE_URL,
-    process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_KEY,
-    { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } }
-);
+// Cliente solo para login/refresh (ver database/supabase.js)
+const authClient = crearClienteAuth();
 
 const armarSesion = (session) => ({
     token: session.access_token,

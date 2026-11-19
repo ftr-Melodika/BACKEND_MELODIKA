@@ -1,6 +1,5 @@
 import pg from 'pg';
 import dotenv from 'dotenv';
-import { createClient } from '@supabase/supabase-js';
 
 dotenv.config();
 
@@ -26,15 +25,4 @@ pool.connect((err, client, release) => {
   release();
 });
 
-const supabaseKey = process.env.SUPABASE_ANON_KEY || process.env.SUPABASE_KEY || process.env.SUPABASE_SERVICE_KEY;
-
-if (!process.env.SUPABASE_URL || !supabaseKey) {
-  console.error('Missing SUPABASE_URL or SUPABASE key in environment variables');
-}
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  supabaseKey
-);
-
-export { pool, supabase };
+export { pool };

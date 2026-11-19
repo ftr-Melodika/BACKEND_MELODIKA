@@ -30,7 +30,11 @@ router.get("/:id/social/:otroId", verificarToken, validarIdPerfil, validarOtroId
 router.post("/:id/solicitudes", verificarToken, validarIdPerfil, validarDatosSolicitud, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Social']
-       #swagger.summary = 'Enviar solicitud de amistad' */
+       #swagger.summary = 'Enviar solicitud de amistad'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/EnviarSolicitud" } } }
+       } */
 
     const datos = await amistadService.enviarSolicitud(req.user.id, req.params.id, req.body.destinoId);
 
@@ -58,7 +62,11 @@ router.get("/:id/solicitudes", verificarToken, validarIdPerfil, catchAsync(async
 router.put("/:id/solicitudes/:amistadId", verificarToken, validarIdPerfil, validarAmistadId, validarAccionSolicitud, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Social']
-       #swagger.summary = 'Aceptar o rechazar una solicitud de amistad' */
+       #swagger.summary = 'Aceptar o rechazar una solicitud de amistad'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/ResponderSolicitud" } } }
+       } */
 
     const datos = await amistadService.responderSolicitud(req.user.id, req.params.id, req.params.amistadId, req.body.accion);
 

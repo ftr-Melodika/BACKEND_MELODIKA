@@ -1,5 +1,6 @@
 import { pool } from '../database/db.js';
 import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
+import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
 
 const COLUMNAS = 'id, titulo, artista, bpm, capo, progresion, formas, nota_rasgueo, consejo';
 
@@ -23,7 +24,7 @@ class CancionRepository {
             const resultado = await pool.query(`SELECT ${COLUMNAS} FROM canciones_practica ORDER BY orden ASC, titulo ASC`);
             return resultado.rows.map(aCancion);
         } catch (error) {
-            manejarErrorDB(error, "Error al obtener las canciones.");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_CANCIONES);
         }
     }
 
@@ -32,7 +33,7 @@ class CancionRepository {
             const resultado = await pool.query(`SELECT ${COLUMNAS} FROM canciones_practica WHERE id = $1`, [id]);
             return resultado.rows.length ? aCancion(resultado.rows[0]) : null;
         } catch (error) {
-            manejarErrorDB(error, "Error al obtener la canción.");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_CANCION);
         }
     }
 }

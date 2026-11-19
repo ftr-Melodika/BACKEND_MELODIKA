@@ -32,7 +32,8 @@ router.get("/:id/grupos/mios", verificarToken, validarIdPerfil, catchAsync(async
 router.get("/:id/grupos/buscar", verificarToken, validarIdPerfil, validarBusquedaGrupos, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Grupos']
-       #swagger.summary = 'Buscar grupos por nombre o descripción' */
+       #swagger.summary = 'Buscar grupos por nombre o descripción'
+       #swagger.parameters['q'] = { in: 'query', description: 'Texto a buscar', schema: { type: 'string' } } */
 
     const datos = await grupoService.buscarGrupos(req.user.id, req.params.id, res.locals.textoBusqueda);
 
@@ -46,7 +47,11 @@ router.get("/:id/grupos/buscar", verificarToken, validarIdPerfil, validarBusqued
 router.post("/:id/grupos", verificarToken, validarIdPerfil, validarDatosCrearGrupo, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Grupos']
-       #swagger.summary = 'Crear un grupo' */
+       #swagger.summary = 'Crear un grupo'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/CrearGrupo" } } }
+       } */
 
     const { nombre, descripcion } = req.body;
     const datos = await grupoService.crearGrupo(req.user.id, req.params.id, nombre, descripcion);
@@ -103,7 +108,10 @@ router.delete("/:id/grupos/:grupoId/salir", verificarToken, validarIdPerfil, val
 router.get("/:id/grupos/:grupoId/mensajes", verificarToken, validarIdPerfil, validarGrupoId, validarConsultaMensajes, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Grupos']
-       #swagger.summary = 'Leer mensajes del grupo (solo miembros)' */
+       #swagger.summary = 'Leer mensajes del grupo (solo miembros)'
+       #swagger.parameters['limit'] = { in: 'query', description: 'Cantidad máxima de mensajes', schema: { type: 'integer' } }
+       #swagger.parameters['despues'] = { in: 'query', description: 'Cursor: mensajes posteriores (no combinar con antes)', schema: { type: 'string' } }
+       #swagger.parameters['antes'] = { in: 'query', description: 'Cursor: mensajes anteriores (no combinar con despues)', schema: { type: 'string' } } */
 
     const datos = await grupoService.listarMensajes(req.user.id, req.params.id, req.params.grupoId, res.locals.paginacion);
 
@@ -117,7 +125,11 @@ router.get("/:id/grupos/:grupoId/mensajes", verificarToken, validarIdPerfil, val
 router.post("/:id/grupos/:grupoId/mensajes", verificarToken, validarIdPerfil, validarGrupoId, validarDatosMensajeGrupo, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Grupos']
-       #swagger.summary = 'Enviar un mensaje al grupo (solo miembros)' */
+       #swagger.summary = 'Enviar un mensaje al grupo (solo miembros)'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/MensajeGrupo" } } }
+       } */
 
     const datos = await grupoService.enviarMensaje(req.user.id, req.params.id, req.params.grupoId, req.body.contenido);
 

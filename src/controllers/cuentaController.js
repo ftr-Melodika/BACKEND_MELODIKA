@@ -3,6 +3,7 @@ import { Router } from "express";
 import CuentaService from "../services/cuentaService.js";
 import validarRegistro from "../middlewares/validadores/validarDatosRegistro.js";
 import validarLogin from "../middlewares/validadores/validarDatosLogin.js";
+import validarRefreshToken from "../middlewares/validadores/validarDatosRefresh.js";
 import verificarToken from "../middlewares/authMiddleware.js";
 import { catchAsync } from "../helpers/catchAsync.js";
 
@@ -51,17 +52,14 @@ router.post("/login", validarLogin, catchAsync(async (req, res) => {
     });
 }));
 
-router.post("/refresh", catchAsync(async (req, res) => {
+router.post("/refresh", validarRefreshToken, catchAsync(async (req, res) => {
     /* #swagger.tags = ['Cuentas']
        #swagger.summary = 'Renovar la sesión usando el refresh token'
        #swagger.requestBody = {
            required: true,
-           content: { "application/json": { schema: { type: "object", properties: { refreshToken: { type: "string" } } } } }
+           content: { "application/json": { schema: { $ref: "#/components/schemas/RefreshToken" } } }
        } */
-    const { refreshToken } = req.body ?? {};
-    if (typeof refreshToken !== "string" || !refreshToken.trim()) {
-        return res.status(status.BAD_REQUEST).json({ success: false, message: "refreshToken requerido" });
-    }
+    const { refreshToken } = req.body;
 
     const resultado = await cuentaService.refrescarSesion(refreshToken.trim());
 

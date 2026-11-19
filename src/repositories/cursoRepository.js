@@ -2,6 +2,7 @@ import { pool } from '../database/db.js';
 import Curso from '../entities/Curso.js';
 import Ejercicio from '../entities/Ejercicio.js';
 import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
+import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
 
 
     class CursoRepository {
@@ -21,7 +22,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                 row.obligatorio
             ));
         } catch (error) {
-            manejarErrorDB(error, "Error al obtener cursos:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_CURSOS);
         }
     }
 
@@ -46,7 +47,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                 row.obligatorio
             );
         } catch (error) {
-            manejarErrorDB(error, "Error al obtener el curso por ID:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_CURSO_POR_ID);
         }
     }
 
@@ -83,7 +84,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                 row.practica
             ));
         } catch (error) {
-            manejarErrorDB(error, "Error al obtener ejercicios del curso:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_EJERCICIOS);
         }
     }
 
@@ -124,7 +125,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
                 return ejercicio;
             });
         } catch (error) {
-            manejarErrorDB(error, "Error al obtener todos los ejercicios:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_TODOS_EJERCICIOS);
         }
     }
 
@@ -138,7 +139,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             const resultado = await pool.query(query, [perfilId]);
             return resultado.rows;
         } catch (error) {
-            manejarErrorDB(error, "Error buscando progresos en la BD:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_PROGRESO_CURSOS);
         }
     }
 
@@ -153,7 +154,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             const resultado = await pool.query(query, [perfilId, cursoId]);
             return resultado.rows;
         } catch (error) {
-            manejarErrorDB(error, "Error al obtener ejercicios completados:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_EJERCICIOS_COMPLETADOS);
         }
     }
 
@@ -166,7 +167,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             const resultado = await pool.query(query, [perfilId]);
             return resultado.rows;
         } catch (error) {
-            manejarErrorDB(error, "Error al obtener todos los ejercicios completados:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_TODOS_EJERCICIOS_COMPLETADOS);
         }
     }
 
@@ -193,7 +194,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             return xpTotal;
         } catch (error) {
             await client.query('ROLLBACK');
-            manejarErrorDB(error, "Error guardando progreso y XP:", "No se pudo registrar el progreso en la BD.");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.REGISTRAR_PROGRESO_XP);
         } finally {
             client.release();
         }
@@ -208,7 +209,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             `;
             await pool.query(query, [perfilId, ejercicioId]);
         } catch (error) {
-            manejarErrorDB(error, "Error al registrar la lección omitida:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.REGISTRAR_LECCION_OMITIDA);
         }
     }
 
@@ -238,7 +239,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             return resXP.rows[0] ? resXP.rows[0].xp : xpGanada;
         } catch (error) {
             await client.query('ROLLBACK');
-            manejarErrorDB(error, "Error al recuperar el XP de la lección omitida:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.RECUPERAR_XP_OMITIDA);
         } finally {
             client.release();
         }
@@ -254,7 +255,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             const resultado = await pool.query(query, [perfilId, cursoId]);
             return resultado.rows.length > 0;
         } catch (error) {
-            manejarErrorDB(error, "Error al verificar curso completado:");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.VERIFICAR_CURSO_COMPLETADO);
         }
     }
 
@@ -267,7 +268,7 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
             await pool.query(query, [perfilId, cursoId]);
             return true;
         } catch (error) {
-            manejarErrorDB(error, "Error al registrar curso completado:", "No se pudo registrar el curso completado.");
+            manejarErrorDB(error, MENSAJES_ERROR_DB.REGISTRAR_CURSO_COMPLETADO);
         }
     }
 }

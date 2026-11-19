@@ -60,6 +60,30 @@
         }
       }
     },
+    "/api/cuentas/refresh": {
+      "post": {
+        "tags": [
+          "Cuentas"
+        ],
+        "summary": "Renovar la sesión usando el refresh token",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshToken"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/cuentas/registrar": {
       "post": {
         "tags": [
@@ -78,6 +102,474 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/RegistroUsuario"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/social/{otroId}": {
+      "get": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Ver el perfil de otro usuario respetando su privacidad",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "otroId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/solicitudes": {
+      "post": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Enviar solicitud de amistad",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnviarSolicitud"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Listar solicitudes de amistad pendientes",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/solicitudes/{amistadId}": {
+      "put": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Aceptar o rechazar una solicitud de amistad",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "amistadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResponderSolicitud"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/amistades/{amistadId}": {
+      "delete": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Cancelar una solicitud enviada o eliminar una amistad",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "amistadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/amigos": {
+      "get": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Listar amigos del perfil",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/mios": {
+      "get": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Listar mis grupos, primero los de actividad más reciente",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/buscar": {
+      "get": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Buscar grupos por nombre o descripción",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Texto a buscar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos": {
+      "post": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Crear un grupo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrearGrupo"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/{grupoId}": {
+      "get": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Ver un grupo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/{grupoId}/unirse": {
+      "post": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Unirse a un grupo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/{grupoId}/salir": {
+      "delete": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Salir de un grupo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/{grupoId}/mensajes": {
+      "get": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Leer mensajes del grupo (solo miembros)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Cantidad máxima de mensajes",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "despues",
+            "in": "query",
+            "description": "Cursor: mensajes posteriores (no combinar con antes)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "antes",
+            "in": "query",
+            "description": "Cursor: mensajes anteriores (no combinar con despues)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Enviar un mensaje al grupo (solo miembros)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MensajeGrupo"
               }
             }
           }
@@ -118,6 +610,40 @@
         "responses": {
           "default": {
             "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/mensajes": {
+      "post": {
+        "tags": [
+          "Perfiles"
+        ],
+        "summary": "Enviar feedback, reporte de error o consulta de contacto",
+        "description": "tipo: feedback | reporte_error | contacto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MensajeContacto"
+              }
+            }
           }
         }
       }
@@ -322,7 +848,7 @@
           "Cursos"
         ],
         "summary": "Completar lección / ejercicio",
-        "description": "",
+        "description": "Body opcional: { \"omitida\": true } saltea la lección: desbloquea la siguiente sin dar XP. Si después se llama sin omitida, gana el XP una sola vez.",
         "parameters": [
           {
             "name": "perfilId",
@@ -374,6 +900,44 @@
           },
           {
             "name": "cursoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/canciones/": {
+      "get": {
+        "tags": [
+          "Canciones"
+        ],
+        "summary": "Listar canciones",
+        "description": "Cada canción: { id, titulo, artista, bpm, capo, progresion: [{ acordes: \"Em C\", rasgueo: \"D-D-UUDD\" }], formas, notaRasgueo, consejo }. El rasgueo son 8 corcheas (D abajo, U arriba, X apagado, - sin tocar); con dos acordes, las 4 primeras son del primero.",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/canciones/{id}": {
+      "get": {
+        "tags": [
+          "Canciones"
+        ],
+        "summary": "Detalle de una canción",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -474,6 +1038,10 @@
           "avatarUrl": {
             "type": "string",
             "example": "https://ejemplo.com/avatar.jpg"
+          },
+          "esZurdo": {
+            "type": "boolean",
+            "example": false
           }
         },
         "required": [
@@ -503,8 +1071,101 @@
           "avatarUrl": {
             "type": "string",
             "example": "https://ejemplo.com/avatar2.jpg"
+          },
+          "esPublico": {
+            "type": "boolean",
+            "example": true
+          },
+          "esZurdo": {
+            "type": "boolean",
+            "example": false
           }
         }
+      },
+      "EnviarSolicitud": {
+        "type": "object",
+        "properties": {
+          "destinoId": {
+            "type": "string",
+            "example": "uuid-del-perfil-destino"
+          }
+        },
+        "required": [
+          "destinoId"
+        ]
+      },
+      "ResponderSolicitud": {
+        "type": "object",
+        "properties": {
+          "accion": {
+            "type": "string",
+            "example": "aceptar"
+          }
+        },
+        "required": [
+          "accion"
+        ]
+      },
+      "CrearGrupo": {
+        "type": "object",
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "example": "Guitarristas Principiantes"
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Grupo para compartir avances"
+          }
+        },
+        "required": [
+          "nombre"
+        ]
+      },
+      "MensajeGrupo": {
+        "type": "object",
+        "properties": {
+          "contenido": {
+            "type": "string",
+            "example": "Hola a todos!"
+          }
+        },
+        "required": [
+          "contenido"
+        ]
+      },
+      "MensajeContacto": {
+        "type": "object",
+        "properties": {
+          "tipo": {
+            "type": "string",
+            "example": "feedback"
+          },
+          "categoria": {
+            "type": "string",
+            "example": "general"
+          },
+          "mensaje": {
+            "type": "string",
+            "example": "Me gusta la app, pero..."
+          }
+        },
+        "required": [
+          "tipo",
+          "mensaje"
+        ]
+      },
+      "RefreshToken": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "example": "refresh-token-del-login"
+          }
+        },
+        "required": [
+          "refreshToken"
+        ]
       },
       "AccionCurso": {
         "type": "object",

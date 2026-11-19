@@ -34,14 +34,38 @@ const doc = {
         fecha_nacimiento: "2005-11-18",
         genero: "Masculino",
         pais: "Argentina",
-        avatarUrl: "https://ejemplo.com/avatar.jpg"
+        avatarUrl: "https://ejemplo.com/avatar.jpg",
+        esZurdo: false
       },
       ActualizarPerfil: {
         nombre: "Facundo Editado",
         fecha_nacimiento: "2005-11-18",
         genero: "Masculino",
         pais: "Uruguay",
-        avatarUrl: "https://ejemplo.com/avatar2.jpg"
+        avatarUrl: "https://ejemplo.com/avatar2.jpg",
+        esPublico: true,
+        esZurdo: false
+      },
+      EnviarSolicitud: {
+        $destinoId: "uuid-del-perfil-destino"
+      },
+      ResponderSolicitud: {
+        $accion: "aceptar"
+      },
+      CrearGrupo: {
+        $nombre: "Guitarristas Principiantes",
+        descripcion: "Grupo para compartir avances"
+      },
+      MensajeGrupo: {
+        $contenido: "Hola a todos!"
+      },
+      MensajeContacto: {
+        $tipo: "feedback",
+        categoria: "general",
+        $mensaje: "Me gusta la app, pero..."
+      },
+      RefreshToken: {
+        $refreshToken: "refresh-token-del-login"
       },
       AccionCurso: {
         $perfilId: "uuid-del-perfil"

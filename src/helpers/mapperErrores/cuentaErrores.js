@@ -2,11 +2,6 @@ import status from "http-status-codes";
 import validadores from "../validadores.js";
 
 export function mapLoginError(error) {
-    console.log("======= ERROR OCULTO =======");
-    console.log("Mensaje original:", error.message);
-    console.log("Status original:", error.status);
-    console.log("============================");
-    
     let codigoEstado = error.status || status.INTERNAL_SERVER_ERROR;
     let mensajeUsuario;
     const codigoDb = validadores.obtenerCodigoDb(error);
@@ -42,11 +37,11 @@ export function mapLoginError(error) {
         }
     } else if (error.status === 429 || error.message?.includes("rate limit")) {
         codigoEstado = status.TOO_MANY_REQUESTS;
-        mensajeUsuario = "Demasiados intentos de registro. Por favor, esperá unos minutos.";
+        mensajeUsuario = "Demasiados intentos. Por favor, esperá unos minutos.";
     } else if (codigoEstado >= 500) {
         mensajeUsuario = "Hubo un error interno en el servidor.";
     } else {
-        mensajeUsuario = "No se pudo registrar la cuenta.";
+        mensajeUsuario = "No se pudo iniciar sesión.";
     }
     
     return { codigoEstado, mensajeUsuario };
@@ -55,12 +50,7 @@ export function mapLoginError(error) {
 export function mapRegisterError(error) {
     let codigoEstado = error.status || status.BAD_REQUEST;
     let mensajeUsuario;
-    
-    console.log("======= ERROR OCULTO =======");
-    console.log("Mensaje original:", error.message);
-    console.log("Status original:", error.status);
-    console.log("============================");
-    
+
     if (codigoEstado === 429 || error.message?.includes("rate limit")) {
         return {
             codigoEstado: status.TOO_MANY_REQUESTS,

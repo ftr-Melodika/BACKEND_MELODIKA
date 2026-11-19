@@ -37,7 +37,12 @@ router.post("/:id/racha", verificarToken, validarIdPerfil, catchAsync(async (req
 router.post("/:id/mensajes", verificarToken, validarIdPerfil, validarDatosMensaje, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Perfiles']
-       #swagger.summary = 'Enviar feedback, reporte de error o consulta de contacto' */
+       #swagger.summary = 'Enviar feedback, reporte de error o consulta de contacto'
+       #swagger.description = 'tipo: feedback | reporte_error | contacto'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/MensajeContacto" } } }
+       } */
 
     const { tipo, categoria, mensaje } = req.body;
     const resultado = await perfilService.registrarMensaje(req.user.id, req.params.id, tipo, { categoria, mensaje });

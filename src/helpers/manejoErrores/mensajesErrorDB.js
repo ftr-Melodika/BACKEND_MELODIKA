@@ -20,5 +20,10 @@ export const MENSAJES_ERROR_DB = {
     OBTENER_TODOS_EJERCICIOS_COMPLETADOS: "Error al obtener ejercicios completados de la base de datos",
     VERIFICAR_EJERCICIO_COMPLETADO: "Error al verificar el estado del ejercicio",
     REGISTRAR_PROGRESO_XP: "No se pudo registrar el progreso en la BD.",
-    REGISTRAR_CURSO_COMPLETADO: "No se pudo registrar el curso completado."
+    REGISTRAR_CURSO_COMPLETADO: "No se pudo registrar el curso completado.",
+    VERIFICAR_CURSO_COMPLETADO: "Error al verificar el curso completado",
+    REGISTRAR_LECCION_OMITIDA: "No se pudo registrar la lección omitida.",
+    RECUPERAR_XP_OMITIDA: "No se pudo recuperar el XP de la lección omitida.",
+    OBTENER_CANCIONES: "Error al obtener las canciones.",
+    OBTENER_CANCION: "Error al obtener la canción."
 };
