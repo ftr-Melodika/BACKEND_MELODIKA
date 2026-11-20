@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from "express";
 import cors from "cors";
+import compression from "compression";
 import fs from "fs";
 import swaggerUi from "swagger-ui-express";
 
@@ -19,6 +20,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
+// Respuestas comprimidas (gzip): los JSON de cursos, canciones y rankings pesan mucho menos por la red
+app.use(compression());
 // 2mb: la foto de perfil llega como data URI (JPEG 256x256 en base64) dentro de avatarUrl
 app.use(express.json({ limit: '2mb' }));
 

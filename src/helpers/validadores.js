@@ -23,6 +23,14 @@ const tieneSigno = (password) => {
     return regex.test(password);
 };
 
+// Devuelve el mensaje de error de la primera regla de contraseña que no se cumple, o null si es válida
+const mensajeErrorPassword = (password) => {
+    if (!esPasswordLargo(password)) return 'La contraseña debe tener al menos 6 caracteres.';
+    if (!tieneMayuscula(password)) return 'La contraseña debe incluir al menos una letra mayúscula.';
+    if (!tieneSigno(password)) return 'La contraseña debe incluir al menos un caracter especial ';
+    return null;
+};
+
 const tieneEmail = (email) =>{
     return email !== undefined && email !== null && email.trim() !== '';
 }
@@ -84,6 +92,7 @@ export default {
     esPasswordLargo, 
     tieneMayuscula, 
     tieneSigno,
+    mensajeErrorPassword,
     tieneEmail,
     tienePassword,
     esNombreValido,

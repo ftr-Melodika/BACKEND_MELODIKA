@@ -4,6 +4,7 @@ import CuentaService from "../services/cuentaService.js";
 import validarRegistro from "../middlewares/validadores/validarDatosRegistro.js";
 import validarLogin from "../middlewares/validadores/validarDatosLogin.js";
 import validarRefreshToken from "../middlewares/validadores/validarDatosRefresh.js";
+import validarCambioPassword from "../middlewares/validadores/validarCambioPassword.js";
 import verificarToken from "../middlewares/authMiddleware.js";
 import { catchAsync } from "../helpers/catchAsync.js";
 
@@ -30,6 +31,9 @@ const aCuentaPublica = (user) => ({
     id: user.id,
     email: user.email,
     metadata: user.user_metadata,
+    proveedor: user.app_metadata?.provider ?? null,
+    // true si la cuenta tiene contraseña propia (email); false si entra solo con Google u otro proveedor
+    tienePassword: cuentaService.tieneContraseña(user),
 });
 
 router.get("/yo", verificarToken, catchAsync(async (req, res) => {
@@ -41,6 +45,37 @@ router.get("/yo", verificarToken, catchAsync(async (req, res) => {
         data: {
             cuenta: aCuentaPublica(req.user)
         }
+    });
+}));
+
+router.delete("/yo", verificarToken, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cuentas']
+       #swagger.summary = 'Eliminar la cuenta propia con todos sus perfiles y datos (pide password si la cuenta es de email)'
+       #swagger.requestBody = {
+           content: { "application/json": { schema: { type: "object", properties: { password: { type: "string" } } } } }
+       } */
+    await cuentaService.eliminarCuenta(req.user, req.body?.password);
+
+    res.status(status.OK).json({
+        success: true,
+        message: "Cuenta eliminada correctamente.",
+        data: null
+    });
+}));
+
+router.put("/yo/password", verificarToken, validarCambioPassword, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cuentas']
+       #swagger.summary = 'Cambiar la contraseña estando logueado (solo cuentas de email)'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { type: "object", properties: { passwordActual: { type: "string" }, passwordNueva: { type: "string" } } } } }
+       } */
+    await cuentaService.cambiarPassword(req.user, req.body.passwordActual, req.body.passwordNueva);
+
+    res.status(status.OK).json({
+        success: true,
+        message: "Contraseña actualizada correctamente.",
+        data: null
     });
 }));
 

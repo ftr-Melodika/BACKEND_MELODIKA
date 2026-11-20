@@ -71,6 +71,55 @@ class CuentaService {
 
         return { user: data.user };
     }
+
+    // Las cuentas que entran con Google no tienen contraseña: solo se les pide a las de email.
+    tieneContraseña(user) {
+        const proveedores = user.app_metadata?.providers ?? [user.app_metadata?.provider];
+        return proveedores.includes('email');
+    }
+
+    // Comprueba la contraseña con Supabase y devuelve la sesión que abre (sirve para actuar como ese usuario)
+    async confirmarPassword(user, password, cliente = authClient) {
+        if (typeof password !== 'string' || password.trim() === '') {
+            const err = new Error("Falta la contraseña para confirmar");
+            err.status = 400;
+            throw err;
+        }
+        const { data, error } = await cliente.auth.signInWithPassword({ email: user.email, password });
+        if (error) {
+            const err = new Error("Contraseña incorrecta");
+            err.status = 403;
+            throw err;
+        }
+        return data.session;
+    }
+
+    async eliminarCuenta(user, password) {
+        if (this.tieneContraseña(user)) {
+            await this.confirmarPassword(user, password);
+        }
+
+        await cuentaRepository.eliminarPorAuthId(user.id);
+    }
+
+    async cambiarPassword(user, passwordActual, passwordNueva) {
+        if (!this.tieneContraseña(user)) {
+            const err = new Error("La cuenta no usa contraseña");
+            err.status = 400;
+            throw err;
+        }
+
+        // Cliente propio de esta operación: queda logueado como el usuario para poder cambiarle la clave
+        const cliente = crearClienteAuth();
+        await this.confirmarPassword(user, passwordActual, cliente);
+
+        const { error } = await cliente.auth.updateUser({ password: passwordNueva });
+        if (error) {
+            const err = new Error(error.message);
+            err.status = error.status;
+            throw err;
+        }
+    }
 }
 
 export default CuentaService;

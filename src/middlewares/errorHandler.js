@@ -1,4 +1,4 @@
-import { mapLoginError, mapRegisterError } from "../helpers/mapperErrores/cuentaErrores.js";
+import { mapLoginError, mapRegisterError, mapEliminarCuentaError, mapCambiarPasswordError } from "../helpers/mapperErrores/cuentaErrores.js";
 import { mapCursoError } from "../helpers/mapperErrores/cursoErrores.js";
 import { mapPerfilError } from "../helpers/mapperErrores/perfilErrores.js";
 import { mapAmistadError } from "../helpers/mapperErrores/amistadErrores.js";
@@ -18,6 +18,8 @@ const resolveErrorMapper = (req) => {
 
     if (path.includes("/login")) return mapLoginError;
     if (path.includes("/registrar")) return mapRegisterError;
+    if (req.method === "PUT" && path.startsWith("/api/cuentas/yo/password")) return mapCambiarPasswordError;
+    if (req.method === "DELETE" && path.startsWith("/api/cuentas/yo")) return mapEliminarCuentaError;
     if (path.includes("/api/cursos")) return mapCursoError;
     if (path.includes("/api/canciones")) return mapCancionError;
     if (RUTA_AMISTADES.test(path)) return mapAmistadError;

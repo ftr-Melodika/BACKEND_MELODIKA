@@ -31,6 +31,16 @@ class CuentaRepository {
         }
     }
 
+    // Borra el usuario de Supabase Auth. Por las claves foráneas en cascada se van también
+    // su cuenta, perfiles, progreso, amistades, mensajes, sesiones y refresh tokens.
+    async eliminarPorAuthId(authId) {
+        try {
+            await pool.query('DELETE FROM auth.users WHERE id = $1', [authId]);
+        } catch (error) {
+            manejarErrorDB(error, MENSAJES_ERROR_DB.ELIMINAR_CUENTA);
+        }
+    }
+
 }
 
 export default CuentaRepository;

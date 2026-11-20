@@ -1,5 +1,6 @@
 import status from "http-status-codes";
 import validadores from "../validadores.js";
+import { traducirErrorDB } from "./erroresComunes.js";
 
 export function mapLoginError(error) {
     let codigoEstado = error.status || status.INTERNAL_SERVER_ERROR;
@@ -45,6 +46,38 @@ export function mapLoginError(error) {
     }
     
     return { codigoEstado, mensajeUsuario };
+}
+
+export function mapEliminarCuentaError(error) {
+    const traducido = traducirErrorDB(error);
+    if (traducido) return traducido;
+
+    switch (error.message) {
+        case "Falta la contraseña para confirmar":
+            return { codigoEstado: status.BAD_REQUEST, mensajeUsuario: "Ingresá tu contraseña para confirmar que querés eliminar la cuenta." };
+        case "Contraseña incorrecta":
+            return { codigoEstado: status.FORBIDDEN, mensajeUsuario: "La contraseña es incorrecta." };
+        default:
+            return { codigoEstado: error.status || status.INTERNAL_SERVER_ERROR, mensajeUsuario: "No se pudo eliminar la cuenta. Intentá de nuevo más tarde." };
+    }
+}
+
+export function mapCambiarPasswordError(error) {
+    const traducido = traducirErrorDB(error);
+    if (traducido) return traducido;
+
+    switch (error.message) {
+        case "Falta la contraseña para confirmar":
+            return { codigoEstado: status.BAD_REQUEST, mensajeUsuario: "Ingresá tu contraseña actual." };
+        case "Contraseña incorrecta":
+            return { codigoEstado: status.FORBIDDEN, mensajeUsuario: "La contraseña actual es incorrecta." };
+        case "La cuenta no usa contraseña":
+            return { codigoEstado: status.BAD_REQUEST, mensajeUsuario: "Tu cuenta entra con Google, no tiene contraseña para cambiar." };
+        case "New password should be different from the old password.":
+            return { codigoEstado: status.BAD_REQUEST, mensajeUsuario: "La contraseña nueva debe ser distinta de la actual." };
+        default:
+            return { codigoEstado: error.status || status.INTERNAL_SERVER_ERROR, mensajeUsuario: "No se pudo cambiar la contraseña. Intentá de nuevo más tarde." };
+    }
 }
 
 export function mapRegisterError(error) {

@@ -30,14 +30,28 @@ class CursoService {
         // 🔒 Barrera de seguridad: delegamos la validación a perfilService
         await perfilService.validarAccesoPerfil(authId, perfilId);
 
-        const cursos = await cursoRepository.obtenerCursos();
-        const progresosBD = await cursoRepository.obtenerProgresoCursos(perfilId);
+        const [cursos, progresosBD, ejercicios, completadosBD] = await Promise.all([
+            cursoRepository.obtenerCursos(),
+            cursoRepository.obtenerProgresoCursos(perfilId),
+            cursoRepository.obtenerTodosLosEjerciciosConCurso(),
+            cursoRepository.obtenerTodosLosEjerciciosCompletados(perfilId),
+        ]);
         const idsCompletados = progresosBD.map(progreso => progreso.curso_id);
+        const idsEjerciciosHechos = completadosBD.map(e => e.ejercicio_id);
+
+        const cursosConProgreso = marcarEstados(cursos, idsCompletados).map(curso => {
+            const leccionesCurso = ejercicios.filter(e => mismoId(e.cursoId, curso.id));
+            return {
+                ...curso,
+                totalLecciones: leccionesCurso.length,
+                leccionesCompletadas: leccionesCurso.filter(e => estaEn(idsEjerciciosHechos, e.id)).length
+            };
+        });
 
         return {
             perfilId,
             totalCursos: cursos.length,
-            cursos: marcarEstados(cursos, idsCompletados)
+            cursos: cursosConProgreso
         };
     }
 
@@ -45,11 +59,14 @@ class CursoService {
         // 🔒 Barrera de seguridad
         await perfilService.validarAccesoPerfil(authId, perfilId);
 
-        const cursoInfo = await cursoRepository.obtenerCursoPorId(cursoId);
+        // Las cuatro consultas son independientes: se piden a la vez en vez de una atrás de otra
+        const [cursoInfo, lecciones, ejerciciosCompletadosBD, completado] = await Promise.all([
+            cursoRepository.obtenerCursoPorId(cursoId),
+            cursoRepository.obtenerEjerciciosDeCurso(cursoId),
+            cursoRepository.obtenerEjerciciosCompletados(perfilId, cursoId),
+            cursoRepository.verificarCursoCompletado(perfilId, cursoId),
+        ]);
         if (!cursoInfo) return null; // Si no existe el curso, cortamos acá
-
-        const lecciones = await cursoRepository.obtenerEjerciciosDeCurso(cursoId);
-        const ejerciciosCompletadosBD = await cursoRepository.obtenerEjerciciosCompletados(perfilId, cursoId);
         const idsCompletados = ejerciciosCompletadosBD.map(e => e.ejercicio_id);
 
         const idsOmitidas = ejerciciosCompletadosBD.filter(e => e.omitida).map(e => e.ejercicio_id);
@@ -59,7 +76,7 @@ class CursoService {
 
         return {
             ...cursoInfo,
-            completado: await cursoRepository.verificarCursoCompletado(perfilId, cursoId),
+            completado,
             totalLecciones: lecciones.length,
             leccionesCompletadas: leccionesFinales.filter(l => l.completado).length,
             lecciones: leccionesFinales
@@ -73,11 +90,13 @@ class CursoService {
         const { perfilExistente } = await perfilService.validarAccesoPerfil(authId, perfilId);
 
         // 1. Buscamos la lección para saber cuánta XP da
-        const leccionesDelCurso = await cursoRepository.obtenerEjerciciosDeCurso(cursoId);
+        const [leccionesDelCurso, completadosBD] = await Promise.all([
+            cursoRepository.obtenerEjerciciosDeCurso(cursoId),
+            cursoRepository.obtenerEjerciciosCompletados(perfilId, cursoId),
+        ]);
         const leccion = leccionesDelCurso.find(l => mismoId(l.id, leccionId));
         if (!leccion) throw new Error("Ejercicio no encontrado.");
 
-        const completadosBD = await cursoRepository.obtenerEjerciciosCompletados(perfilId, cursoId);
         const idsCompletados = completadosBD.map(e => e.ejercicio_id);
         const registro = completadosBD.find(e => mismoId(e.ejercicio_id, leccion.id));
 
@@ -157,10 +176,12 @@ class CursoService {
 
     // No valida acceso: quien la llama decide si puede ver el progreso de este perfil
     async resumirProgreso(perfilId) {
-        const cursos = await cursoRepository.obtenerCursos();
-        const progresoCursos = await cursoRepository.obtenerProgresoCursos(perfilId);
-        const ejercicios = await cursoRepository.obtenerTodosLosEjerciciosConCurso();
-        const completadosBD = await cursoRepository.obtenerTodosLosEjerciciosCompletados(perfilId);
+        const [cursos, progresoCursos, ejercicios, completadosBD] = await Promise.all([
+            cursoRepository.obtenerCursos(),
+            cursoRepository.obtenerProgresoCursos(perfilId),
+            cursoRepository.obtenerTodosLosEjerciciosConCurso(),
+            cursoRepository.obtenerTodosLosEjerciciosCompletados(perfilId),
+        ]);
 
         const idsCompletados = completadosBD.map(e => e.ejercicio_id);
         const idsCursosCompletados = progresoCursos.map(p => p.curso_id);

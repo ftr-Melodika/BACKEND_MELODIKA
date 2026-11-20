@@ -48,6 +48,64 @@
             "description": ""
           }
         }
+      },
+      "delete": {
+        "tags": [
+          "Cuentas"
+        ],
+        "summary": "Eliminar la cuenta propia con todos sus perfiles y datos (pide password si la cuenta es de email)",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cuentas/yo/password": {
+      "put": {
+        "tags": [
+          "Cuentas"
+        ],
+        "summary": "Cambiar la contraseña estando logueado (solo cuentas de email)",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "passwordActual": {
+                    "type": "string"
+                  },
+                  "passwordNueva": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "/api/cuentas/login": {

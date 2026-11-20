@@ -11,6 +11,7 @@ export const MENSAJES_ERROR_DB = {
     ELIMINAR_PERFIL: "No se pudo eliminar el perfil en la base de datos",
     ACTUALIZAR_PERFIL: "No se pudo actualizar el perfil en la base de datos",
     OBTENER_PERFIL_POR_ID: "Error al conectar con la base de datos",
+    ELIMINAR_CUENTA: "No se pudo eliminar la cuenta en la base de datos",
     BUSCAR_CUENTA_AUTH: "Error al conectar con la base de datos",
     OBTENER_CURSOS: "Error al obtener cursos de la base de datos",
     OBTENER_CURSO_POR_ID: "Error al obtener el curso de la base de datos",

@@ -1,5 +1,6 @@
 import PerfilRepository, { DIAS_MAXIMOS_SIN_PRACTICAR } from '../repositories/PerfilesRepository.js';
 import CuentaRepository from '../repositories/cuentaRepository.js';
+import { CacheTemporal } from '../helpers/cacheTemporal.js';
 
 const perfilRepository = new PerfilRepository();
 const cuentaRepository = new CuentaRepository();
@@ -7,19 +8,31 @@ const cuentaRepository = new CuentaRepository();
 // 1. Subimos la constante de configuración arriba de todo
 const MAX_PERFILES = 4; 
 
+// La cuenta de un usuario (su id interno) no cambia, y todas las rutas la buscan para validar el acceso.
+// Solo se recuerdan las que existen: una cuenta recién registrada tiene que poder aparecer.
+const SEGUNDOS_CACHE_CUENTA = 300;
+const cuentasPorAuthId = new CacheTemporal({ duracionMs: SEGUNDOS_CACHE_CUENTA * 1000, maximo: 1000 });
+
 class PerfilService {
 
    async validarAccesoPerfil(authId, perfilId) {
-        const cuenta = await this._obtenerCuentaValidada(authId);
-        const perfilExistente = await perfilRepository.obtenerPorId(perfilId);
-        
+        // La cuenta y el perfil no dependen uno del otro: se piden a la vez
+        const [cuenta, perfilExistente] = await Promise.all([
+            this._obtenerCuentaValidada(authId),
+            perfilRepository.obtenerPorId(perfilId),
+        ]);
+
         this._validarEstadoYPermisos(perfilExistente, cuenta.id);
         
         return { cuenta, perfilExistente };
    }
     
     async _obtenerCuentaValidada(authId) {
-        const cuenta = await cuentaRepository.encontrarPorAuthId(authId);
+        let cuenta = cuentasPorAuthId.obtener(authId);
+        if (!cuenta) {
+            cuenta = await cuentaRepository.encontrarPorAuthId(authId);
+            if (cuenta) cuentasPorAuthId.guardar(authId, cuenta);
+        }
         if (!cuenta) {
             console.warn(`PerfilService: no se encontró cuenta local para authId: ${authId}`);
             throw new Error("Cuenta no encontrada");
