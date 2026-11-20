@@ -27,6 +27,18 @@ export function mapAmistadError(error) {
             mensajeUsuario = "Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.";
             codigoEstado = status.INTERNAL_SERVER_ERROR;
             break;
+        case "No se pudo procesar la invitación de amistad.":
+            mensajeUsuario = "Hubo un problema con el link de invitación. Intentá de nuevo más tarde.";
+            codigoEstado = status.INTERNAL_SERVER_ERROR;
+            break;
+        case "Invitación no válida":
+            mensajeUsuario = "Este link de invitación no es válido o ya fue reemplazado.";
+            codigoEstado = status.NOT_FOUND;
+            break;
+        case "No existe un perfil con ese username":
+            mensajeUsuario = "No encontramos a nadie con ese nombre de usuario.";
+            codigoEstado = status.NOT_FOUND;
+            break;
         case "No podés enviarte una solicitud a vos mismo":
             mensajeUsuario = "No podés enviarte una solicitud de amistad a vos mismo.";
             codigoEstado = status.BAD_REQUEST;

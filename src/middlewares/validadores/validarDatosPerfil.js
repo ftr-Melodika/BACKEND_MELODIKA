@@ -134,10 +134,38 @@ const validarAmistadId = (req, res, next) => {
     next();
 };
 
+// Token de invitación: 22 caracteres base64url
+const esTokenInvitacionValido = (token) => typeof token === 'string' && /^[A-Za-z0-9_-]{22}$/.test(token);
+
+const estaPresente = (valor) => valor !== undefined && valor !== null;
+
+// El destino se indica con uno solo de: destinoId, username o token (de un link de invitación)
 const validarDatosSolicitud = (req, res, next) => {
-    const { destinoId } = req.body ?? {};
-    if (typeof destinoId !== 'string' || !validadores.esIdValido(destinoId)) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: "El perfil de destino no es válido." });
+    const { destinoId, username, token } = req.body ?? {};
+    const rechazar = (message) => res.status(StatusCodes.BAD_REQUEST).json({ success: false, message });
+
+    const indicados = [destinoId, username, token].filter(estaPresente).length;
+    if (indicados !== 1) {
+        return rechazar("Indicá a quién enviar la solicitud: destinoId, username o token (solo uno).");
+    }
+    if (estaPresente(destinoId) && (typeof destinoId !== 'string' || !validadores.esIdValido(destinoId))) {
+        return rechazar("El perfil de destino no es válido.");
+    }
+    if (estaPresente(username) && (typeof username !== 'string' || !validadores.esUsernameValido(username))) {
+        return rechazar("El username no es válido.");
+    }
+    if (estaPresente(token) && !esTokenInvitacionValido(token)) {
+        return rechazar("El link de invitación no es válido.");
+    }
+
+    req.body = estaPresente(username) ? { username: username.trim() } : { destinoId, token };
+    next();
+};
+
+// Un token mal formado no puede existir: se responde igual que uno inexistente
+const validarTokenInvitacion = (req, res, next) => {
+    if (!esTokenInvitacionValido(req.params.token)) {
+        return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: "Este link de invitación no es válido o ya fue reemplazado." });
     }
     next();
 };
@@ -159,4 +187,5 @@ export {
     validarAmistadId,
     validarDatosSolicitud,
     validarAccionSolicitud,
+    validarTokenInvitacion,
 };

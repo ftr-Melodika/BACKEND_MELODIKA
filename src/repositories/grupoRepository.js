@@ -4,6 +4,8 @@ import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
 
 const UNIQUE_VIOLATION = '23505';
 const MAX_RESULTADOS_BUSQUEDA = 30;
+const ROL_ADMIN = 'admin';
+const ROL_MIEMBRO = 'miembro';
 
 // Los perfiles dados de baja siguen en chat_participantes, pero no cuentan como miembros
 const TOTAL_MIEMBROS = `(
@@ -71,8 +73,9 @@ class GrupoRepository {
         }
     }
 
+    // Crea el grupo con su creador como admin y los integrantes indicados como miembros, todo junto.
     // Devuelve el id del grupo, o null si el nombre ya está en uso
-    async crear(perfilId, nombre, descripcion) {
+    async crear(perfilId, nombre, descripcion, miembroIds = []) {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -84,9 +87,16 @@ class GrupoRepository {
             );
             const grupoId = creado.rows[0].id;
             await client.query(
-                'INSERT INTO chat_participantes (chat_id, perfil_id) VALUES ($1, $2)',
+                `INSERT INTO chat_participantes (chat_id, perfil_id, rol) VALUES ($1, $2, '${ROL_ADMIN}')`,
                 [grupoId, perfilId]
             );
+            if (miembroIds.length > 0) {
+                await client.query(
+                    `INSERT INTO chat_participantes (chat_id, perfil_id, rol)
+                     SELECT $1, miembro_id, '${ROL_MIEMBRO}' FROM unnest($2::uuid[]) AS miembro_id`,
+                    [grupoId, miembroIds]
+                );
+            }
             await client.query('COMMIT');
             return grupoId;
         } catch (error) {
@@ -121,7 +131,7 @@ class GrupoRepository {
     async listarMiembros(grupoId) {
         try {
             const resultado = await pool.query(
-                `SELECT p.id, p.nombre, p.username
+                `SELECT p.id, p.nombre, p.username, cp.rol
                  FROM chat_participantes cp
                  JOIN perfiles p ON p.id = cp.perfil_id
                  WHERE cp.chat_id = $1 AND p.activo = true
