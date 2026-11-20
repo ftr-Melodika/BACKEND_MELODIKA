@@ -25,6 +25,25 @@ router.get("/", verificarToken, catchAsync(async (req, res) => {
     });
 }));
 
+// Los datos de la cuenta que ve el frontend (los mismos en el login y en /yo)
+const aCuentaPublica = (user) => ({
+    id: user.id,
+    email: user.email,
+    metadata: user.user_metadata,
+});
+
+router.get("/yo", verificarToken, catchAsync(async (req, res) => {
+    /* #swagger.tags = ['Cuentas']
+       #swagger.summary = 'Datos de la cuenta del token (para entrar con Google u otros proveedores sin pasar por /login)' */
+    res.status(status.OK).json({
+        success: true,
+        message: "Cuenta obtenida correctamente.",
+        data: {
+            cuenta: aCuentaPublica(req.user)
+        }
+    });
+}));
+
 router.post("/login", validarLogin, catchAsync(async (req, res) => {
     const cuentaIngresada = req.body;
     const resultado = await cuentaService.login(cuentaIngresada.email, cuentaIngresada.password);
@@ -43,11 +62,7 @@ router.post("/login", validarLogin, catchAsync(async (req, res) => {
             token: resultado.token,
             refreshToken: resultado.refreshToken,
             expiresAt: resultado.expiresAt,
-            cuenta: {
-                id: resultado.user.id,
-                email: resultado.user.email,
-                metadata: resultado.user.user_metadata,
-            }
+            cuenta: aCuentaPublica(resultado.user)
         }
     });
 }));

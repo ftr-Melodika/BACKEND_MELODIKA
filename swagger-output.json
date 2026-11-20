@@ -36,6 +36,20 @@
         }
       }
     },
+    "/api/cuentas/yo": {
+      "get": {
+        "tags": [
+          "Cuentas"
+        ],
+        "summary": "Datos de la cuenta del token (para entrar con Google u otros proveedores sin pasar por /login)",
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/cuentas/login": {
       "post": {
         "tags": [
