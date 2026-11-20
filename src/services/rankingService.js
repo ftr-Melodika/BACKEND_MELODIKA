@@ -22,6 +22,8 @@ class RankingService {
         if (!await rankingRepository.existe(grupoId)) {
             return { activo: false, unido: false, participantes: [] };
         }
+        // Así nadie aparece con una racha que ya venció
+        await perfilService.reiniciarRachasVencidas();
         const participantes = await rankingRepository.listarParticipantes(grupoId);
         return {
             activo: true,

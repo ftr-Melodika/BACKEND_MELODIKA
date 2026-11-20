@@ -1,5 +1,8 @@
 import StatusCodes from 'http-status-codes';
 import validadores from '../../helpers/validadores.js';
+import { esCodigoGrupoValido, LARGO_CODIGO_GRUPO } from '../../helpers/codigoGrupo.js';
+
+const MENSAJE_CODIGO_INVALIDO = `El código tiene ${LARGO_CODIGO_GRUPO} letras o números, sin espacios.`;
 
 const LIMITE_POR_DEFECTO = 50;
 const LIMITE_MAXIMO = 100;
@@ -20,7 +23,11 @@ const validarGrupoId = (req, res, next) => {
 };
 
 const validarDatosCrearGrupo = (req, res, next) => {
-    const { nombre, descripcion, miembroIds } = req.body ?? {};
+    const { nombre, descripcion, miembroIds, esPrivado } = req.body ?? {};
+
+    if (esPrivado !== undefined && esPrivado !== null && typeof esPrivado !== 'boolean') {
+        return rechazar(res, "esPrivado debe ser verdadero o falso.");
+    }
 
     if (typeof nombre !== 'string' || tieneNul(nombre)) {
         return rechazar(res, "El nombre del grupo es obligatorio.");
@@ -47,7 +54,32 @@ const validarDatosCrearGrupo = (req, res, next) => {
         nombre: nombreLimpio,
         descripcion: descripcionLimpia,
         miembroIds: (miembroIds ?? []).map(id => id.toLowerCase()),
+        esPrivado: esPrivado === true,
     };
+    next();
+};
+
+// Unirse a un grupo por su ID: el código es opcional (solo lo piden los grupos privados)
+const validarCodigoOpcional = (req, res, next) => {
+    const { codigo } = req.body ?? {};
+    if (codigo === undefined || codigo === null || codigo === '') {
+        res.locals.codigo = null;
+        return next();
+    }
+    if (!esCodigoGrupoValido(codigo)) {
+        return rechazar(res, MENSAJE_CODIGO_INVALIDO);
+    }
+    res.locals.codigo = codigo;
+    next();
+};
+
+// Unirse solo con el código: es obligatorio
+const validarCodigoObligatorio = (req, res, next) => {
+    const { codigo } = req.body ?? {};
+    if (!esCodigoGrupoValido(codigo)) {
+        return rechazar(res, MENSAJE_CODIGO_INVALIDO);
+    }
+    res.locals.codigo = codigo;
     next();
 };
 
@@ -129,4 +161,6 @@ export {
     validarBusquedaGrupos,
     validarConsultaMensajes,
     validarDatosMensajeGrupo,
+    validarCodigoOpcional,
+    validarCodigoObligatorio,
 };

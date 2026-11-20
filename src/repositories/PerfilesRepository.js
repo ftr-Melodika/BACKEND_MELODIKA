@@ -174,24 +174,6 @@ class PerfilRepository {
         }
     }
 
-    // Ranking Global
-    async obtenerTopRanking() {
-        try {
-            await this.reiniciarRachasVencidas();
-            const query = `
-                SELECT id, nombre, username, avatar_url, COALESCE(xp, 0) AS xp, COALESCE(racha, 0) AS racha
-                FROM perfiles
-                WHERE activo = true
-                ORDER BY COALESCE(xp, 0) DESC, COALESCE(racha, 0) DESC, created_at ASC
-                LIMIT 10;
-            `;
-            const resultado = await pool.query(query);
-            return resultado.rows;
-        } catch (error) {
-            manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_RANKING);
-        }
-    }
-
     // Realiza un borrado lógico del perfil
     async eliminarPerfil(perfilId, cuentaId) {
         try {

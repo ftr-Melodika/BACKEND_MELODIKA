@@ -3,7 +3,6 @@ export const MENSAJES_ERROR_DB = {
     BUSCAR_PERFILES: "Error al conectar con la base de datos para buscar perfiles",
     CREAR_PERFIL: "No se pudo crear el perfil en la base de datos",
     ACTUALIZAR_RACHA: "No se pudo procesar la racha.",
-    OBTENER_RANKING: "Error al cargar el ranking",
     GUARDAR_MENSAJE: "No se pudo guardar el mensaje.",
     GESTIONAR_AMISTADES: "No se pudo procesar la solicitud de amistad.",
     GESTIONAR_INVITACIONES: "No se pudo procesar la invitación de amistad.",

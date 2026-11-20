@@ -51,7 +51,6 @@ export function mapPerfilError(error) {
             break;
         case "No se pudo procesar la racha.":
         case "No se pudo guardar el mensaje.":
-        case "Error al cargar el ranking":
             mensajeUsuario = "Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.";
             codigoEstado = status.INTERNAL_SERVER_ERROR;
             break;

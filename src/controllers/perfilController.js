@@ -7,19 +7,6 @@ import { validarDatosCrearPerfil, validarDatosActualizarPerfil, validarIdPerfil,
 
 const router = Router();
 
-router.get("/ranking", verificarToken, catchAsync(async (req, res) => {
-    
-        /* #swagger.tags = ['Perfiles']
-       #swagger.summary = 'Obtener ranking global' */
-
-    const resultado = await perfilService.obtenerRanking();
-
-    return res.status(status.OK).json({
-        success: true,
-        data: resultado
-    });
-}));
-
 router.post("/:id/racha", verificarToken, validarIdPerfil, catchAsync(async (req, res) => {
     
     /* #swagger.tags = ['Perfiles']

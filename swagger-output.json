@@ -435,7 +435,7 @@
         "tags": [
           "Grupos"
         ],
-        "summary": "Crear un grupo (opcional: miembroIds con amigos a sumar, hasta 49)",
+        "summary": "Crear un grupo (opcional: miembroIds con amigos a sumar, hasta 49; esPrivado para que se entre solo con código)",
         "description": "",
         "parameters": [
           {
@@ -496,12 +496,46 @@
         }
       }
     },
+    "/api/perfiles/{id}/grupos/unirse-con-codigo": {
+      "post": {
+        "tags": [
+          "Grupos"
+        ],
+        "summary": "Unirse a un grupo privado solo con su código",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigoGrupo"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/perfiles/{id}/grupos/{grupoId}/unirse": {
       "post": {
         "tags": [
           "Grupos"
         ],
-        "summary": "Unirse a un grupo",
+        "summary": "Unirse a un grupo (si es privado, con su código en el cuerpo)",
         "description": "",
         "parameters": [
           {
@@ -524,6 +558,16 @@
         "responses": {
           "default": {
             "description": ""
+          }
+        },
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CodigoGrupo"
+              }
+            }
           }
         }
       }
@@ -799,20 +843,6 @@
             }
           }
         ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      }
-    },
-    "/api/perfiles/ranking": {
-      "get": {
-        "tags": [
-          "Perfiles"
-        ],
-        "summary": "Obtener ranking global",
-        "description": "",
         "responses": {
           "default": {
             "description": ""
@@ -1360,10 +1390,26 @@
             "items": {
               "type": "string"
             }
+          },
+          "esPrivado": {
+            "type": "boolean",
+            "example": false
           }
         },
         "required": [
           "nombre"
+        ]
+      },
+      "CodigoGrupo": {
+        "type": "object",
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "example": "aB3dE9xZ"
+          }
+        },
+        "required": [
+          "codigo"
         ]
       },
       "MensajeGrupo": {

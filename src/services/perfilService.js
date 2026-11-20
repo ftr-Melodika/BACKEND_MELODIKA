@@ -134,12 +134,9 @@ class PerfilService {
         return await perfilRepository.registrarMensaje(perfilId, tipo, datos);
     }
 
-    async obtenerRanking() {
-        const top10 = await perfilRepository.obtenerTopRanking();
-        return {
-            total_jugadores: top10.length,
-            ranking: top10.map((jugador, index) => ({ posicion: index + 1, ...jugador }))
-        };
+    // Antes de mostrar rachas ajenas (por ejemplo en un ranking de grupo), pone en 0 las vencidas
+    async reiniciarRachasVencidas() {
+        await perfilRepository.reiniciarRachasVencidas();
     }
 }
 

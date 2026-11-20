@@ -10,6 +10,8 @@ import {
     validarBusquedaGrupos,
     validarConsultaMensajes,
     validarDatosMensajeGrupo,
+    validarCodigoOpcional,
+    validarCodigoObligatorio,
 } from "../middlewares/validadores/validarDatosGrupo.js";
 
 const router = Router();
@@ -47,14 +49,14 @@ router.get("/:id/grupos/buscar", verificarToken, validarIdPerfil, validarBusqued
 router.post("/:id/grupos", verificarToken, validarIdPerfil, validarDatosCrearGrupo, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Grupos']
-       #swagger.summary = 'Crear un grupo (opcional: miembroIds con amigos a sumar, hasta 49)'
+       #swagger.summary = 'Crear un grupo (opcional: miembroIds con amigos a sumar, hasta 49; esPrivado para que se entre solo con código)'
        #swagger.requestBody = {
            required: true,
            content: { "application/json": { schema: { $ref: "#/components/schemas/CrearGrupo" } } }
        } */
 
-    const { nombre, descripcion, miembroIds } = req.body;
-    const datos = await grupoService.crearGrupo(req.user.id, req.params.id, nombre, descripcion, miembroIds);
+    const { nombre, descripcion, miembroIds, esPrivado } = req.body;
+    const datos = await grupoService.crearGrupo(req.user.id, req.params.id, nombre, descripcion, miembroIds, esPrivado);
 
     return res.status(status.CREATED).json({
         success: true,
@@ -77,12 +79,35 @@ router.get("/:id/grupos/:grupoId", verificarToken, validarIdPerfil, validarGrupo
     });
 }));
 
-router.post("/:id/grupos/:grupoId/unirse", verificarToken, validarIdPerfil, validarGrupoId, catchAsync(async (req, res) => {
+// Va antes que /:grupoId/unirse para que "unirse-con-codigo" no se tome como un ID
+router.post("/:id/grupos/unirse-con-codigo", verificarToken, validarIdPerfil, validarCodigoObligatorio, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Grupos']
-       #swagger.summary = 'Unirse a un grupo' */
+       #swagger.summary = 'Unirse a un grupo privado solo con su código'
+       #swagger.requestBody = {
+           required: true,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/CodigoGrupo" } } }
+       } */
 
-    const datos = await grupoService.unirse(req.user.id, req.params.id, req.params.grupoId);
+    const datos = await grupoService.unirseConCodigo(req.user.id, req.params.id, res.locals.codigo);
+
+    return res.status(status.OK).json({
+        success: true,
+        message: "Te uniste al grupo.",
+        data: datos
+    });
+}));
+
+router.post("/:id/grupos/:grupoId/unirse", verificarToken, validarIdPerfil, validarGrupoId, validarCodigoOpcional, catchAsync(async (req, res) => {
+
+    /* #swagger.tags = ['Grupos']
+       #swagger.summary = 'Unirse a un grupo (si es privado, con su código en el cuerpo)'
+       #swagger.requestBody = {
+           required: false,
+           content: { "application/json": { schema: { $ref: "#/components/schemas/CodigoGrupo" } } }
+       } */
+
+    const datos = await grupoService.unirse(req.user.id, req.params.id, req.params.grupoId, res.locals.codigo);
 
     return res.status(status.OK).json({
         success: true,

@@ -42,6 +42,19 @@ export function mapGrupoError(error) {
             mensajeUsuario = "No encontramos ese mensaje en este grupo.";
             codigoEstado = status.NOT_FOUND;
             break;
+        case "El grupo es privado":
+            mensajeUsuario = "Este grupo es privado: necesitás su código para entrar.";
+            codigoEstado = status.FORBIDDEN;
+            break;
+        // Mismo mensaje si el código no existe o es de otro grupo: no revela qué códigos están en uso
+        case "Código de grupo incorrecto":
+            mensajeUsuario = "El código no es correcto. Revisalo: distingue mayúsculas y minúsculas.";
+            codigoEstado = status.FORBIDDEN;
+            break;
+        case "No se pudo generar el código del grupo":
+            mensajeUsuario = "No pudimos crear el grupo privado. Intentá de nuevo.";
+            codigoEstado = status.INTERNAL_SERVER_ERROR;
+            break;
         default:
             mensajeUsuario = codigoEstado >= 500
                 ? "Hubo un error interno en el servidor"

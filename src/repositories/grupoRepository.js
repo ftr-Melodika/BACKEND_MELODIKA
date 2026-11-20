@@ -3,7 +3,11 @@ import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
 import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
 
 const UNIQUE_VIOLATION = '23505';
+const INDICE_CODIGO_UNICO = 'chats_codigo_unico';
 const MAX_RESULTADOS_BUSQUEDA = 30;
+
+// Resultado de crear() cuando el código generado ya lo tiene otro grupo (se reintenta con otro)
+export const CODIGO_REPETIDO = 'codigo-repetido';
 const ROL_ADMIN = 'admin';
 const ROL_MIEMBRO = 'miembro';
 
@@ -28,7 +32,7 @@ class GrupoRepository {
     async listarDePerfil(perfilId) {
         try {
             const resultado = await pool.query(
-                `SELECT c.id, c.nombre, c.descripcion, c.creador_id, ${TOTAL_MIEMBROS} AS total_miembros,
+                `SELECT c.id, c.nombre, c.descripcion, c.creador_id, c.es_privado, ${TOTAL_MIEMBROS} AS total_miembros,
                         ultimo.contenido AS ultimo_contenido,
                         ultimo.created_at AS ultimo_created_at,
                         ultimo.remitente_nombre AS ultimo_remitente_nombre
@@ -55,7 +59,7 @@ class GrupoRepository {
     async buscar(perfilId, texto) {
         try {
             const resultado = await pool.query(
-                `SELECT c.id, c.nombre, c.descripcion, ${TOTAL_MIEMBROS} AS total_miembros,
+                `SELECT c.id, c.nombre, c.descripcion, c.es_privado, ${TOTAL_MIEMBROS} AS total_miembros,
                         EXISTS (
                             SELECT 1 FROM chat_participantes yo
                             WHERE yo.chat_id = c.id AND yo.perfil_id = $1
@@ -74,16 +78,17 @@ class GrupoRepository {
     }
 
     // Crea el grupo con su creador como admin y los integrantes indicados como miembros, todo junto.
-    // Devuelve el id del grupo, o null si el nombre ya está en uso
-    async crear(perfilId, nombre, descripcion, miembroIds = []) {
+    // codigo: null para un grupo público. Devuelve el id del grupo, null si el nombre ya está en uso,
+    // o CODIGO_REPETIDO si el código ya lo tiene otro grupo.
+    async crear(perfilId, nombre, descripcion, miembroIds = [], codigo = null) {
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
             const creado = await client.query(
-                `INSERT INTO chats (es_grupo, nombre, descripcion, creador_id)
-                 VALUES (true, $1, $2, $3)
+                `INSERT INTO chats (es_grupo, nombre, descripcion, creador_id, es_privado, codigo)
+                 VALUES (true, $1, $2, $3, $4, $5)
                  RETURNING id`,
-                [nombre, descripcion, perfilId]
+                [nombre, descripcion, perfilId, codigo !== null, codigo]
             );
             const grupoId = creado.rows[0].id;
             await client.query(
@@ -102,7 +107,7 @@ class GrupoRepository {
         } catch (error) {
             await client.query('ROLLBACK');
             if (error.code === UNIQUE_VIOLATION) {
-                return null;
+                return error.constraint === INDICE_CODIGO_UNICO ? CODIGO_REPETIDO : null;
             }
             manejarErrorDB(error, MENSAJES_ERROR_DB.GESTIONAR_GRUPOS);
         } finally {
@@ -113,7 +118,8 @@ class GrupoRepository {
     async obtenerPorId(grupoId, perfilId) {
         try {
             const resultado = await pool.query(
-                `SELECT c.id, c.nombre, c.descripcion, c.creador_id, ${TOTAL_MIEMBROS} AS total_miembros,
+                `SELECT c.id, c.nombre, c.descripcion, c.creador_id, c.es_privado, c.codigo,
+                        ${TOTAL_MIEMBROS} AS total_miembros,
                         EXISTS (
                             SELECT 1 FROM chat_participantes yo
                             WHERE yo.chat_id = c.id AND yo.perfil_id = $2
@@ -123,6 +129,19 @@ class GrupoRepository {
                 [grupoId, perfilId]
             );
             return resultado.rows[0] ?? null;
+        } catch (error) {
+            manejarErrorDB(error, MENSAJES_ERROR_DB.GESTIONAR_GRUPOS);
+        }
+    }
+
+    // El grupo privado que tiene ese código exacto (distingue mayúsculas), o null
+    async obtenerIdPorCodigo(codigo) {
+        try {
+            const resultado = await pool.query(
+                'SELECT id FROM chats WHERE codigo = $1 AND es_grupo = true AND es_privado = true',
+                [codigo]
+            );
+            return resultado.rows[0]?.id ?? null;
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.GESTIONAR_GRUPOS);
         }

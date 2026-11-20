@@ -57,7 +57,11 @@ const doc = {
       CrearGrupo: {
         $nombre: "Guitarristas Principiantes",
         descripcion: "Grupo para compartir avances",
-        miembroIds: ["uuid-de-un-amigo"]
+        miembroIds: ["uuid-de-un-amigo"],
+        esPrivado: false
+      },
+      CodigoGrupo: {
+        $codigo: "aB3dE9xZ"
       },
       MensajeGrupo: {
         $contenido: "Hola a todos!"
