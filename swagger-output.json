@@ -656,6 +656,156 @@
         }
       }
     },
+    "/api/perfiles/{id}/rankings": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Listar los rankings de grupo en los que participo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/{grupoId}/ranking": {
+      "get": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Ver el ranking de un grupo (solo miembros). activo=false si todavía no se creó",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Invitar al grupo a un ranking: lo crea, suma a quien invita y manda la invitación al chat",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/{grupoId}/ranking/aceptar": {
+      "post": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Aceptar la invitación y entrar al ranking del grupo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/grupos/{grupoId}/ranking/salir": {
+      "delete": {
+        "tags": [
+          "Rankings"
+        ],
+        "summary": "Salir del ranking del grupo",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "grupoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/perfiles/ranking": {
       "get": {
         "tags": [

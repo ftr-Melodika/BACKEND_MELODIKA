@@ -11,6 +11,7 @@ const mismoPerfil = (a, b) => String(a).toLowerCase() === String(b).toLowerCase(
 // chat se consulta cada pocos segundos) ni cuentaId, fecha de nacimiento o género.
 const aMensaje = (fila, perfilId) => ({
     id: fila.id,
+    tipo: fila.tipo,
     contenido: fila.contenido,
     createdAt: fila.created_at,
     remitente: fila.remitente_id
@@ -30,7 +31,7 @@ class GrupoService {
         return grupo;
     }
 
-    async _exigirMembresia(grupoId, perfilId) {
+    async exigirMembresia(grupoId, perfilId) {
         const grupo = await this._obtenerGrupo(grupoId, perfilId);
         if (!grupo.unido) {
             throw new Error("No sos miembro de este grupo");
@@ -128,7 +129,7 @@ class GrupoService {
 
     async listarMensajes(authId, perfilId, grupoId, { limite, despues, antes }) {
         await perfilService.validarAccesoPerfil(authId, perfilId);
-        await this._exigirMembresia(grupoId, perfilId);
+        await this.exigirMembresia(grupoId, perfilId);
 
         if (despues) {
             await this._exigirMensaje(grupoId, despues);
@@ -155,7 +156,7 @@ class GrupoService {
 
     async enviarMensaje(authId, perfilId, grupoId, contenido) {
         const { perfilExistente } = await perfilService.validarAccesoPerfil(authId, perfilId);
-        await this._exigirMembresia(grupoId, perfilId);
+        await this.exigirMembresia(grupoId, perfilId);
 
         const fila = await grupoRepository.crearMensaje(grupoId, perfilId, contenido);
         return aMensaje({

@@ -1,6 +1,6 @@
 import status from "http-status-codes";
 import validadores from "../validadores.js";
-import { traducirErrorDB, traducirErrorAccesoPerfil } from "./erroresComunes.js";
+import { traducirErrorDB, traducirErrorAccesoPerfil, traducirErrorMembresiaGrupo } from "./erroresComunes.js";
 
 export function mapGrupoError(error) {
     // 23505: ya existe un grupo con ese nombre
@@ -19,6 +19,9 @@ export function mapGrupoError(error) {
     const errorAcceso = traducirErrorAccesoPerfil(error.message);
     if (errorAcceso) return errorAcceso;
 
+    const errorMembresia = traducirErrorMembresiaGrupo(error.message);
+    if (errorMembresia) return errorMembresia;
+
     let codigoEstado = error.status || status.INTERNAL_SERVER_ERROR;
     let mensajeUsuario;
 
@@ -27,10 +30,6 @@ export function mapGrupoError(error) {
             mensajeUsuario = "Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.";
             codigoEstado = status.INTERNAL_SERVER_ERROR;
             break;
-        case "Grupo no encontrado":
-            mensajeUsuario = "No encontramos ese grupo.";
-            codigoEstado = status.NOT_FOUND;
-            break;
         case "Ya existe un grupo con ese nombre":
             mensajeUsuario = "Ya existe un grupo con ese nombre. Elegí otro.";
             codigoEstado = status.CONFLICT;
@@ -38,10 +37,6 @@ export function mapGrupoError(error) {
         case "Solo podés agregar a tus amigos":
             mensajeUsuario = "Solo podés agregar al grupo a personas que ya son tus amigas.";
             codigoEstado = status.BAD_REQUEST;
-            break;
-        case "No sos miembro de este grupo":
-            mensajeUsuario = "Tenés que unirte al grupo para ver y enviar mensajes.";
-            codigoEstado = status.FORBIDDEN;
             break;
         case "Mensaje no encontrado":
             mensajeUsuario = "No encontramos ese mensaje en este grupo.";
