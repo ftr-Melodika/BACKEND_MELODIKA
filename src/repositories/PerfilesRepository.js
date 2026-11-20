@@ -6,11 +6,46 @@ import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
 // Zona horaria usada para decidir qué es "hoy" en la racha
 const ZONA_HORARIA = 'America/Argentina/Buenos_Aires';
 
+// Días de calendario que se pueden dejar pasar sin practicar sin perder la racha.
+// 1 = practicó ayer: sigue. 2 o más días desde la última práctica: la racha vuelve a 0.
+export const DIAS_MAXIMOS_SIN_PRACTICAR = 1;
+
+// Días desde el último día que sumó racha (hora argentina). Sin ninguna práctica registrada, 999.
+// Se usa en la tabla perfiles con el alias `p`.
+const SQL_DIAS_SIN_PRACTICAR = `
+    COALESCE(
+        (NOW() AT TIME ZONE '${ZONA_HORARIA}')::date
+        - (
+            SELECT MAX(e.created_at AT TIME ZONE '${ZONA_HORARIA}')::date
+            FROM eventos e
+            WHERE e.perfil_id = p.id AND e.nombre = 'racha_diaria'
+          ),
+        999
+    )`;
+
 class PerfilRepository {
-    
+
+    // Pone en 0 la racha de los perfiles que pasaron más de un día sin practicar.
+    // Se llama antes de leer perfiles, así quien mira su racha (o la de otro, o el ranking)
+    // ve 0 aunque todavía no haya vuelto a entrar. `filtro` limita a qué perfiles se aplica.
+    async reiniciarRachasVencidas({ perfilId = null, cuentaId = null } = {}) {
+        try {
+            await pool.query(`
+                UPDATE perfiles p SET racha = 0
+                WHERE COALESCE(p.racha, 0) > 0
+                  AND ($1::text IS NULL OR p.id::text = $1)
+                  AND ($2::text IS NULL OR p.cuenta_id::text = $2)
+                  AND ${SQL_DIAS_SIN_PRACTICAR} > ${DIAS_MAXIMOS_SIN_PRACTICAR}
+            `, [perfilId, cuentaId]);
+        } catch (error) {
+            manejarErrorDB(error, MENSAJES_ERROR_DB.ACTUALIZAR_RACHA);
+        }
+    }
+
     // Trae todos los perfiles activos de una cuenta específica
     async obtenerPorCuentaId(cuentaId) {
         try {
+            await this.reiniciarRachasVencidas({ cuentaId });
             const query = 'SELECT * FROM perfiles WHERE cuenta_id = $1 AND activo = true';
             const resultado = await pool.query(query, [cuentaId]);
             
@@ -91,16 +126,7 @@ class PerfilRepository {
             // Días de calendario (hora argentina) desde el último día que sumó racha.
             // Si nunca sumó, usamos 999 para que arranque una racha nueva.
             const info = await client.query(`
-                SELECT p.racha,
-                       COALESCE(
-                           (NOW() AT TIME ZONE '${ZONA_HORARIA}')::date
-                           - (
-                               SELECT MAX(e.created_at AT TIME ZONE '${ZONA_HORARIA}')::date
-                               FROM eventos e
-                               WHERE e.perfil_id = p.id AND e.nombre = 'racha_diaria'
-                             ),
-                           999
-                       ) AS dias_pasados
+                SELECT p.racha, ${SQL_DIAS_SIN_PRACTICAR} AS dias_pasados
                 FROM perfiles p
                 WHERE p.id = $1
                 FOR UPDATE
@@ -118,7 +144,7 @@ class PerfilRepository {
                 return { racha: racha ?? 0, dias_pasados };
             }
 
-            const nuevaRacha = dias_pasados <= 3 ? (racha ?? 0) + 1 : 1;
+            const nuevaRacha = dias_pasados <= DIAS_MAXIMOS_SIN_PRACTICAR ? (racha ?? 0) + 1 : 1;
             await client.query('UPDATE perfiles SET racha = $1 WHERE id = $2', [nuevaRacha, perfilId]);
             await client.query(
                 `INSERT INTO eventos (perfil_id, nombre, datos) VALUES ($1, 'racha_diaria', $2)`,
@@ -151,6 +177,7 @@ class PerfilRepository {
     // Ranking Global
     async obtenerTopRanking() {
         try {
+            await this.reiniciarRachasVencidas();
             const query = `
                 SELECT id, nombre, username, avatar_url, COALESCE(xp, 0) AS xp, COALESCE(racha, 0) AS racha
                 FROM perfiles
@@ -250,6 +277,7 @@ class PerfilRepository {
     // Busca un perfil específico por su ID sin importar su estado
     async obtenerPorId(perfilId) {
         try {
+            await this.reiniciarRachasVencidas({ perfilId });
             const query = 'SELECT * FROM perfiles WHERE id = $1';
             const resultado = await pool.query(query, [perfilId]);
             

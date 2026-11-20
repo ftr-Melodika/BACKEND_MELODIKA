@@ -8,9 +8,9 @@
 //   npm run seed:cursos                    Guarda un backup en backups/ y actualiza los cursos
 //   npm run seed:cursos -- --restaurar backups/cursos-XXXX.json   Vuelve al backup
 //
-// Cada lección se identifica por su curso y su nombre: si ya existe se actualiza en su lugar (y el
-// progreso de los alumnos se conserva); si es nueva se crea; si ya no está en el archivo se borra,
-// con su progreso. Cambiarle el nombre a una lección es borrarla y crear otra.
+// Cada lección se identifica por su nombre: si ya existe se actualiza en su lugar (y el progreso de
+// los alumnos se conserva); si es nueva se crea; si ya no está en el archivo se borra, con su
+// progreso. Para renombrar una lección sin perder el progreso, agregá el nombre viejo a `antes`.
 // Los cursos de guitarra que no están en el archivo también se borran.
 // Todo corre en una transacción: si algo falla, la base queda como estaba.
 import pg from 'pg';
@@ -85,8 +85,9 @@ async function borrarCursos(ids) {
   await client.query('DELETE FROM cursos WHERE id = ANY($1)', [ids]);
 }
 
-// Cada lección se busca en todos los cursos de guitarra, por su nombre o por `nombreAnterior`
-// (si se renombró o se movió de curso): así se actualiza en su lugar y el progreso se conserva.
+// Cada lección se busca en todos los cursos de guitarra, por su nombre o por alguno de sus
+// `nombresAnteriores` (si se renombró, se movió de curso o reemplaza a otra): así se actualiza
+// en su lugar y el progreso se conserva.
 async function sincronizar() {
   // Primero los cursos, para poder mover lecciones a los nuevos
   for (const curso of CURSOS) {
@@ -113,7 +114,8 @@ async function sincronizar() {
     let nuevas = 0;
     for (const [i, l] of curso.lecciones.entries()) {
       const valores = [l.nombre, l.descripcion, i + 1, l.xp, l.tipo, l.texto_teoria, l.texto_destacado, JSON.stringify(l.instrucciones || []), l.practica ? JSON.stringify(l.practica) : null, curso.id];
-      const existente = [porNombre.get(l.nombre), porNombre.get(l.nombreAnterior)].find((r) => r && !usados.has(r.id));
+      const anteriores = l.nombresAnteriores ?? (l.nombreAnterior ? [l.nombreAnterior] : []);
+      const existente = [l.nombre, ...anteriores].map((n) => porNombre.get(n)).find((r) => r && !usados.has(r.id));
       if (existente) {
         await client.query(
           `UPDATE ejercicios SET nombre = $1, descripcion = $2, orden = $3, xp_recompensa = $4, tipo = $5, texto_teoria = $6,

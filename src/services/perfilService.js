@@ -1,4 +1,4 @@
-import PerfilRepository from '../repositories/PerfilesRepository.js';
+import PerfilRepository, { DIAS_MAXIMOS_SIN_PRACTICAR } from '../repositories/PerfilesRepository.js';
 import CuentaRepository from '../repositories/cuentaRepository.js';
 
 const perfilRepository = new PerfilRepository();
@@ -110,7 +110,7 @@ class PerfilService {
 
         if (resultado.dias_pasados === 0) {
             mensajeApp = "¡Ya habías sumado tu racha de hoy! 🔥";
-        } else if (resultado.dias_pasados <= 3) {
+        } else if (resultado.dias_pasados <= DIAS_MAXIMOS_SIN_PRACTICAR) {
             mensajeApp = `¡Excelente! Tu racha subió a ${resultado.racha} 🔥`;
             mostrarAnimacion = true;
             rachaAnterior = resultado.racha - 1;
