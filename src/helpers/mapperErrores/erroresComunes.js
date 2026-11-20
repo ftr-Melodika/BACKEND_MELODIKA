@@ -53,3 +53,20 @@ const ERRORES_ACCESO_PERFIL = {
 export function traducirErrorAccesoPerfil(mensaje) {
     return ERRORES_ACCESO_PERFIL[mensaje] ?? null;
 }
+
+// Errores que lanza grupoService al comprobar el grupo y la pertenencia, usado por grupos y rankings.
+const ERRORES_MEMBRESIA_GRUPO = {
+    "Grupo no encontrado": {
+        codigoEstado: status.NOT_FOUND,
+        mensajeUsuario: "No encontramos ese grupo."
+    },
+    "No sos miembro de este grupo": {
+        codigoEstado: status.FORBIDDEN,
+        mensajeUsuario: "Tenés que unirte al grupo para ver y enviar mensajes."
+    }
+};
+
+// Devuelve { codigoEstado, mensajeUsuario } o null si el mensaje no es de pertenencia al grupo.
+export function traducirErrorMembresiaGrupo(mensaje) {
+    return ERRORES_MEMBRESIA_GRUPO[mensaje] ?? null;
+}

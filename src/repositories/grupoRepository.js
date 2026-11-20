@@ -14,7 +14,7 @@ const TOTAL_MIEMBROS = `(
 )`;
 
 const CAMPOS_MENSAJE = `
-    m.id, m.contenido, m.created_at, m.remitente_id,
+    m.id, m.tipo, m.contenido, m.created_at, m.remitente_id,
     p.nombre AS remitente_nombre, p.username AS remitente_username
 `;
 
@@ -218,7 +218,7 @@ class GrupoRepository {
             const resultado = await pool.query(
                 `INSERT INTO mensajes (chat_id, remitente_id, contenido)
                  VALUES ($1, $2, $3)
-                 RETURNING id, contenido, created_at, remitente_id`,
+                 RETURNING id, tipo, contenido, created_at, remitente_id`,
                 [grupoId, remitenteId, contenido]
             );
             return resultado.rows[0];
