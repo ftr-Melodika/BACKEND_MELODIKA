@@ -8,7 +8,7 @@ import { mapCancionError } from "../helpers/mapperErrores/cancionErrores.js";
 import { registrarErrorOculto } from "../helpers/manejoErrores/registrarErrorOculto.js";
 
 // Amistades y grupos cuelgan de /api/perfiles/:id/..., por eso van antes que el mapper de perfiles
-const RUTA_AMISTADES = /^\/api\/perfiles\/[^/]+\/(solicitudes|amistades|amigos|social)(\/|\?|$)/;
+const RUTA_AMISTADES = /^\/api\/perfiles\/[^/]+\/(solicitudes|amistades|amigos|social|invitacion)(\/|\?|$)/;
 const RUTA_GRUPOS = /^\/api\/perfiles\/[^/]+\/grupos(\/|\?|$)/;
 // El ranking de un grupo cuelga de /grupos/:grupoId/ranking, así que va antes que RUTA_GRUPOS
 const RUTA_RANKINGS = /^\/api\/perfiles\/[^/]+\/(rankings|grupos\/[^/]+\/ranking)(\/|\?|$)/;

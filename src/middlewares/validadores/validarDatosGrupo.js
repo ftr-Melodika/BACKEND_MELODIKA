@@ -4,6 +4,8 @@ import validadores from '../../helpers/validadores.js';
 const LIMITE_POR_DEFECTO = 50;
 const LIMITE_MAXIMO = 100;
 const MAX_TEXTO_BUSQUEDA = 100;
+const MAX_INTEGRANTES_GRUPO = 50;
+const MAX_MIEMBROS_INVITADOS = MAX_INTEGRANTES_GRUPO - 1; // el creador ocupa un lugar
 
 // Postgres rechaza el carácter NUL en columnas de texto: sin esto terminaría en un 500
 const tieneNul = (texto) => texto.includes('\u0000');
@@ -18,7 +20,7 @@ const validarGrupoId = (req, res, next) => {
 };
 
 const validarDatosCrearGrupo = (req, res, next) => {
-    const { nombre, descripcion } = req.body ?? {};
+    const { nombre, descripcion, miembroIds } = req.body ?? {};
 
     if (typeof nombre !== 'string' || tieneNul(nombre)) {
         return rechazar(res, "El nombre del grupo es obligatorio.");
@@ -36,8 +38,40 @@ const validarDatosCrearGrupo = (req, res, next) => {
         return rechazar(res, "La descripción puede tener hasta 200 caracteres.");
     }
 
-    req.body = { nombre: nombreLimpio, descripcion: descripcionLimpia };
+    const errorMiembros = validarMiembroIds(miembroIds, req.params.id);
+    if (errorMiembros) {
+        return rechazar(res, errorMiembros);
+    }
+
+    req.body = {
+        nombre: nombreLimpio,
+        descripcion: descripcionLimpia,
+        miembroIds: (miembroIds ?? []).map(id => id.toLowerCase()),
+    };
     next();
+};
+
+// Devuelve el texto del error, o null si la lista (opcional) es válida
+const validarMiembroIds = (miembroIds, creadorId) => {
+    if (miembroIds === undefined || miembroIds === null) return null;
+
+    if (!Array.isArray(miembroIds)) {
+        return "miembroIds debe ser una lista de IDs de perfil.";
+    }
+    if (miembroIds.length > MAX_MIEMBROS_INVITADOS) {
+        return `Un grupo puede tener hasta ${MAX_INTEGRANTES_GRUPO} integrantes contándote a vos.`;
+    }
+    if (!miembroIds.every(id => typeof id === 'string' && validadores.esIdValido(id))) {
+        return "Alguno de los integrantes elegidos no tiene un ID válido.";
+    }
+    const normalizados = miembroIds.map(id => id.toLowerCase());
+    if (new Set(normalizados).size !== normalizados.length) {
+        return "Hay integrantes repetidos en la lista.";
+    }
+    if (normalizados.includes(String(creadorId).toLowerCase())) {
+        return "No hace falta agregarte: ya sos parte del grupo como creador.";
+    }
+    return null;
 };
 
 const validarBusquedaGrupos = (req, res, next) => {

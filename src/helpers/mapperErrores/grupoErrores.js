@@ -34,6 +34,10 @@ export function mapGrupoError(error) {
             mensajeUsuario = "Ya existe un grupo con ese nombre. Elegí otro.";
             codigoEstado = status.CONFLICT;
             break;
+        case "Solo podés agregar a tus amigos":
+            mensajeUsuario = "Solo podés agregar al grupo a personas que ya son tus amigas.";
+            codigoEstado = status.BAD_REQUEST;
+            break;
         case "Mensaje no encontrado":
             mensajeUsuario = "No encontramos ese mensaje en este grupo.";
             codigoEstado = status.NOT_FOUND;

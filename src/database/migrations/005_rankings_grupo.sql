@@ -1,5 +1,5 @@
--- 004: rankings por grupo (reemplaza al ranking global).
---   npm run migrar -- 004_rankings_grupo.sql
+-- 005: rankings por grupo (reemplaza al ranking global).
+--   npm run migrar -- 005_rankings_grupo.sql
 -- Un grupo tiene como mucho un ranking. Se crea al invitar y cada miembro entra al aceptar.
 
 -- Tipo de mensaje: 'texto' (normal) o 'invitacion_ranking' (tarjeta con botón Aceptar en el chat)

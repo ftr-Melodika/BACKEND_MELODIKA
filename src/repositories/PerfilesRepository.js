@@ -280,6 +280,22 @@ class PerfilRepository {
         }
     }
 
+    // Búsqueda exacta sin distinguir mayúsculas; solo perfiles activos.
+    // Devuelve únicamente datos públicos (no es la entidad completa).
+    async obtenerActivoPorUsername(username) {
+        try {
+            const resultado = await pool.query(
+                `SELECT id, nombre, username, avatar_url
+                 FROM perfiles
+                 WHERE lower(username) = lower($1) AND activo = true`,
+                [username]
+            );
+            return resultado.rows[0] ?? null;
+        } catch (error) {
+            manejarErrorDB(error, MENSAJES_ERROR_DB.BUSCAR_PERFILES);
+        }
+    }
+
 }
 
 export default PerfilRepository;

@@ -108,6 +108,86 @@
         }
       }
     },
+    "/api/perfiles/{id}/invitacion": {
+      "get": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Obtener mi link de invitación de amistad (se crea si no existe)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/invitacion/regenerar": {
+      "post": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Generar un link de invitación nuevo (el anterior deja de funcionar)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/perfiles/{id}/invitacion/{token}": {
+      "get": {
+        "tags": [
+          "Social"
+        ],
+        "summary": "Ver a quién pertenece un link de invitación y la relación con ese perfil",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api/perfiles/{id}/social/{otroId}": {
       "get": {
         "tags": [
@@ -145,7 +225,7 @@
         "tags": [
           "Social"
         ],
-        "summary": "Enviar solicitud de amistad",
+        "summary": "Enviar solicitud de amistad (por destinoId, username o token de invitación; solo uno)",
         "description": "",
         "parameters": [
           {
@@ -355,7 +435,7 @@
         "tags": [
           "Grupos"
         ],
-        "summary": "Crear un grupo",
+        "summary": "Crear un grupo (opcional: miembroIds con amigos a sumar, hasta 49)",
         "description": "",
         "parameters": [
           {
@@ -1238,11 +1318,16 @@
           "destinoId": {
             "type": "string",
             "example": "uuid-del-perfil-destino"
+          },
+          "username": {
+            "type": "string",
+            "example": "facu_pro"
+          },
+          "token": {
+            "type": "string",
+            "example": "token-de-22-caracteres"
           }
-        },
-        "required": [
-          "destinoId"
-        ]
+        }
       },
       "ResponderSolicitud": {
         "type": "object",
@@ -1266,6 +1351,15 @@
           "descripcion": {
             "type": "string",
             "example": "Grupo para compartir avances"
+          },
+          "miembroIds": {
+            "type": "array",
+            "example": [
+              "uuid-de-un-amigo"
+            ],
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [

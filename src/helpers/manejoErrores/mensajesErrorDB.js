@@ -6,6 +6,7 @@ export const MENSAJES_ERROR_DB = {
     OBTENER_RANKING: "Error al cargar el ranking",
     GUARDAR_MENSAJE: "No se pudo guardar el mensaje.",
     GESTIONAR_AMISTADES: "No se pudo procesar la solicitud de amistad.",
+    GESTIONAR_INVITACIONES: "No se pudo procesar la invitación de amistad.",
     GESTIONAR_GRUPOS: "No se pudo procesar la operación del grupo.",
     GESTIONAR_RANKING_GRUPO: "No se pudo procesar la operación del ranking.",
     ELIMINAR_PERFIL: "No se pudo eliminar el perfil en la base de datos",

@@ -47,14 +47,17 @@ const doc = {
         esZurdo: false
       },
       EnviarSolicitud: {
-        $destinoId: "uuid-del-perfil-destino"
+        destinoId: "uuid-del-perfil-destino",
+        username: "facu_pro",
+        token: "token-de-22-caracteres"
       },
       ResponderSolicitud: {
         $accion: "aceptar"
       },
       CrearGrupo: {
         $nombre: "Guitarristas Principiantes",
-        descripcion: "Grupo para compartir avances"
+        descripcion: "Grupo para compartir avances",
+        miembroIds: ["uuid-de-un-amigo"]
       },
       MensajeGrupo: {
         $contenido: "Hola a todos!"

@@ -1,7 +1,9 @@
 import GrupoRepository from '../repositories/grupoRepository.js';
+import AmistadRepository from '../repositories/amistadRepository.js';
 import perfilService from './perfilService.js';
 
 const grupoRepository = new GrupoRepository();
+const amistadRepository = new AmistadRepository();
 
 const mismoPerfil = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
 
@@ -87,9 +89,19 @@ class GrupoService {
         }));
     }
 
-    async crearGrupo(authId, perfilId, nombre, descripcion) {
+    // Solo se puede sumar directo a amigos aceptados (y con perfil activo)
+    async _exigirQueSeanAmigos(perfilId, miembroIds) {
+        if (miembroIds.length === 0) return;
+        const amigos = await amistadRepository.filtrarAmigos(perfilId, miembroIds);
+        if (amigos.length !== miembroIds.length) {
+            throw new Error("Solo podés agregar a tus amigos");
+        }
+    }
+
+    async crearGrupo(authId, perfilId, nombre, descripcion, miembroIds = []) {
         await perfilService.validarAccesoPerfil(authId, perfilId);
-        const grupoId = await grupoRepository.crear(perfilId, nombre, descripcion);
+        await this._exigirQueSeanAmigos(perfilId, miembroIds);
+        const grupoId = await grupoRepository.crear(perfilId, nombre, descripcion, miembroIds);
         if (!grupoId) {
             throw new Error("Ya existe un grupo con ese nombre");
         }

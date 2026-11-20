@@ -2,6 +2,8 @@ import AmistadRepository from '../repositories/amistadRepository.js';
 import PerfilRepository from '../repositories/PerfilesRepository.js';
 import CursoService from './cursoService.js';
 import perfilService from './perfilService.js';
+import invitacionAmistadService from './invitacionAmistadService.js';
+import { mismoPerfil, describirRelacion } from '../helpers/relacionAmistad.js';
 
 const amistadRepository = new AmistadRepository();
 const perfilRepository = new PerfilRepository();
@@ -9,26 +11,27 @@ const cursoService = new CursoService();
 
 const ESTADO_POR_ACCION = { aceptar: 'aceptada', rechazar: 'rechazada' };
 
-const mismoPerfil = (a, b) => String(a).toLowerCase() === String(b).toLowerCase();
-
 const aPerfilResumido = (fila) => ({
     amistadId: fila.amistad_id,
     perfil: { id: fila.id, nombre: fila.nombre, username: fila.username, avatarUrl: fila.avatar_url },
 });
 
-// Una solicitud rechazada no se le informa al emisor: para ambos cuenta como "ninguna".
-function describirRelacion(amistad, perfilId) {
-    if (!amistad || amistad.estado === 'rechazada') {
-        return { estado: 'ninguna', amistadId: null };
-    }
-    if (amistad.estado === 'aceptada') {
-        return { estado: 'amigos', amistadId: amistad.id };
-    }
-    const estado = mismoPerfil(amistad.perfil_1_id, perfilId) ? 'enviada' : 'recibida';
-    return { estado, amistadId: amistad.id };
-}
-
 class AmistadService {
+
+    // El destino llega por uno solo de estos datos (el validador ya lo garantiza)
+    async _resolverDestino({ destinoId, username, token }) {
+        if (destinoId) {
+            return this._obtenerPerfilActivo(destinoId);
+        }
+        if (token) {
+            return invitacionAmistadService.obtenerDuenoDelToken(token);
+        }
+        const perfil = await perfilRepository.obtenerActivoPorUsername(username);
+        if (!perfil) {
+            throw new Error("No existe un perfil con ese username");
+        }
+        return perfil;
+    }
 
     async _obtenerPerfilActivo(perfilId) {
         const perfil = await perfilRepository.obtenerPorId(perfilId);
@@ -86,13 +89,13 @@ class AmistadService {
         return datos;
     }
 
-    async enviarSolicitud(authId, perfilId, destinoId) {
+    async enviarSolicitud(authId, perfilId, datosDestino) {
         await perfilService.validarAccesoPerfil(authId, perfilId);
 
-        if (mismoPerfil(perfilId, destinoId)) {
+        const destino = await this._resolverDestino(datosDestino);
+        if (mismoPerfil(perfilId, destino.id)) {
             throw new Error("No podés enviarte una solicitud a vos mismo");
         }
-        const destino = await this._obtenerPerfilActivo(destinoId);
 
         const { amistad, existente } = await amistadRepository.enviarSolicitud(perfilId, destino.id);
         if (amistad) {

@@ -47,14 +47,14 @@ router.get("/:id/grupos/buscar", verificarToken, validarIdPerfil, validarBusqued
 router.post("/:id/grupos", verificarToken, validarIdPerfil, validarDatosCrearGrupo, catchAsync(async (req, res) => {
 
     /* #swagger.tags = ['Grupos']
-       #swagger.summary = 'Crear un grupo'
+       #swagger.summary = 'Crear un grupo (opcional: miembroIds con amigos a sumar, hasta 49)'
        #swagger.requestBody = {
            required: true,
            content: { "application/json": { schema: { $ref: "#/components/schemas/CrearGrupo" } } }
        } */
 
-    const { nombre, descripcion } = req.body;
-    const datos = await grupoService.crearGrupo(req.user.id, req.params.id, nombre, descripcion);
+    const { nombre, descripcion, miembroIds } = req.body;
+    const datos = await grupoService.crearGrupo(req.user.id, req.params.id, nombre, descripcion, miembroIds);
 
     return res.status(status.CREATED).json({
         success: true,

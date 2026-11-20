@@ -152,6 +152,26 @@ class AmistadRepository {
         }
     }
 
+    // De la lista de perfiles recibida, devuelve los ids que son amigos aceptados y activos
+    async filtrarAmigos(perfilId, candidatosIds) {
+        try {
+            const resultado = await pool.query(
+                `SELECT p.id
+                 FROM amistades a
+                 JOIN perfiles p
+                   ON p.id = CASE WHEN a.perfil_2_id = $1 THEN a.perfil_1_id ELSE a.perfil_2_id END
+                 WHERE (a.perfil_1_id = $1 OR a.perfil_2_id = $1)
+                   AND a.estado = 'aceptada'
+                   AND p.activo = true
+                   AND p.id = ANY($2::uuid[])`,
+                [perfilId, candidatosIds]
+            );
+            return resultado.rows.map(fila => fila.id);
+        } catch (error) {
+            manejarErrorDB(error, MENSAJES_ERROR_DB.GESTIONAR_AMISTADES);
+        }
+    }
+
     async contarAmigos(perfilId) {
         try {
             const resultado = await pool.query(
