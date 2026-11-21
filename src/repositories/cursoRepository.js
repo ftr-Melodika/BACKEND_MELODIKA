@@ -4,23 +4,24 @@ import Ejercicio from '../entities/Ejercicio.js';
 import { manejarErrorDB } from '../helpers/manejoErrores/manejarErrorDB.js';
 import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
 
+// Fila de la base -> entidad (las consultas de cursos y de ejercicios devuelven siempre estas columnas)
+const aCurso = (row) => new Curso(
+    row.id, row.nombre, row.descripcion, row.instrumento_id, row.camino_id, row.nivel, row.orden, row.obligatorio
+);
 
-    class CursoRepository {
+const aEjercicio = (row) => new Ejercicio(
+    row.id, row.curso_id, row.titulo, row.descripcion, row.tipo, row.orden, row.xp_recompensa,
+    row.youtube_id, row.duracion_segundos, row.cuerda, row.traste_objetivo, row.nota_esperada,
+    row.dot_left, row.dot_bottom, row.texto_teoria, row.texto_destacado, row.instrucciones, row.practica
+);
+
+class CursoRepository {
 
     async obtenerCursos() {
         try {
             const query = `SELECT id, nombre, descripcion, instrumento_id, camino_id, nivel, orden, obligatorio FROM cursos ORDER BY orden ASC, nombre ASC`;
             const resultado = await pool.query(query);
-            return resultado.rows.map(row => new Curso(
-                row.id,
-                row.nombre,
-                row.descripcion,
-                row.instrumento_id,
-                row.camino_id,
-                row.nivel,
-                row.orden,
-                row.obligatorio
-            ));
+            return resultado.rows.map(row => aCurso(row));
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_CURSOS);
         }
@@ -36,16 +37,7 @@ import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
             }
 
             const row = resultado.rows[0];
-            return new Curso(
-                row.id,
-                row.nombre,
-                row.descripcion,
-                row.instrumento_id,
-                row.camino_id,
-                row.nivel,
-                row.orden,
-                row.obligatorio
-            );
+            return aCurso(row);
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_CURSO_POR_ID);
         }
@@ -63,26 +55,7 @@ import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
                 ORDER BY orden ASC
             `;
             const resultado = await pool.query(query, [cursoId]);
-            return resultado.rows.map(row => new Ejercicio(
-                row.id,
-                row.curso_id,
-                row.titulo,
-                row.descripcion,
-                row.tipo,
-                row.orden,
-                row.xp_recompensa,
-                row.youtube_id,
-                row.duracion_segundos,
-                row.cuerda,
-                row.traste_objetivo,
-                row.nota_esperada,
-                row.dot_left,
-                row.dot_bottom,
-                row.texto_teoria,
-                row.texto_destacado,
-                row.instrucciones,
-                row.practica
-            ));
+            return resultado.rows.map(row => aEjercicio(row));
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_EJERCICIOS);
         }
@@ -101,26 +74,7 @@ import { MENSAJES_ERROR_DB } from '../helpers/manejoErrores/mensajesErrorDB.js';
             `;
             const resultado = await pool.query(query);
             return resultado.rows.map(row => {
-                const ejercicio = new Ejercicio(
-                    row.id,
-                    row.curso_id,
-                    row.titulo,
-                    row.descripcion,
-                    row.tipo,
-                    row.orden,
-                    row.xp_recompensa,
-                    row.youtube_id,
-                    row.duracion_segundos,
-                    row.cuerda,
-                    row.traste_objetivo,
-                    row.nota_esperada,
-                    row.dot_left,
-                    row.dot_bottom,
-                    row.texto_teoria,
-                    row.texto_destacado,
-                    row.instrucciones,
-                    row.practica
-                );
+                const ejercicio = aEjercicio(row);
                 ejercicio.cursoNombre = row.curso_nombre;
                 return ejercicio;
             });

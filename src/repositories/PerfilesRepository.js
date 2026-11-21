@@ -23,6 +23,13 @@ const SQL_DIAS_SIN_PRACTICAR = `
         999
     )`;
 
+// Fila de la tabla perfiles -> entidad
+const aPerfil = (row) => new Perfil(
+    row.id, row.cuenta_id, row.nombre, row.username, row.avatar_url, row.pais, row.fecha_nacimiento,
+    row.genero, row.xp, row.racha, row.instrumento_actual_id, row.activo,
+    row.es_publico === true, row.es_zurdo === true
+);
+
 class PerfilRepository {
 
     // Pone en 0 la racha de los perfiles que pasaron más de un día sin practicar.
@@ -50,22 +57,7 @@ class PerfilRepository {
             const resultado = await pool.query(query, [cuentaId]);
             
             // Transformamos cada fila de la BD en un objeto de nuestra Entidad
-            return resultado.rows.map(row => new Perfil(
-                row.id,
-                row.cuenta_id,
-                row.nombre,
-                row.username,
-                row.avatar_url,
-                row.pais,
-                row.fecha_nacimiento,
-                row.genero,
-                row.xp,
-                row.racha,
-                row.instrumento_actual_id,
-                row.activo,
-                row.es_publico === true,
-                row.es_zurdo === true
-            ));
+            return resultado.rows.map(row => aPerfil(row));
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.BUSCAR_PERFILES);
         }
@@ -94,22 +86,7 @@ class PerfilRepository {
             const resultado = await pool.query(query, values);
             const perfil = resultado.rows[0];
 
-            return new Perfil(
-                perfil.id,
-                perfil.cuenta_id,
-                perfil.nombre,
-                perfil.username,
-                perfil.avatar_url,
-                perfil.pais,
-                perfil.fecha_nacimiento,
-                perfil.genero,
-                perfil.xp,
-                perfil.racha,
-                perfil.instrumento_actual_id,
-                perfil.activo,
-                perfil.es_publico === true,
-                perfil.es_zurdo === true
-            );
+            return aPerfil(perfil);
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.CREAR_PERFIL);
         }
@@ -222,22 +199,7 @@ class PerfilRepository {
             }
 
             const perfil = resultado.rows[0];
-            return new Perfil(
-                perfil.id,
-                perfil.cuenta_id,
-                perfil.nombre,
-                perfil.username,
-                perfil.avatar_url,
-                perfil.pais,
-                perfil.fecha_nacimiento,
-                perfil.genero,
-                perfil.xp,
-                perfil.racha,
-                perfil.instrumento_actual_id,
-                perfil.activo,
-                perfil.es_publico === true,
-                perfil.es_zurdo === true
-            );
+            return aPerfil(perfil);
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.ACTUALIZAR_PERFIL);
         }
@@ -256,22 +218,7 @@ class PerfilRepository {
             
             const row = resultado.rows[0];
             // Mapeamos a tu entidad Perfil
-            return new Perfil(
-                row.id,
-                row.cuenta_id,
-                row.nombre,
-                row.username,
-                row.avatar_url,
-                row.pais,
-                row.fecha_nacimiento,
-                row.genero,
-                row.xp,
-                row.racha,
-                row.instrumento_actual_id,
-                row.activo,
-                row.es_publico === true,
-                row.es_zurdo === true
-            );
+            return aPerfil(row);
         } catch (error) {
             manejarErrorDB(error, MENSAJES_ERROR_DB.OBTENER_PERFIL_POR_ID);
         }

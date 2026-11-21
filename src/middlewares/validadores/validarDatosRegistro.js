@@ -13,16 +13,9 @@ const validarRegistro = (req, res, next) => {
         return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'El formato del email no es válido.' });
     }
     
-    if (!validadores.esPasswordLargo(password)) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'La contraseña debe tener al menos 6 caracteres.' });
-    }
-
-    if (!validadores.tieneMayuscula(password)) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'La contraseña debe incluir al menos una letra mayúscula.' });
-    }
-
-    if (!validadores.tieneSigno(password)) {
-        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'La contraseña debe incluir al menos un caracter especial ' });
+    const errorPassword = validadores.mensajeErrorPassword(password);
+    if (errorPassword) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: errorPassword });
     }
 
     if (!validadores.esNombreValido(nombre)) {
