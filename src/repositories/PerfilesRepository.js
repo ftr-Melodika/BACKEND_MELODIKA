@@ -161,19 +161,6 @@ class PerfilRepository {
         }
     }
 
-    // Feedback, reportes y consultas se guardan como eventos: nombre = tipo, datos = { categoria, mensaje }
-    async registrarMensaje(perfilId, tipo, datos) {
-        try {
-            const resultado = await pool.query(
-                'INSERT INTO eventos (perfil_id, nombre, datos) VALUES ($1, $2, $3) RETURNING id, created_at',
-                [perfilId, tipo, JSON.stringify(datos)]
-            );
-            return resultado.rows[0];
-        } catch (error) {
-            manejarErrorDB(error, MENSAJES_ERROR_DB.GUARDAR_MENSAJE);
-        }
-    }
-
     // Realiza un borrado lógico del perfil
     async eliminarPerfil(perfilId, cuentaId) {
         try {

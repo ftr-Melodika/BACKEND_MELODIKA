@@ -103,6 +103,18 @@ const validarDatosMensaje = (req, res, next) => {
         return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'La categoría no es válida.' });
     }
 
+    const { nombre, email } = req.body;
+
+    if (nombre !== undefined && (typeof nombre !== 'string' || nombre.trim().length === 0 || nombre.length > 100)) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'El nombre no es válido.' });
+    }
+
+    if (email !== undefined && (typeof email !== 'string' || email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()))) {
+        return res.status(StatusCodes.BAD_REQUEST).json({ success: false, message: 'El email no es válido.' });
+    }
+
+    if (nombre !== undefined) req.body.nombre = nombre.trim();
+    if (email !== undefined) req.body.email = email.trim();
     req.body.mensaje = mensaje.trim();
     next();
 };

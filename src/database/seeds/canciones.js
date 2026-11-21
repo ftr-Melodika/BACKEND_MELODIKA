@@ -20,6 +20,8 @@ export const FORMAS = {
   C: [p(5, 3, 3), p(4, 2, 2), p(3, 0), p(2, 1, 1), p(1, 0)],
   G: [p(6, 3, 2), p(5, 2, 1), p(4, 0), p(3, 0), p(2, 0), p(1, 3, 3)],
   D: [p(4, 0), p(3, 2, 1), p(2, 3, 3), p(1, 2, 2)],
+  A: [p(5, 0), p(4, 2, 1), p(3, 2, 2), p(2, 2, 3), p(1, 0)],
+  E: [p(6, 0), p(5, 2, 2), p(4, 2, 3), p(3, 1, 1), p(2, 0), p(1, 0)],
   B7: [p(5, 2, 2), p(4, 1, 1), p(3, 2, 3), p(2, 0), p(1, 2, 4)],
   // Con cejilla en el traste 2 (de la 5ta a la 1ra)
   Bm: [p(5, 2, 1), p(4, 4, 3), p(3, 4, 4), p(2, 3, 2), p(1, 2, 1)],
@@ -93,5 +95,39 @@ export const CANCIONES = [
     id: 'stand-by-me', titulo: 'Stand By Me', artista: 'Ben E. King', bpm: 118, capo: 2,
     progresion: conRasgueo('DUXUDUXU', ['G', 'Em', 'C', 'D']),
     consejo: 'La X es un golpe apagado: apoyá la palma sobre las cuerdas al rasguear.',
+  },
+
+  // Las siguientes son versiones simplificadas para aprender: un acorde por compás y un golpe ↓ por tiempo (negras).
+  // Los tempos son los del original, bajados a algo practicable (se dice en cada una). Capo 0 en todas: no se verificó
+  // un capo distinto. Fuentes del tempo: Tunebat, SongBPM, Hooktheory, Klang.io, Musicnotes y Karaoke Version (nov. 2026).
+  {
+    id: 'horse-with-no-name', titulo: 'Horse With No Name', artista: 'America', bpm: 100, capo: 0, // original ~125, bajado para practicar
+    progresion: conRasgueo('D-D-D-D-', ['Em', 'D', 'Em', 'D', 'Em', 'D', 'Em', 'D']),
+    consejo: 'Solo dos acordes, Em y D: un golpe hacia abajo por tiempo y cambiá de acorde en cada compás.',
+  },
+  {
+    id: 'oye-como-va', titulo: 'Oye cómo va', artista: 'Santana (versión de Tito Puente)', bpm: 100, capo: 0, // original ~128, bajado para practicar
+    progresion: conRasgueo('D-D-D-D-', ['Am', 'D', 'Am', 'D', 'Am', 'D', 'Am']),
+    consejo: 'Am y D se alternan sin parar: el truco es hacer el cambio a tiempo, sin frenar el brazo.',
+  },
+  {
+    id: 'three-little-birds', titulo: 'Three Little Birds', artista: 'Bob Marley', bpm: 74, capo: 0,
+    progresion: conRasgueo('D-D-D-D-', ['A', 'D', 'A', 'D', 'A', 'E', 'A', 'D', 'A', 'E', 'A', 'D', 'A']),
+    consejo: 'Tranquila, estilo reggae: dejá sonar cada acorde y no apures los cambios.',
+  },
+  {
+    id: 'knockin-on-heavens-door', titulo: "Knockin' on Heaven's Door", artista: 'Bob Dylan', bpm: 70, capo: 0,
+    progresion: conRasgueo('D-D-D-D-', ['G', 'D', 'Am', 'G', 'D', 'C', 'G', 'D', 'Am', 'G', 'D', 'C']),
+    consejo: 'Cuatro acordes abiertos y un tempo lento: ideal para practicar los cambios G, D, Am y C.',
+  },
+  {
+    id: 'zombie', titulo: 'Zombie', artista: 'The Cranberries', bpm: 84, capo: 0,
+    progresion: conRasgueo('D-D-D-D-', ['Em', 'C', 'G', 'D', 'Em', 'C', 'G', 'D']),
+    consejo: 'Los mismos cuatro acordes se repiten toda la canción: cuando los cambios salgan solos, probá tocar más fuerte en el estribillo.',
+  },
+  {
+    id: 'wish-you-were-here', titulo: 'Wish You Were Here', artista: 'Pink Floyd', bpm: 100, capo: 0, // original ~122, bajado para practicar
+    progresion: conRasgueo('D-D-D-D-', ['Em', 'G', 'C', 'D', 'Am', 'G', 'D', 'C', 'Am', 'G']),
+    consejo: 'Cinco acordes en una progresión clásica: tocala suave y dejá sonar cada acorde.',
   },
 ];

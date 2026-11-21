@@ -124,6 +124,24 @@ function practicar(titulo, practica, { destacado = null, instrucciones = [], ant
 // Prueba de salida de un tramo: no lleva número, suma más XP
 const prueba = (titulo, practica, opciones = {}) => ({ ...practicar(titulo, practica, { ...opciones, xp: XP_PRUEBA }), prueba: true });
 
+// Las dos clases finales de un curso: se aprende una canción del catálogo (canciones_practica) y se toca.
+// La app enseña los acordes y los cambios en "aprender", y muestra el mástil desplazante en "tocar".
+const XP_CANCION_TOCAR = 100;
+function clasesDeCancion({ cancionId, titulo, artista }) {
+  const practica = (fase) => ({ tipo: 'cancion', cancionId, fase });
+  return [
+    practicar(`Aprendé ${titulo}`, practica('aprender'), {
+      meta: `Aprendé los acordes de ${titulo} (${artista}) y los cambios entre ellos.`,
+      instrucciones: [`Aprendé cada acorde de ${titulo} y después los cambios entre acordes.`],
+    }),
+    practicar(`Tocá ${titulo}`, practica('tocar'), {
+      meta: `Tocá ${titulo} (${artista}): rasgueá cada acorde cuando llegue a la línea.`,
+      instrucciones: [`Rasgueá cada acorde de ${titulo} cuando llegue a la línea.`],
+      xp: XP_CANCION_TOCAR,
+    }),
+  ];
+}
+
 // ═════════════════════════ PRIMEROS PASOS ═════════════════════════
 
 const primerosPasos1 = {
@@ -860,11 +878,25 @@ const PLAN = [
   musicalidad1, musicalidad2, concierto,
 ];
 
+// Canción final de cada curso: solo usa los acordes que el curso (o los anteriores) ya enseñó.
+// Los cursos que no están acá no tienen canción final (los de notas sueltas, o sin canción del catálogo que encaje).
+const CANCION_FINAL = new Map([
+  [acordes2, { cancionId: 'horse-with-no-name', titulo: 'Horse With No Name', artista: 'America' }], // Em, D
+  [acordes3, { cancionId: 'three-little-birds', titulo: 'Three Little Birds', artista: 'Bob Marley' }], // A, D, E
+  [acordes4, { cancionId: 'knockin-on-heavens-door', titulo: "Knockin' on Heaven's Door", artista: 'Bob Dylan' }], // G, D, Am, C
+  // La zamba (6/8) no entra en el formato de la app (4/4): Acordes V sigue con Flaca
+  [acordes5, { cancionId: 'flaca', titulo: 'Flaca', artista: 'Andrés Calamaro' }], // G, B7, Em, C, D
+  [cambios, { cancionId: 'de-musica-ligera', titulo: 'De música ligera', artista: 'Soda Stereo' }], // Em, C, G, D
+  [ritmo3, { cancionId: 'stand-by-me', titulo: 'Stand By Me', artista: 'Ben E. King' }], // G, Em, C, D + golpe apagado
+]);
+
 function armarCursos() {
   return PLAN.map((curso, i) => {
     const orden = i + 1;
     let numero = 0;
-    const lecciones = curso.lecciones.map(({ titulo, antes, prueba: esPrueba, ...l }) => ({
+    const cancion = CANCION_FINAL.get(curso);
+    const leccionesCurso = cancion ? [...curso.lecciones, ...clasesDeCancion(cancion)] : curso.lecciones;
+    const lecciones = leccionesCurso.map(({ titulo, antes, prueba: esPrueba, ...l }) => ({
       ...l,
       nombre: esPrueba ? titulo : `${orden}.${++numero} · ${titulo}`,
       nombresAnteriores: antes || [],

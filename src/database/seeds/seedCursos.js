@@ -32,12 +32,16 @@ const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: 
 async function validar() {
   const errores = [];
   let total = 0;
+  const cancionesExistentes = new Set((await client.query('SELECT id FROM canciones_practica')).rows.map((r) => r.id));
   for (const curso of CURSOS) {
     const nombres = new Set();
     for (const leccion of curso.lecciones) {
       total++;
       if (nombres.has(leccion.nombre)) errores.push(`${curso.nombre}: nombre repetido "${leccion.nombre}"`);
       nombres.add(leccion.nombre);
+      if (leccion.practica?.tipo === 'cancion' && !cancionesExistentes.has(leccion.practica.cancionId)) {
+        errores.push(`${curso.nombre} / ${leccion.nombre}: la canción "${leccion.practica.cancionId}" no está en canciones_practica (¿corriste npm run seed:canciones?)`);
+      }
       const { rows } = await client.query('SELECT practica_valida($1::jsonb) AS ok', [leccion.practica ? JSON.stringify(leccion.practica) : null]);
       if (!rows[0].ok) {
         const pista = leccion.practica?.tipo === 'ritmo' ? ' (¿aplicaste la migración 001_practica_ritmo.sql?)' : '';

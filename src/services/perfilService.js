@@ -1,6 +1,7 @@
 import PerfilRepository, { DIAS_MAXIMOS_SIN_PRACTICAR } from '../repositories/PerfilesRepository.js';
 import CuentaRepository from '../repositories/cuentaRepository.js';
 import { CacheTemporal } from '../helpers/cacheTemporal.js';
+import { enviarMail } from '../helpers/enviarMail.js';
 
 const perfilRepository = new PerfilRepository();
 const cuentaRepository = new CuentaRepository();
@@ -142,9 +143,25 @@ class PerfilService {
         };
     }
 
-    async registrarMensaje(authId, perfilId, tipo, datos) {
-        await this.validarAccesoPerfil(authId, perfilId);
-        return await perfilRepository.registrarMensaje(perfilId, tipo, datos);
+    // Feedback, reportes y consultas: se envían por mail (no se guardan en la base)
+    async registrarMensaje(authId, perfilId, tipo, { categoria, mensaje, nombre, email }) {
+        const { perfilExistente } = await this.validarAccesoPerfil(authId, perfilId);
+
+        const etiquetas = { feedback: 'Feedback', reporte_error: 'Reporte de error', contacto: 'Contacto' };
+        const remitente = nombre || perfilExistente.nombre || perfilExistente.username;
+        const asunto = `[Melodika] ${etiquetas[tipo]}${categoria ? ` - ${categoria}` : ''}`;
+        const texto = [
+            `Tipo: ${etiquetas[tipo]}`,
+            categoria ? `Categoría: ${categoria}` : null,
+            `Nombre: ${remitente}`,
+            email ? `Email: ${email}` : null,
+            `Perfil: ${perfilExistente.username || perfilExistente.nombre} (id ${perfilId})`,
+            '',
+            mensaje,
+        ].filter((linea) => linea !== null).join('\n');
+
+        await enviarMail({ asunto, texto, replyTo: email });
+        return { enviado: true };
     }
 
     // Antes de mostrar rachas ajenas (por ejemplo en un ranking de grupo), pone en 0 las vencidas

@@ -31,8 +31,8 @@ router.post("/:id/mensajes", verificarToken, validarIdPerfil, validarDatosMensaj
            content: { "application/json": { schema: { $ref: "#/components/schemas/MensajeContacto" } } }
        } */
 
-    const { tipo, categoria, mensaje } = req.body;
-    const resultado = await perfilService.registrarMensaje(req.user.id, req.params.id, tipo, { categoria, mensaje });
+    const { tipo, categoria, mensaje, nombre, email } = req.body;
+    const resultado = await perfilService.registrarMensaje(req.user.id, req.params.id, tipo, { categoria, mensaje, nombre, email });
 
     return res.status(status.CREATED).json({
         success: true,
