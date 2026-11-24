@@ -75,9 +75,9 @@ Se usa Supabase Auth (`signInWithPassword`, `supabase.auth.getUser(token)`). El 
 Validar toda entrada, consultas parametrizadas, secretos solo en `.env`, no loguear datos sensibles, comprobar que cada usuario solo accede a lo suyo.
 
 ## 10. Base de datos: migraciones y seeds
-- Todo cambio de tablas va en un archivo nuevo `src/database/migrations/NNN_descripcion.sql`, con el número siguiente al último (hoy el último es `006_grupos_privados.sql`).
+- Todo cambio de tablas va en un archivo nuevo `src/database/migrations/NNN_descripcion.sql`, con el número siguiente al último (hoy el último es `008_practica_consignas.sql`).
 - Nunca editar una migración ya aplicada: si hay que corregir algo, crear una nueva.
-- Se aplica una por vez y en una transacción: `npm run migrar -- 007_descripcion.sql`. No hay registro de cuáles se aplicaron, así que avisar en la respuesta qué migración hay que correr.
+- Se aplica una por vez y en una transacción: `npm run migrar -- 009_descripcion.sql`. No hay registro de cuáles se aplicaron, así que avisar en la respuesta qué migración hay que correr.
 - Preferir cambios que no rompan datos existentes (`ADD COLUMN ... DEFAULT`, `IF NOT EXISTS`). Si una migración borra o transforma datos de usuarios, preguntar antes.
 - El contenido de cursos y canciones vive en `src/database/seeds/` y se carga con `npm run seed:cursos` y `npm run seed:canciones`.
 

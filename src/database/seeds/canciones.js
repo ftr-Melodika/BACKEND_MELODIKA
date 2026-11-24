@@ -43,7 +43,7 @@ const conRasgueo = (rasgueo, compases) => compases.map((acordes) => ({ acordes, 
 
 export const CANCIONES = [
   {
-    id: 'de-musica-ligera', titulo: 'De música ligera', artista: 'Soda Stereo', bpm: 112, capo: 0, // bajado de 124 para practicar
+    id: 'de-musica-ligera', titulo: 'De música ligera', artista: 'Soda Stereo', bpm: 124, capo: 0, // original
     // En semicorcheas, 2 tiempos cada acorde. El primero: ↓ en el 1 y ↓ en el 2. El segundo, más
     // rápido: ↑ ↑ ↓ ↓ ↓ ↑ desde la "e" del 3, que se completa con el ↓ del acorde siguiente.
     //            1 e y a 2 e y a 3 e y a 4 e y a
@@ -98,15 +98,23 @@ export const CANCIONES = [
   },
 
   // Las siguientes son versiones simplificadas para aprender: un acorde por compás y un golpe ↓ por tiempo (negras).
-  // Los tempos son los del original, bajados a algo practicable (se dice en cada una). Capo 0 en todas: no se verificó
+  // Los tempos son los del original (los marcados con ~ son aproximados). Capo 0 en todas: no se verificó
   // un capo distinto. Fuentes del tempo: Tunebat, SongBPM, Hooktheory, Klang.io, Musicnotes y Karaoke Version (nov. 2026).
   {
-    id: 'horse-with-no-name', titulo: 'Horse With No Name', artista: 'America', bpm: 100, capo: 0, // original ~125, bajado para practicar
+    id: 'horse-with-no-name', titulo: 'Horse With No Name', artista: 'America', bpm: 125, capo: 0, // original ~125 (A CONFIRMAR con la grabación)
     progresion: conRasgueo('D-D-D-D-', ['Em', 'D', 'Em', 'D', 'Em', 'D', 'Em', 'D']),
     consejo: 'Solo dos acordes, Em y D: un golpe hacia abajo por tiempo y cambiá de acorde en cada compás.',
   },
   {
-    id: 'oye-como-va', titulo: 'Oye cómo va', artista: 'Santana (versión de Tito Puente)', bpm: 100, capo: 0, // original ~128, bajado para practicar
+    // Curso 4 (docs/temario-definitivo.md): solo el estribillo, en La – Mim (medio tono más abajo que la
+    // grabación, que está en Si♭). Un compás de 4 tiempos por acorde y un solo golpe ↓ por compás.
+    // Sin letra. A CONFIRMAR con la grabación: los compases por acorde y el tempo de 128 BPM.
+    id: 'sera', titulo: 'Será', artista: 'Las Pelotas', bpm: 128, capo: 0, // A CONFIRMAR
+    progresion: conRasgueo('D-------', ['A', 'Em', 'A', 'Em', 'A', 'Em', 'A', 'Em']),
+    consejo: 'Dos acordes, La y Mim: un solo golpe hacia abajo al empezar cada compás. Usá los últimos tiempos para preparar el cambio.',
+  },
+  {
+    id: 'oye-como-va', titulo: 'Oye cómo va', artista: 'Santana (versión de Tito Puente)', bpm: 128, capo: 0, // original ~128 (aproximado)
     progresion: conRasgueo('D-D-D-D-', ['Am', 'D', 'Am', 'D', 'Am', 'D', 'Am']),
     consejo: 'Am y D se alternan sin parar: el truco es hacer el cambio a tiempo, sin frenar el brazo.',
   },
@@ -126,7 +134,7 @@ export const CANCIONES = [
     consejo: 'Los mismos cuatro acordes se repiten toda la canción: cuando los cambios salgan solos, probá tocar más fuerte en el estribillo.',
   },
   {
-    id: 'wish-you-were-here', titulo: 'Wish You Were Here', artista: 'Pink Floyd', bpm: 100, capo: 0, // original ~122, bajado para practicar
+    id: 'wish-you-were-here', titulo: 'Wish You Were Here', artista: 'Pink Floyd', bpm: 122, capo: 0, // original ~122 (aproximado)
     progresion: conRasgueo('D-D-D-D-', ['Em', 'G', 'C', 'D', 'Am', 'G', 'D', 'C', 'Am', 'G']),
     consejo: 'Cinco acordes en una progresión clásica: tocala suave y dejá sonar cada acorde.',
   },

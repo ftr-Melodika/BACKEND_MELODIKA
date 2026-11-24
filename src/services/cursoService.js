@@ -125,6 +125,7 @@ class CursoService {
             xpGanada = xpRecompensa;
         } else {
             xpTotal = await cursoRepository.registrarProgresoYSumarXP(perfilId, leccion.id, xpRecompensa);
+            if (xpTotal === null) throw new Error("Ya habías reclamado el XP de este ejercicio.");
             xpGanada = xpRecompensa;
         }
 

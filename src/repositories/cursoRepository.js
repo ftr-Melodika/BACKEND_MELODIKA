@@ -132,8 +132,15 @@ class CursoRepository {
             const insertProgreso = `
                 INSERT INTO progreso_ejercicios (perfil_id, ejercicio_id, completado)
                 VALUES ($1, $2, true)
+                ON CONFLICT (perfil_id, ejercicio_id) DO NOTHING
+                RETURNING perfil_id
             `;
-            await client.query(insertProgreso, [perfilId, ejercicioId]);
+            const resProgreso = await client.query(insertProgreso, [perfilId, ejercicioId]);
+            // Otro pedido simultáneo ya guardó esta lección: no se suma la XP otra vez
+            if (resProgreso.rowCount === 0) {
+                await client.query('ROLLBACK');
+                return null;
+            }
 
             const updateXP = `
                 UPDATE perfiles 
@@ -160,6 +167,7 @@ class CursoRepository {
             const query = `
                 INSERT INTO progreso_ejercicios (perfil_id, ejercicio_id, completado, omitida)
                 VALUES ($1, $2, true, true)
+                ON CONFLICT (perfil_id, ejercicio_id) DO NOTHING
             `;
             await pool.query(query, [perfilId, ejercicioId]);
         } catch (error) {

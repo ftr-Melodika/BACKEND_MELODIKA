@@ -6,6 +6,8 @@
 //                                          Hace todo (con la migración, si se indica) y lo deshace:
 //                                          muestra qué cambiaría sin guardar nada
 //   npm run seed:cursos                    Guarda un backup en backups/ y actualiza los cursos
+//   npm run seed:cursos -- --desde-cero    Como el normal, pero primero borra TODOS los cursos de guitarra con su
+//                                          progreso: los alumnos arrancan de cero (sirve también con --simular)
 //   npm run seed:cursos -- --restaurar backups/cursos-XXXX.json   Vuelve al backup
 //
 // Cada lección se identifica por su nombre: si ya existe se actualiza en su lugar (y el progreso de
@@ -25,6 +27,7 @@ const args = process.argv.slice(2);
 const probar = args.includes('--probar');
 const restaurar = args.includes('--restaurar') ? args[args.indexOf('--restaurar') + 1] : null;
 const simular = args.includes('--simular');
+const desdeCero = args.includes('--desde-cero');
 const migracion = args.includes('--migracion') ? args[args.indexOf('--migracion') + 1] : null;
 
 const client = new pg.Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
@@ -39,12 +42,16 @@ async function validar() {
       total++;
       if (nombres.has(leccion.nombre)) errores.push(`${curso.nombre}: nombre repetido "${leccion.nombre}"`);
       nombres.add(leccion.nombre);
-      if (leccion.practica?.tipo === 'cancion' && !cancionesExistentes.has(leccion.practica.cancionId)) {
-        errores.push(`${curso.nombre} / ${leccion.nombre}: la canción "${leccion.practica.cancionId}" no está en canciones_practica (¿corriste npm run seed:canciones?)`);
+      // La práctica puede ser una sola o varias consignas: se revisa cada canción que use
+      const partes = leccion.practica?.tipo === 'consignas' ? leccion.practica.consignas : [leccion.practica];
+      for (const parte of partes.filter((x) => x?.tipo === 'cancion')) {
+        if (!cancionesExistentes.has(parte.cancionId)) {
+          errores.push(`${curso.nombre} / ${leccion.nombre}: la canción "${parte.cancionId}" no está en canciones_practica (¿corriste npm run seed:canciones?)`);
+        }
       }
       const { rows } = await client.query('SELECT practica_valida($1::jsonb) AS ok', [leccion.practica ? JSON.stringify(leccion.practica) : null]);
       if (!rows[0].ok) {
-        const pista = leccion.practica?.tipo === 'ritmo' ? ' (¿aplicaste la migración 001_practica_ritmo.sql?)' : '';
+        const pista = ['ritmo', 'consignas', 'notasAlAzar'].includes(leccion.practica?.tipo) ? ' (¿aplicaste las migraciones 001 y 008?)' : '';
         errores.push(`${curso.nombre} / ${leccion.nombre}: la BD rechaza la práctica${pista}`);
       }
     }
@@ -93,6 +100,11 @@ async function borrarCursos(ids) {
 // `nombresAnteriores` (si se renombró, se movió de curso o reemplaza a otra): así se actualiza
 // en su lugar y el progreso se conserva.
 async function sincronizar() {
+  if (desdeCero) {
+    const viejos = (await client.query('SELECT id FROM cursos WHERE instrumento_id = $1', [GUITARRA])).rows.map((c) => c.id);
+    await borrarCursos(viejos);
+    console.log(`  Desde cero: se borraron ${viejos.length} cursos de guitarra con su progreso`);
+  }
   // Primero los cursos, para poder mover lecciones a los nuevos
   for (const curso of CURSOS) {
     await client.query(

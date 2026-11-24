@@ -1,22 +1,23 @@
 // Archivo: src/database/seeds/cursosGuitarra.js
 // Contenido de los cursos de guitarra. Lo carga seedCursos.js.
 //
-// Cómo está pensado (el detalle pedagógico está en docs/temario-guitarra.md):
-// - Cada lección enseña UNA cosa y la aterriza enseguida en algo que se toca.
-// - La teoría se enseña con videos: acá no hay lecciones de teoría ni texto de teoría en las
-//   prácticas. Todas las lecciones son prácticas que la app mide.
-// - `instrucciones` es el texto de la barra lateral: un solo paso, el de la práctica.
-// - Todo lo que se pide se puede medir con la app: notas y acordes (micrófono), riffs a tempo
-//   (secuencia con `tempo`), golpes a tiempo (ritmo) y la afinación.
+// Fuente: docs/temario-definitivo.md (cursos 1 a 5, diseñados clase por clase). Los textos son los
+// del documento, tal cual. Reglas que se cumplen en todas las clases:
+// - Los textos en pantalla nunca dicen "la app".
+// - Hay un video por curso (clases 1.1, 2.1, 3.1 y 5.3). Quedan preparadas pero sin video cargado:
+//   `youtube_id` queda vacío y los puntos del video están en VIDEO_CURSO_n, solo como referencia.
+// - Canciones y riffs a velocidad original; la consigna 1 al 75% y la 2 a la original. Se puede practicar
+//   a x0.5 (`escalon: 0.5`), pero la clase se aprueba solo a velocidad original.
+// - El recordatorio de toda clase a tiempo termina con «¿Te cuesta? Probala a x0.5.»
 //
-// El nombre de cada lección se arma solo: "<n° de curso>.<n° de lección> · <título>".
-// El nombre es lo que identifica a la lección en la base: `antes` lista los nombres que tenía
-// (o los de las lecciones que reemplaza) para que seedCursos.js la actualice en su lugar y el
-// progreso de los alumnos se conserve.
-import { readFileSync } from 'node:fs';
-
-const QUIZZES = JSON.parse(readFileSync(new URL('./quizzesBase.json', import.meta.url), 'utf8'));
-
+// Formato de cada práctica (lo valida practica_valida en la base; migraciones 001, 007 y 008):
+// - `consignas`: varias prácticas seguidas en una clase; cada una lleva su `instruccion`.
+// - `notasAlAzar`: el curso dice cuántas notas, qué cuerdas, qué trastes y qué dedo; las notas se arman
+//   distintas cada vez que se entra a la clase.
+// - `secuencia` con `tempo`: riff a tiempo. `cancion` con `bpm`: pisa el tempo de la canción en esa consigna.
+//
+// El nombre de cada lección se arma solo: "<n° de curso>.<n° de lección> · <título>". Es lo que la
+// identifica en la base.
 const GUITARRA = '6c990a6d-47cd-4df8-83bd-acbb521da352';
 const id = (n) => `b0000000-0000-4000-a000-0000000000${n}`;
 
@@ -31,916 +32,396 @@ const p = (cuerda, traste, dedo) => (traste === 0 ? { cuerda, traste } : { cuerd
 const nota = (cuerda, traste, dedo) => ({ tipo: 'nota', nombre: nombreNota(cuerda, traste), posiciones: [p(cuerda, traste, dedo)] });
 // Lista de [cuerda, traste, dedo] -> pasos de nota
 const notas = (lista) => lista.map(([c, t, d]) => nota(c, t, d));
-// La misma nota repetida
-const repetir = (veces, cuerda, traste, dedo) => Array.from({ length: veces }, () => [cuerda, traste, dedo]);
-// El cromático 1-2-3-4 desde un traste, en una cuerda
-const cromatico = (cuerda, desde) => [0, 1, 2, 3].map((i) => [cuerda, desde + i, i + 1]);
 
 // Formas de los acordes (los mismos nombres que usa la app)
 const ACORDES = {
   Mim: [p(6, 0), p(5, 2, 2), p(4, 2, 3), p(3, 0), p(2, 0), p(1, 0)],
-  Lam: [p(5, 0), p(4, 2, 2), p(3, 2, 3), p(2, 1, 1), p(1, 0)],
-  Re: [p(4, 0), p(3, 2, 1), p(2, 3, 3), p(1, 2, 2)],
-  La: [p(5, 0), p(4, 2, 1), p(3, 2, 2), p(2, 2, 3), p(1, 0)],
   Mi: [p(6, 0), p(5, 2, 2), p(4, 2, 3), p(3, 1, 1), p(2, 0), p(1, 0)],
-  Do: [p(5, 3, 3), p(4, 2, 2), p(3, 0), p(2, 1, 1), p(1, 0)],
-  Sol: [p(6, 3, 2), p(5, 2, 1), p(4, 0), p(3, 0), p(2, 0), p(1, 3, 3)],
-  // Sol con 4 dedos: el dedo 3 queda en la 2da cuerda, igual que en Re (dedo fijo)
-  Sol4: [p(6, 3, 2), p(5, 2, 1), p(4, 0), p(3, 0), p(2, 3, 3), p(1, 3, 4)],
-  Si7: [p(5, 2, 2), p(4, 1, 1), p(3, 2, 3), p(2, 0), p(1, 2, 4)],
-  // Versión fácil de Si menor
-  Sim7: [p(5, 2, 1), p(4, 0), p(3, 2, 2), p(2, 0), p(1, 2, 3)],
+  Lam: [p(5, 0), p(4, 2, 2), p(3, 2, 3), p(2, 1, 1), p(1, 0)],
+  La: [p(5, 0), p(4, 2, 1), p(3, 2, 2), p(2, 2, 3), p(1, 0)],
+  Re: [p(4, 0), p(3, 2, 1), p(2, 3, 3), p(1, 2, 2)],
 };
-// El Sol de 4 dedos se llama Sol en pantalla
-const nombreAcorde = (nombre) => (nombre === 'Sol4' ? 'Sol' : nombre);
-const acorde = (nombre) => ({ tipo: 'acorde', nombre: nombreAcorde(nombre), posiciones: ACORDES[nombre] });
+const acorde = (nombre) => ({ tipo: 'acorde', nombre, posiciones: ACORDES[nombre] });
 
-// Con `tempo` ({ bpm, duraciones: pulsos de cada paso }), después de las notas una por una la app
-// muestra el riff en movimiento: las notas avanzan y hay que tocarlas a tiempo. Solo notas sueltas.
 const secuencia = (nombre, pasos, tempo) => ({ tipo: 'secuencia', nombre, pasos, ...(tempo ? { tempo } : {}) });
-// Riff a tempo: todas las notas con la misma duración salvo que se indiquen
-const aTempo = (nombre, lista, bpm, duraciones = lista.map(() => 1)) => secuencia(nombre, notas(lista), { bpm, duraciones });
-const acordes = (nombre, lista) => secuencia(nombre, lista.map(acorde));
-// Alterna dos acordes: A B A B …
-const cambio = (a, b, veces = 4) =>
-  acordes(`${nombreAcorde(a)} ↔ ${nombreAcorde(b)}`, Array.from({ length: veces * 2 }, (_, i) => (i % 2 ? b : a)));
 
-// "Acorde perfecto": cuerda por cuerda, de la más grave a la más aguda, y al final el acorde entero
-function acordePerfecto(nombre) {
-  const posiciones = [...ACORDES[nombre]].sort((a, b) => b.cuerda - a.cuerda);
-  const pasos = posiciones.map((pos) => ({ tipo: 'nota', nombre: nombreNota(pos.cuerda, pos.traste), posiciones: [pos] }));
-  return secuencia(`${nombreAcorde(nombre)} perfecto`, [...pasos, acorde(nombre)]);
-}
+// Cuánto hay que acertar para aprobar una clase a tiempo, y la consigna 1 (escalón) respecto de la original
+const APROBAR_A_TIEMPO = 0.75;
+// Selector x0.5: para practicar. Solo aprueba la velocidad de la consigna.
+const ESCALON_PRACTICA = 0.5;
+// Riff a tiempo: una duración (en pulsos) por nota. Con `escalon` se puede practicar a x0.5 pero no aprueba.
+const aTempo = (nombre, lista, bpm, duraciones) =>
+  secuencia(nombre, notas(lista), { bpm, duraciones, aprobar: APROBAR_A_TIEMPO, escalon: ESCALON_PRACTICA });
 
-// Ejercicio de tempo con metrónomo (ver src/utils/ritmo.js en el frontend).
-// etapas: [[bpm, compases], …]. patron: qué partes del compás se tocan (en corcheas, 1 y 2 y 3 y 4 y).
-const ritmo = (nombre, etapas, { compas = 4, subdivision, patron, cuenta, clicQueDesaparece, aprobar } = {}) => ({
-  tipo: 'ritmo', nombre, compas,
-  ...(subdivision ? { subdivision } : {}),
-  ...(patron ? { patron } : {}),
-  etapas: etapas.map(([bpm, compases]) => ({ bpm, compases })),
-  ...(cuenta !== undefined ? { cuenta } : {}),
-  ...(clicQueDesaparece ? { clicQueDesaparece } : {}),
-  ...(aprobar ? { aprobar } : {}),
+// Notas al azar: el curso indica cuántas, en qué cuerdas y trastes y con qué dedo.
+const notasAlAzar = (nombre, { cantidad, cuerdas, trastes, dedo, dedoPorTraste, vecesPorTraste }) => ({
+  tipo: 'notasAlAzar', nombre, cantidad, cuerdas, trastes,
+  ...(dedo ? { dedo } : {}),
+  ...(dedoPorTraste ? { dedoPorTraste } : {}),
+  vecesPorTraste,
+  sinRepetirSeguidas: true, // nunca la misma nota dos veces seguidas
 });
 
-// Patrones de rasgueo en corcheas: 1 y 2 y 3 y 4 y
-const PATRON = {
-  universal: [1, 0, 1, 1, 0, 1, 1, 1], // ↓ · ↓↑ · ↑↓↑
-  uno: [1, 0, 1, 1, 1, 0, 1, 1], // ↓ · ↓↑ ↓ · ↓↑
-  rock: [1, 0, 1, 0, 1, 1, 1, 1], // ↓ · ↓ · ↓↑ ↓↑
-  pop: [1, 0, 1, 1, 0, 1, 1, 0], // ↓ · ↓↑ · ↑ ↓ ·
-  contratiempo: [0, 1, 0, 1, 0, 1, 0, 1], // · ↑ · ↑ · ↑ · ↑
-};
+// Cambio entre dos acordes: A → B → A → B → A (4 cambios), con un rasgueo por acorde
+const cambio = (a, b) => secuencia(`${a} ↔ ${b}`, [a, b, a, b, a].map(acorde));
+// Acorde: cuerda por cuerda (con el pulgar, de la más grave a la 1) y un rasgueo tres veces
+const cuerdaPorCuerda = (nombre) =>
+  secuencia(`${nombre}: cuerda por cuerda`, [...ACORDES[nombre]].sort((a, b) => b.cuerda - a.cuerda).map((pos) => ({ tipo: 'nota', nombre: nombreNota(pos.cuerda, pos.traste), posiciones: [pos] })));
+const rasgueoTresVeces = (nombre) => secuencia(`${nombre}: un rasgueo, tres veces`, [acorde(nombre), acorde(nombre), acorde(nombre)]);
+
+// Ejercicio de tempo con metrónomo. etapas: [[bpm, compases], …]
+const ritmo = (nombre, etapas, { compas = 4 } = {}) => ({
+  tipo: 'ritmo', nombre, compas,
+  etapas: etapas.map(([bpm, compases]) => ({ bpm, compases })),
+  aprobar: APROBAR_A_TIEMPO,
+});
+
+// Canción del catálogo (canciones_practica). `bpm` pisa el tempo de la canción en esa consigna.
+const cancion = (cancionId, fase, opciones = {}) => ({ tipo: 'cancion', cancionId, fase, ...opciones });
+const cancionATiempo = (cancionId, bpm) => cancion(cancionId, 'tocar', { bpm, aprobar: APROBAR_A_TIEMPO, escalon: ESCALON_PRACTICA });
+
+// Una consigna de una clase: la práctica más su instrucción
+const consigna = (instruccion, practica) => ({ ...practica, instruccion });
+const consignas = (lista) => ({ tipo: 'consignas', consignas: lista });
 
 // ───────────────────────── Tipos de lección ─────────────────────────
 
 const XP_PRACTICA = 50;
-const XP_PRUEBA = 100;
+const XP_CANCION_TOCAR = 100;
+const X05 = '¿Te cuesta? Probala a x0.5.';
 
-// Cómo se hacen los ejercicios de ritmo: la app escucha golpes (sonidos fuertes que aparecen de golpe)
-const AVISO_RITMO = {
-  palmas: '👏 Con palmas: la app escucha cada aplauso.',
-  rasgueo: '🎸 Rasgueá con ganas y con las cuerdas apagadas (la mano que pisa apoyada, sin apretar): suena seco, como un tambor, y la app lo escucha. Si no te detecta, hacelo con palmas.',
-};
-const DOS_PARTES = 'Primero las notas una por una. Después a tempo: avanzan por el mástil y tocás cada una cuando pasa por la línea amarilla.';
-
-// Aviso que se suma al destacado según cómo se hace la práctica
-function avisoDePractica(practica, modo) {
-  if (practica.tipo === 'ritmo') return AVISO_RITMO[modo];
-  if (practica.tipo === 'secuencia' && practica.tempo) return DOS_PARTES;
-  return null;
-}
-
-// Práctica que la app mide. La teoría va en videos, así que no lleva texto_teoria.
-// modo (solo ritmo): 'rasgueo' o 'palmas'. meta: objetivo extra que se guarda como descripción.
-function practicar(titulo, practica, { destacado = null, instrucciones = [], antes = [], meta = null, modo = 'rasgueo', xp = XP_PRACTICA } = {}) {
+// Una clase. `objetivo` queda como descripción. Sin teoría en pantalla: la explicación va en el video del curso.
+// Si no se pasan instrucciones, se usa la de la primera consigna.
+function clase(titulo, practica, { objetivo, destacado = null, instrucciones, xp = XP_PRACTICA }) {
+  const porDefecto = practica.tipo === 'consignas' ? [practica.consignas[0].instruccion] : [];
   return {
-    titulo, tipo: 'practica', descripcion: meta, texto_teoria: null,
-    texto_destacado: [destacado, avisoDePractica(practica, modo)].filter(Boolean).join('\n\n') || null,
-    instrucciones, practica, xp, antes,
+    titulo, tipo: 'practica', descripcion: objetivo, texto_teoria: null,
+    texto_destacado: destacado, instrucciones: instrucciones ?? porDefecto, practica, xp,
   };
 }
-// Prueba de salida de un tramo: no lleva número, suma más XP
-const prueba = (titulo, practica, opciones = {}) => ({ ...practicar(titulo, practica, { ...opciones, xp: XP_PRUEBA }), prueba: true });
 
-// Las dos clases finales de un curso: se aprende una canción del catálogo (canciones_practica) y se toca.
-// La app enseña los acordes y los cambios en "aprender", y muestra el mástil desplazante en "tocar".
-const XP_CANCION_TOCAR = 100;
-function clasesDeCancion({ cancionId, titulo, artista }) {
-  const practica = (fase) => ({ tipo: 'cancion', cancionId, fase });
-  return [
-    practicar(`Aprendé ${titulo}`, practica('aprender'), {
-      meta: `Aprendé los acordes de ${titulo} (${artista}) y los cambios entre ellos.`,
-      instrucciones: [`Aprendé cada acorde de ${titulo} y después los cambios entre acordes.`],
-    }),
-    practicar(`Tocá ${titulo}`, practica('tocar'), {
-      meta: `Tocá ${titulo} (${artista}): rasgueá cada acorde cuando llegue a la línea.`,
-      instrucciones: [`Rasgueá cada acorde de ${titulo} cuando llegue a la línea.`],
-      xp: XP_CANCION_TOCAR,
-    }),
-  ];
+// Clases de acordes: consigna 1 cuerda por cuerda y consigna 2 un rasgueo tres veces
+function claseDeAcorde(titulo, nombre, { objetivo, destacado, primeraCuerda }) {
+  return clase(titulo, consignas([
+    consigna(`Armá el ${nombre} y tocá cada cuerda con el pulgar, de la ${primeraCuerda} a la 1.`, cuerdaPorCuerda(nombre)),
+    consigna(`Armá el ${nombre}, rasgueá una vez y soltá la mano. Tres veces.`, rasgueoTresVeces(nombre)),
+  ]), { objetivo, destacado });
 }
 
-// ═════════════════════════ PRIMEROS PASOS ═════════════════════════
+// Clase de cambio entre dos acordes sin dedos fijos (3.6 y 5.2)
+const claseDeCambioEnBloque = (titulo, a, b, objetivo) =>
+  clase(titulo, cambio(a, b), {
+    objetivo,
+    destacado: 'Mové los dedos juntos, como un bloque, no de a uno.',
+    instrucciones: [`Armá el ${a}, rasgueá una vez y pasá al ${b} con los tres dedos a la vez.`],
+  });
 
-const primerosPasos1 = {
-  id: id('01'),
+// ───────────────────────── Videos (preparados, sin cargar) ─────────────────────────
+// Un video por curso. Los puntos son lo que tiene que explicar; el `youtube_id` se carga cuando exista.
+
+const VIDEO_CURSO_1 = [
+  'Cómo funciona una clase: dar permiso al micrófono, buscar un lugar sin ruido, dejar el celular cerca de la guitarra, tocar y esperar el ✓.',
+  'Partes de la criolla: clavijero y clavijas, cejuela, mástil y trastes, caja y boca, puente.',
+  'Postura: sentado, la guitarra apoyada en la pierna, el mástil apenas hacia arriba, la espalda derecha. Una mano en el mástil y la otra sobre la boca (los zurdos, al revés).',
+  'Las cuerdas: la 6 es la más gruesa (queda arriba) y la 1 la más fina. Sus nombres: Mi, La, Re, Sol, Si, Mi.',
+  'Cómo afinar: cada cuerda termina en su clavija. Tensar sube la nota y aflojar la baja. Girar de a poco: si se gira de más, la cuerda se puede cortar.',
+  'Afinar siempre: el nailon se desafina entre una sesión y otra, y las cuerdas nuevas se estiran durante varios días.',
+  'Qué es un traste y cómo se cuentan: el 1 es el más cercano a las clavijas.',
+  'Cómo pisar: con la punta del dedo, justo detrás del metal, sin apretar de más. El pulgar de la mano que pisa va detrás del mástil.',
+  'Los dedos: 1 índice, 2 mayor, 3 anular, 4 meñique. En este curso se usa solo el índice.',
+  'Cómo leer el mástil: qué cuerda se toca, el círculo con el número de dedo y el 0 para la cuerda al aire.',
+];
+const VIDEO_CURSO_2 = [
+  'Un dedo por traste: cada dedo se ocupa de un traste, así la mano no se mueve.',
+  'Dedos arqueados: pisar con la punta y el dedo curvo, para no apagar la cuerda de al lado.',
+  'Dedos cerca del mástil: los que no pisan quedan cerca, listos para la próxima nota.',
+];
+const VIDEO_CURSO_3 = [
+  'Cómo leer un acorde en el mástil: cada círculo es un dedo en su cuerda y traste; la X es una cuerda que no se toca y el 0 una cuerda al aire.',
+  'Que suenen todas las cuerdas: dedos arqueados, para no apagar las cuerdas al aire.',
+  'Cómo hacer un rasgueo único: el pulgar baja por todas las cuerdas de una pasada, sin tocar las que tienen X.',
+];
+const VIDEO_CURSO_5 = [
+  'Cómo apagar las cuerdas: la mano que pisa apoyada sobre las cuerdas, sin apretar, para que suenen secas, como un tambor.',
+  'Rasguear parejo con el pulgar: la mano no se frena entre golpe y golpe.',
+];
+export const VIDEOS_PENDIENTES = { 'Primeros pasos I': VIDEO_CURSO_1, 'Seven Nation Army': VIDEO_CURSO_2, 'Primeros acordes': VIDEO_CURSO_3, 'Re y rasgueo de 4 golpes': VIDEO_CURSO_5 };
+
+// ═════════════════════════ CURSO 1 · PRIMEROS PASOS I ═════════════════════════
+
+// Smoke on the Water, cuerda 6 con el índice: frases 1 a 4 (el 0 es la cuerda al aire)
+const SMOKE = {
+  frase1: [[6, 0], [6, 3, 1], [6, 5, 1]],
+  frase2: [[6, 0], [6, 3, 1], [6, 6, 1], [6, 5, 1]],
+  frase3: [[6, 0], [6, 3, 1], [6, 5, 1]],
+  frase4: [[6, 3, 1], [6, 0]],
+};
+const SMOKE_RIFF = [...SMOKE.frase1, ...SMOKE.frase2, ...SMOKE.frase3, ...SMOKE.frase4];
+// Pulsos que dura cada nota hasta la siguiente. A CONFIRMAR escuchando el original.
+const SMOKE_DURACIONES = [1, 1, 2, 1, 1, 0.5, 2.5, 1, 1, 2, 1, 2];
+const INSTRUCCION_SMOKE = 'Pisá con el índice el traste marcado y tocá la cuerda 6 con el pulgar. Esperá el ✓.';
+
+const curso1 = {
+  id: id('71'),
   nombre: 'Primeros pasos I',
-  descripcion: 'Conocé tu guitarra: sus partes, el número y el nombre de cada cuerda, la postura, cómo afinarla y tus primeros golpes con la púa.',
+  descripcion: 'Tené la guitarra afinada, conocé las 6 cuerdas y da tus primeros golpes parejos hasta tocar tu primer riff famoso.',
   lecciones: [
-    practicar('Las 6 cuerdas: número y nombre',
-      secuencia('Las cuerdas de la 6 a la 1', notas([[6, 0], [5, 0], [4, 0], [3, 0], [2, 0], [1, 0]])),
-      { destacado: '6 Mi · 5 La · 4 Re · 3 Sol · 2 Si · 1 Mi',
-        instrucciones: ['Tocá cada cuerda al aire (sin pisar), de la 6 a la 1. Esperá el ✓ antes de pasar a la siguiente.'],
-        antes: ['1.3 · Las 6 cuerdas: número y nombre', '1.1 · Quiz: nombre y número de cada cuerda'] }),
-
-    practicar('Encontrá cada cuerda',
-      secuencia('Cuerdas en desorden', notas([[3, 0], [6, 0], [2, 0], [5, 0], [1, 0], [4, 0]])),
-      { instrucciones: ['Contá las cuerdas desde la 6 si dudás. Golpe corto, una sola cuerda.'],
-        antes: ['1.4 · Encontrá cada cuerda', '1.1 · Tocá cada cuerda al aire'] }),
-
-    practicar('Afiná tu guitarra',
-      QUIZZES['Afinación Básica (Standard)'],
-      { destacado: 'Si la nota está baja, tensá la cuerda. Si está alta, aflojala y llegá a la nota subiendo.',
-        instrucciones: ['Tocá la cuerda que te pide la app y girá su clavija despacio hasta que la aguja quede en el centro.'],
-        antes: ['1.5 · Afiná tu guitarra', '1.1 · Afiná las 6 cuerdas'] }),
-
-    practicar('Púa estable: golpes parejos',
-      aTempo('Golpes parejos', [...repetir(4, 6, 0), ...repetir(4, 5, 0)], 60),
-      { instrucciones: ['Un golpe hacia abajo por nota, sin apurarte: la nota tiene que llegar a la línea.'],
-        antes: ['1.6 · Púa estable: golpes parejos', '1.2 · Púa estable: 16 golpes a 60 BPM'] }),
-  ],
-};
-
-const primerosPasos2 = {
-  id: id('11'),
-  nombre: 'Primeros pasos II',
-  descripcion: 'Qué es un traste, el número de cada dedo y cómo leer el mástil de Melodika. Cómo pisar para que la nota suene limpia y tu primera melodía.',
-  lecciones: [
-    practicar('Cómo leer el mástil de Melodika',
-      secuencia('Tu primera lectura', notas([[1, 0], [1, 1, 1], [1, 3, 3], [1, 1, 1], [1, 0]])),
-      { destacado: 'Cuerda subrayada = se toca · Círculo con número = traste y dedo · ✕ = no se toca',
-        instrucciones: ['Cuerda 1: al aire, dedo 1 en el traste 1, dedo 3 en el traste 3, y de vuelta.'],
-        antes: ['2.2 · Cómo leer el mástil de Melodika', '1.4 · Cómo leer el mástil de Melodika'] }),
-
-    practicar('Presión mínima: una nota limpia',
-      nota(2, 1, 1),
-      { destacado: 'Punta del dedo · Pegado al traste · Pulgar detrás del mástil',
-        instrucciones: ['Cuerda 2, traste 1, dedo 1. Mantené la nota sonando hasta el ✓.'],
-        antes: ['2.3 · Presión mínima: una nota limpia', '2.1 · Presión mínima: una nota limpia'] }),
-
-    practicar('Un dedo por traste',
-      secuencia('Cuerda 1, trastes 1 a 4 y vuelta', notas([...cromatico(1, 1), [1, 3, 3], [1, 2, 2], [1, 1, 1]])),
-      { instrucciones: ['Subí del traste 1 al 4 y volvé. Cada dedo en su traste.'],
-        antes: ['2.4 · Un dedo por traste', '2.1 · Un dedo por traste'] }),
-
-    practicar('Leé y tocá: tres frases cortas',
-      secuencia('Tres frases cortas', notas([
-        [3, 0], [3, 2, 2], [2, 0], [2, 1, 1],
-        [2, 3, 3], [2, 1, 1], [1, 0], [1, 1, 1],
-        [4, 2, 2], [3, 0], [2, 0], [1, 0],
-      ])),
-      { destacado: 'Cuerda → traste → dedo',
-        instrucciones: ['Leé cada posición antes de tocar. Si suena otra nota, mirá de nuevo la cuerda.'],
-        antes: ['2.5 · Leé y tocá: tres frases cortas', '2.2 · Leé y tocá: tres frases cortas'] }),
-
-    practicar('Tu primera melodía: Oda a la alegría',
-      aTempo('Oda a la alegría', [[1, 0], [1, 0], [1, 1, 1], [1, 3, 3], [1, 3, 3], [1, 1, 1], [1, 0], [2, 3, 3], [2, 1, 1], [2, 1, 1], [2, 3, 3], [1, 0], [1, 0], [2, 3, 3], [2, 3, 3]],
-        80, [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5, 0.5, 2]),
-      { instrucciones: ['Primero nota por nota; después tocala a tempo.'],
-        antes: ['2.6 · Tu primera melodía: Oda a la alegría', '3.3 · Melodía de la Oda a la alegría'] }),
-  ],
-};
-
-const primerosPasos3 = {
-  id: id('12'),
-  nombre: 'Primeros pasos III',
-  descripcion: 'El pulso y el metrónomo, dedos independientes con el cromático y la araña, y tu primer riff de verdad.',
-  lecciones: [
-    practicar('Un golpe por clic',
-      ritmo('Un golpe por clic', [[60, 4]]),
-      { modo: 'palmas',
-        instrucciones: ['Tocá Empezar, esperá la cuenta y aplaudí con cada clic.'],
-        antes: ['3.2 · Un golpe por clic'] }),
-
-    practicar('Escalera de tempo',
-      ritmo('Escalera de tempo', [[60, 2], [70, 2], [80, 2]]),
-      { modo: 'palmas',
-        instrucciones: ['Aplaudí con el clic y acompañá cada subida sin adelantarte.'],
-        antes: ['3.3 · Escalera de tempo', '3.2 · Escalera de tempo: 60, 70 y 80 BPM'] }),
-
-    practicar('El clic que desaparece',
-      ritmo('El clic que desaparece', [[60, 8]], { clicQueDesaparece: true }),
-      { modo: 'palmas',
-        instrucciones: ['Seguí aplaudiendo aunque el clic se calle. Contá en voz alta.'],
-        antes: ['3.4 · El clic que desaparece', '3.2 · El clic que desaparece'] }),
-
-    practicar('Cromático 1-2-3-4',
-      aTempo('Cromático en el traste 5', [...cromatico(6, 5), ...cromatico(6, 5)], 60),
-      { instrucciones: ['Dedos 1, 2, 3 y 4 en los trastes 5, 6, 7 y 8 de la cuerda 6, dos veces.'],
-        antes: ['3.5 · Cromático 1-2-3-4', '3.1 · Cromático 1-2-3-4 en la cuerda 6'] }),
-
-    practicar('La araña',
-      aTempo('La araña', [6, 5, 4, 3, 2, 1].flatMap((c) => cromatico(c, 5)), 60),
-      { instrucciones: ['Mismo dedo, mismo traste en todas las cuerdas. Lento y parejo.'],
-        antes: ['3.6 · La araña', '3.1 · La araña en las 6 cuerdas'] }),
-
-    practicar('Riff: Seven Nation Army',
-      aTempo('Riff de Seven Nation Army', [[4, 2, 2], [4, 2, 2], [3, 0], [4, 2, 2], [4, 0], [5, 3, 3], [5, 2, 2]], 70, [1.5, 0.5, 0.75, 0.75, 0.5, 2, 2]),
-      { instrucciones: ['Primero nota por nota; después a tempo.'],
-        antes: ['3.7 · Riff: Seven Nation Army', '3.3 · Riff de Seven Nation Army'] }),
-
-    prueba('Prueba de salida: Primeros pasos',
-      aTempo('Seven Nation Army a 85 BPM', [[4, 2, 2], [4, 2, 2], [3, 0], [4, 2, 2], [4, 0], [5, 3, 3], [5, 2, 2]], 85, [1.5, 0.5, 0.75, 0.75, 0.5, 2, 2]),
-      { instrucciones: ['El riff a 85 BPM: pie marcando el pulso.'],
-        antes: ['Prueba de salida: Primeros pasos', '3.3 · Inventá tu propio riff'] }),
-  ],
-};
-
-// ═════════════════════════ ACORDES ═════════════════════════
-// Los cambios de acorde se enseñan junto con cada acorde nuevo (y no en un curso aparte):
-// así cada técnica de cambio llega justo cuando hace falta.
-
-const primerRasgueo = 'Rasgueo en negras: ↓ ↓ ↓ ↓ (un golpe hacia abajo por tiempo). Contá en voz alta y cambiá de acorde en el 1.';
-
-const acordes1 = {
-  id: id('02'),
-  nombre: 'Acordes I',
-  descripcion: 'Cómo se arma un acorde, el cifrado americano y tus dos primeros acordes: Em y Am. Tu primer cambio y tu primer rasgueo.',
-  lecciones: [
-    practicar('Cómo se arma un acorde: Em',
-      acordePerfecto('Mim'),
-      { destacado: 'Dedos parados · Punta del dedo · Pegado al traste',
-        instrucciones: ['Cuerda por cuerda, de la 6 a la 1. Si una no suena, corregí ese dedo y volvé a tocarla.'],
-        antes: ['4.1 · Acorde perfecto: Mi menor (Em)', '2.2 · Tu primer acorde: Mi menor (Em)'] }),
-
-    practicar('Acorde perfecto: Am',
-      acordePerfecto('Lam'),
-      { instrucciones: ['Cuerda por cuerda, desde la 5. La cuerda 1 tiene que sonar clara.'],
-        antes: ['4.3 · Acorde perfecto: Am', '4.1 · Acorde perfecto: La menor (Am)'] }),
-
-    practicar('Tu primer cambio: Em ↔ Am',
-      cambio('Mim', 'Lam'),
-      { destacado: 'La forma no se desarma: se traslada.',
-        meta: 'Meta: 12 cambios en 30 segundos',
-        instrucciones: ['Alterná Em y Am. Fuera de la app, medí cuántos cambios hacés en 30 segundos: la meta es 12.'],
-        antes: ['4.4 · Tu primer cambio: Em ↔ Am', '6.1 · Primer cambio: Em ↔ Am', '6.2 · Em ↔ Am: la forma se traslada', '4.1 · Em y Am de memoria'] }),
-
-    practicar('Tu primer rasgueo: negras',
-      ritmo('Negras', [[60, 4]]),
-      { destacado: '↓ ↓ ↓ ↓  —  1 2 3 4',
-        instrucciones: ['Un rasgueo hacia abajo con cada clic, desde la cuerda 6.'],
-        antes: ['4.5 · Tu primer rasgueo: negras', '9.1 · Negras con las cuerdas apagadas'] }),
-
-    practicar('Jam en Em y Am',
-      acordes('Jam en Em y Am', ['Mim', 'Lam', 'Mim', 'Lam', 'Mim', 'Lam', 'Mim']),
-      { destacado: primerRasgueo,
-        instrucciones: ['Cuatro golpes por acorde. Cuando aparezca el ✓, ya estás en el siguiente.'],
-        antes: ['4.6 · Jam en Em y Am', '4.1 · Jam rockero en Em y Am'] }),
-  ],
-};
-
-const acordes2 = {
-  id: id('21'),
-  nombre: 'Acordes II',
-  descripcion: 'El acorde de D, las reglas para cambiar de acorde sin frenar y tus primeras dos canciones.',
-  lecciones: [
-    practicar('Acorde perfecto: D',
-      acordePerfecto('Re'),
-      { destacado: 'D: solo 4 cuerdas',
-        instrucciones: ['Cuerda por cuerda, desde la 4. La cuerda 1 es la que más se apaga: revisá el dedo 3.'],
-        antes: ['4.2 · Acorde perfecto: Re (D)', '4.2 · Cómo se arma Re (D)'] }),
-
-    practicar('Em ↔ D moviendo la mano en bloque',
-      cambio('Mim', 'Re'),
-      { meta: 'Meta: 10 cambios en 30 segundos',
-        instrucciones: ['Alterná Em y D. Acordate: en D se rasguean solo 4 cuerdas.'],
-        antes: ['5.3 · Em ↔ D moviendo la mano en bloque', '4.2 · Re (D) de memoria', '6.1 · Cambio lento sin cortar el sonido'] }),
-
-    practicar('Canción: Horse With No Name',
-      acordes('Horse With No Name (simplificada)', ['Mim', 'Re', 'Mim', 'Re', 'Mim', 'Re', 'Mim', 'Re']),
-      { destacado: primerRasgueo,
-        instrucciones: ['Em y D, cuatro golpes cada uno. El pie no para.'],
-        antes: ['5.4 · Canción: Horse With No Name'] }),
-
-    practicar('Canción: Oye cómo va',
-      acordes('Oye cómo va (simplificada)', ['Lam', 'Re', 'Lam', 'Re', 'Lam', 'Re', 'Lam']),
-      { destacado: primerRasgueo,
-        instrucciones: ['Am y D, cuatro golpes cada uno.'],
-        antes: ['5.5 · Canción: Oye cómo va', '4.2 · Jam en D con banda'] }),
-  ],
-};
-
-const acordes3 = {
-  id: id('22'),
-  nombre: 'Acordes III',
-  descripcion: 'Los acordes mayores A y E, el dedo guía y tu primera canción completa: Three Little Birds.',
-  lecciones: [
-    practicar('Acorde perfecto: A',
-      acordePerfecto('La'),
-      { instrucciones: ['Cuerda por cuerda, desde la 5. La cuerda 1 tiene que sonar.'],
-        antes: ['5.1 · Acorde perfecto: La (A)', '5.1 · Cómo se arman La (A) y Mi (E)'] }),
-
-    practicar('Acorde perfecto: E',
-      acordePerfecto('Mi'),
-      { instrucciones: ['Cuerda por cuerda, las 6.'],
-        antes: ['5.1 · Acorde perfecto: Mi (E)'] }),
-
-    practicar('A ↔ D con el dedo guía',
-      cambio('La', 'Re'),
-      { destacado: 'Dedo guía: se desliza, no se levanta.',
-        meta: 'Meta: 15 cambios en 30 segundos',
-        instrucciones: ['Alterná A y D. El dedo 3 no se despega.'],
-        antes: ['6.2 · A ↔ D con el dedo guía'] }),
-
-    practicar('E ↔ A moviendo la mano en bloque',
-      cambio('Mi', 'La'),
-      { meta: 'Meta: 12 cambios en 30 segundos',
-        instrucciones: ['Alterná E y A. Ojo con la cuerda 6.'],
-        antes: ['6.2 · E ↔ Am: la forma se traslada'] }),
-
-    practicar('Canción: Three Little Birds',
-      acordes('Three Little Birds', ['La', 'Re', 'La', 'Re', 'La', 'Mi', 'La', 'Re', 'La', 'Mi', 'La', 'Re', 'La']),
-      { destacado: primerRasgueo,
-        instrucciones: ['La canción completa. Cuatro golpes por acorde.'],
-        antes: ['6.2 · Canción completa: Three Little Birds', '5.1 · Canción: Three Little Birds'] }),
-  ],
-};
-
-const acordes4 = {
-  id: id('23'),
-  nombre: 'Acordes IV',
-  descripcion: 'Los acordes C y G, los dedos fijos (el mejor atajo para cambiar) y dos canciones completas.',
-  lecciones: [
-    practicar('Acorde perfecto: C',
-      acordePerfecto('Do'),
-      { instrucciones: ['Cuerda por cuerda, desde la 5. Prestá atención a la cuerda 3.'],
-        antes: ['5.2 · Acorde perfecto: Do (C)', '5.2 · Cómo se arman Do (C) y Sol (G)'] }),
-
-    practicar('Dedos fijos: C ↔ Am',
-      cambio('Do', 'Lam'),
-      { destacado: 'Dedo fijo: no se levanta nunca.',
-        meta: 'Meta: 20 cambios en 30 segundos',
-        instrucciones: ['Alterná C y Am. Los dedos 1 y 2 no se despegan.'],
-        antes: ['8.1 · C ↔ Am con dos dedos fijos', '8.1 · Qué son los dedos fijos'] }),
-
-    practicar('Acorde perfecto: G con 3 dedos',
-      acordePerfecto('Sol'),
-      { instrucciones: ['Cuerda por cuerda, las 6. Revisá la cuerda 4.'],
-        antes: ['5.2 · Acorde perfecto: Sol (G) con 3 dedos'] }),
-
-    practicar('Acorde perfecto: G con 4 dedos',
-      acordePerfecto('Sol4'),
-      { instrucciones: ['Cuerda por cuerda, las 6.'],
-        antes: ['5.2 · Acorde perfecto: Sol (G) con 4 dedos'] }),
-
-    practicar('Dedo fijo: G ↔ D',
-      cambio('Sol4', 'Re'),
-      { meta: 'Meta: 15 cambios en 30 segundos',
-        instrucciones: ['Alterná G y D. El dedo 3 es tu ancla.'],
-        antes: ['8.1 · G ↔ D con el dedo 3 fijo'] }),
-
-    practicar('C ↔ G moviendo la mano en bloque',
-      cambio('Do', 'Sol'),
-      { meta: 'Meta: 12 cambios en 30 segundos',
-        instrucciones: ['Alterná C y G. Primero el bajo.'],
-        antes: ['6.3 · C ↔ G moviendo la mano en bloque', '6.3 · Cambios sin dedos en común'] }),
-
-    practicar("Canción: Knockin' on Heaven's Door",
-      acordes("Knockin' on Heaven's Door", ['Sol', 'Re', 'Lam', 'Sol', 'Re', 'Do', 'Sol', 'Re', 'Lam', 'Sol', 'Re', 'Do']),
-      { destacado: primerRasgueo,
-        instrucciones: ['La canción completa, cuatro golpes por acorde.'],
-        antes: ["8.2 · Canción completa: Knockin' on Heaven's Door", "5.2 · Canción: Knockin' on Heaven's Door"] }),
-
-    practicar('Canción: Stand By Me',
-      acordes('Stand By Me', ['Sol', 'Mim', 'Do', 'Re', 'Sol', 'Mim', 'Do', 'Re', 'Sol']),
-      { destacado: primerRasgueo,
-        instrucciones: ['La canción completa, cuatro golpes por acorde.'],
-        antes: ['6.3 · Canción completa: Stand By Me', '7.2 · Canción: Stand By Me', '9.1 · Stand By Me en negras'] }),
-  ],
-};
-
-const acordes5 = {
-  id: id('24'),
-  nombre: 'Acordes V',
-  descripcion: 'B7, el acorde del folklore y del blues, con sus cambios por dedo fijo, y la Zamba de mi esperanza.',
-  lecciones: [
-    practicar('Acorde perfecto: B7',
-      acordePerfecto('Si7'),
-      { instrucciones: ['Cuerda por cuerda, desde la 5. La difícil es la 2.'],
-        antes: ['7.1 · Acorde perfecto: Si séptima (B7)', '7.1 · B7, el acorde del folklore'] }),
-
-    practicar('Dedo fijo: E ↔ B7',
-      cambio('Mi', 'Si7'),
-      { meta: 'Meta: 15 cambios en 30 segundos',
-        instrucciones: ['Alterná E y B7.'],
-        antes: ['8.1 · E ↔ B7 con el dedo 2 fijo'] }),
-
-    practicar('Dedo fijo: Am ↔ B7',
-      cambio('Lam', 'Si7'),
-      { meta: 'Meta: 12 cambios en 30 segundos',
-        instrucciones: ['Alterná Am y B7, rasgueando desde la cuerda 5.'],
-        antes: ['16.2 · Am ↔ B7'] }),
-
-    practicar('Dedo fijo: Em ↔ B7',
-      cambio('Mim', 'Si7'),
-      { meta: 'Meta: 15 cambios en 30 segundos',
-        instrucciones: ['Alterná Em y B7.'],
-        antes: ['8.1 · Em ↔ B7 con el dedo 2 fijo'] }),
-
-    practicar('Canción: Zamba de mi esperanza',
-      acordes('Zamba de mi esperanza (simple, en Mi)', ['Mi', 'La', 'Si7', 'Mi', 'La', 'Si7', 'Mi']),
-      { destacado: 'Rasgueo: ↓ · · ↓ · ·  —  1 2 3 4 5 6',
-        instrucciones: ['Toda la canción, cambiando de acorde en el 1.'],
-        antes: ['7.1 · Canción: Zamba de mi esperanza', '8.1 · Estribillo de Zamba de mi esperanza'] }),
-  ],
-};
-
-const cambios = {
-  id: id('03'),
-  nombre: 'Cambios de acordes',
-  descripcion: 'El cambio anticipado, no frenar nunca y cuatro canciones completas con los 8 acordes. Cierra con las pruebas de acordes y de cambios.',
-  lecciones: [
-    practicar('El cambio anticipado',
-      acordes('G - D - Em - C', ['Sol', 'Re', 'Mim', 'Do', 'Sol', 'Re', 'Mim', 'Do']),
-      { destacado: '↓ ↓ ↓ ↗  —  en el 4 ya estás viajando',
-        instrucciones: ['La progresión completa, cambiando en el último golpe.'],
-        antes: ['8.2 · Progresión G - D - Em - C a 70 BPM', '8.2 · Cambio anticipado'] }),
-
-    practicar('D ↔ E moviendo la mano en bloque',
-      cambio('Re', 'Mi'),
-      { meta: 'Meta: 12 cambios en 30 segundos',
-        instrucciones: ['Alterná D y E. La púa también cambia de cuerda.'],
-        antes: ['6.3 · D ↔ E moviendo la mano en bloque'] }),
-
-    practicar('Forzar el cambio',
-      acordes('Am - C - G - Em', ['Lam', 'Do', 'Sol', 'Mim', 'Lam', 'Do', 'Sol', 'Mim']),
-      { instrucciones: ['Am, C, G y Em sin frenar nunca.'],
-        antes: ['8.3 · Forzar el cambio: Am - C - G - Em'] }),
-
-    practicar('Canción: Zombie',
-      acordes('Zombie (simplificada)', ['Mim', 'Do', 'Sol', 'Re', 'Mim', 'Do', 'Sol', 'Re']),
-      { destacado: primerRasgueo,
-        instrucciones: ['La progresión completa, con cambio anticipado.'],
-        antes: ['7.2 · Canción: Zombie'] }),
-
-    practicar('Canción: De música ligera',
-      acordes('De música ligera (tono adaptado)', ['Mim', 'Do', 'Sol', 'Re', 'Mim', 'Do', 'Sol', 'Re']),
-      { destacado: primerRasgueo,
-        instrucciones: ['La progresión completa. Subí la velocidad solo si no frenás.'],
-        antes: ['7.2 · Canción: De música ligera', '8.3 · De música ligera, cada vez más rápido'] }),
-
-    practicar('Canción: Wish You Were Here',
-      acordes('Wish You Were Here (simplificada)', ['Mim', 'Sol', 'Do', 'Re', 'Lam', 'Sol', 'Re', 'Do', 'Lam', 'Sol']),
-      { destacado: primerRasgueo,
-        instrucciones: ['La canción completa, sin frenar.'],
-        antes: ['7.2 · Canción: Wish You Were Here'] }),
-
-    prueba('Prueba de salida: Acordes',
-      acordes('Los 8 acordes', ['Mim', 'Lam', 'Re', 'La', 'Mi', 'Do', 'Sol', 'Si7']),
-      { instrucciones: ['Cada acorde tiene que sonar limpio, con todas sus cuerdas.'],
-        antes: ['Prueba de salida: Acordes'] }),
-
-    prueba('Prueba de salida: Cambios de acordes',
-      acordes('Cambios encadenados', ['Mi', 'Si7', 'Mi', 'La', 'Re', 'Sol', 'Re', 'Do', 'Lam', 'Do', 'Sol', 'Mim', 'Si7', 'Mim']),
-      { instrucciones: ['Toda la cadena, con cambio anticipado.'],
-        antes: ['Prueba de salida: Cambios de acordes'] }),
-  ],
-};
-
-// ═════════════════════════ RITMO Y RASGUEO ═════════════════════════
-
-const ritmo1 = {
-  id: id('04'),
-  nombre: 'Ritmo y rasgueo I',
-  descripcion: 'Negras y corcheas, la mano como un péndulo y el patrón universal, el rasgueo que sirve para cientos de canciones.',
-  lecciones: [
-    practicar('Negras hasta 90 BPM',
-      ritmo('Negras', [[60, 2], [75, 2], [90, 2]]),
-      { instrucciones: ['Un golpe hacia abajo por clic. El tempo sube solo.'],
-        antes: ['10.2 · Negras hasta 90 BPM', '9.1 · Qué es una negra'] }),
-
-    practicar('Corcheas: abajo y arriba sin parar',
-      ritmo('Corcheas', [[60, 4], [70, 4]], { subdivision: 2 }),
-      { instrucciones: ['Ocho golpes por compás, todos iguales de fuertes.'],
-        antes: ['10.3 · Corcheas: abajo y arriba sin parar', '9.2 · Abajo-arriba continuo'] }),
-
-    practicar('El patrón universal',
-      ritmo('Patrón universal', [[65, 4]], { subdivision: 2, patron: PATRON.universal }),
-      { destacado: '↓ · ↓↑ · ↑↓↑  —  1 y 2 y 3 y 4 y',
-        instrucciones: ['Tocá el patrón con el clic. La mano no se frena en los huecos.'],
-        antes: ['10.4 · El patrón universal', '9.2 · El patrón universal'] }),
-
-    practicar('Patrón universal sin red',
-      ritmo('Patrón universal sin clic', [[75, 8]], { subdivision: 2, patron: PATRON.universal, clicQueDesaparece: true }),
-      { instrucciones: ['Seguí el patrón aunque el clic se calle.'],
-        antes: ['10.5 · Patrón universal sin red'] }),
-
-    practicar("Knockin' on Heaven's Door con el patrón universal",
-      acordes("Knockin' on Heaven's Door", ['Sol', 'Re', 'Lam', 'Sol', 'Re', 'Do']),
-      { destacado: '↓ · ↓↑ · ↑↓↑ en cada acorde',
-        instrucciones: ['La canción con un patrón por acorde.'],
-        antes: ['10.6 · Knockin\' on Heaven\'s Door con el patrón universal', "9.2 · Knockin' on Heaven's Door con el patrón universal"] }),
-  ],
-};
-
-const ritmo2 = {
-  id: id('41'),
-  nombre: 'Ritmo y rasgueo II',
-  descripcion: 'Cuatro patrones de rasgueo esenciales (incluido el contratiempo del reggae) y dos canciones para aplicarlos.',
-  lecciones: [
-    practicar('Patrón 1: abajo y arriba en el 2 y el 4',
-      ritmo('Patrón 1', [[70, 4]], { subdivision: 2, patron: PATRON.uno }),
-      { destacado: '↓ · ↓↑ ↓ · ↓↑  —  1 y 2 y 3 y 4 y',
-        instrucciones: ['Tocá el patrón con el clic.'],
-        antes: ['10.1 · Patrón 1: abajo y arriba en el 2 y el 4', '10.1 · Para qué sirven los patrones'] }),
-
-    practicar('Patrón 2: rock',
-      ritmo('Patrón 2', [[70, 4]], { subdivision: 2, patron: PATRON.rock }),
-      { destacado: '↓ · ↓ · ↓↑ ↓↑  —  1 y 2 y 3 y 4 y',
-        instrucciones: ['Tocá el patrón con el clic.'],
-        antes: ['10.1 · Patrón 2: rock'] }),
-
-    practicar('Patrón 3: pop',
-      ritmo('Patrón 3', [[70, 4]], { subdivision: 2, patron: PATRON.pop }),
-      { destacado: '↓ · ↓↑ · ↑ ↓ ·  —  1 y 2 y 3 y 4 y',
-        instrucciones: ['Tocá el patrón con el clic.'],
-        antes: ['10.1 · Patrón 3: pop'] }),
-
-    practicar('Patrón 4: contratiempo',
-      ritmo('Patrón 4', [[70, 4]], { subdivision: 2, patron: PATRON.contratiempo }),
-      { destacado: '· ↑ · ↑ · ↑ · ↑  —  1 y 2 y 3 y 4 y',
-        instrucciones: ['Solo los arriba, con ganas.'],
-        antes: ['10.1 · Patrón 4: contratiempo'] }),
-
-    practicar('Canción: Three Little Birds en contratiempo',
-      acordes('Three Little Birds', ['La', 'Re', 'La', 'Re', 'La', 'Mi', 'La', 'Re', 'La', 'Mi', 'La', 'Re', 'La']),
-      { destacado: '· ↑ · ↑ · ↑ · ↑ en cada acorde',
-        instrucciones: ['La canción completa en contratiempo.'],
-        antes: ['10.1 · De música ligera en corcheas'] }),
-
-    practicar('Canción: Wish You Were Here con patrón',
-      acordes('Wish You Were Here (simplificada)', ['Mim', 'Sol', 'Do', 'Re', 'Lam', 'Sol', 'Re', 'Do', 'Lam', 'Sol']),
-      { destacado: '↓ · ↓↑ ↓ · ↓↑ en cada acorde',
-        instrucciones: ['La canción completa con el patrón.'],
-        antes: ['10.1 · Wish You Were Here con patrón', '10.1 · Armá tu propio patrón'] }),
-  ],
-};
-
-const ritmo3 = {
-  id: id('42'),
-  nombre: 'Ritmo y rasgueo III',
-  descripcion: 'El golpe percusivo (el «chas» del redoblante) y la dinámica: tocar suave y fuerte para que la canción respire.',
-  lecciones: [
-    practicar('El golpe percusivo en el 2 y el 4',
-      ritmo('Golpe en 2 y 4', [[70, 4]], { patron: [0, 1, 0, 1] }),
-      { destacado: '· chas · chas  —  1 2 3 4',
-        instrucciones: ['Solo en el 2 y el 4. En el 1 y el 3, silencio.'],
-        antes: ['11.2 · Qué es el golpe percusivo'] }),
-
-    practicar('Acorde y golpe: bum - chas',
-      ritmo('Bum - chas', [[70, 4], [80, 4]]),
-      { destacado: '↓ chas ↓ chas  —  1 2 3 4',
-        instrucciones: ['Un golpe por clic, alternando rasgueo y chas.'],
-        antes: ['11.2 · Acorde en 1 y 3, golpe en 2 y 4'] }),
-
-    practicar('Canción: Stand By Me con golpe percusivo',
-      acordes('Stand By Me', ['Sol', 'Mim', 'Do', 'Re', 'Sol', 'Mim', 'Do', 'Re', 'Sol']),
-      { destacado: '↓ chas ↓ chas en cada acorde',
-        instrucciones: ['La canción con bum - chas.'],
-        antes: ['11.2 · Three Little Birds con golpe'] }),
-
-    practicar('Canción: Zombie con dinámica',
-      acordes('Zombie (simplificada)', ['Mim', 'Do', 'Sol', 'Re', 'Mim', 'Do', 'Sol', 'Re']),
-      { destacado: 'Vuelta 1: suave · Vuelta 2: fuerte',
-        instrucciones: ['Primera vuelta suave, segunda fuerte.'],
-        antes: ['12.5 · Canción: Zombie con dinámica', '11.1 · Zombie con dinámica'] }),
-  ],
-};
-
-const ritmo4 = {
-  id: id('43'),
-  nombre: 'Ritmo y rasgueo IV',
-  descripcion: 'Vals en 3/4, rasgueo en 6/8, entrar justo en el 1 y aguantar tres minutos sin parar.',
-  lecciones: [
-    practicar('Rasgueo de vals en 3/4',
-      ritmo('Vals', [[90, 8]], { compas: 3 }),
-      { destacado: '↓ ↓ ↓  —  UNO dos tres',
-        instrucciones: ['Tres golpes por compás, el primero más fuerte.'],
-        antes: ['12.1 · Rasgueo de vals', '12.1 · Compases de 3/4 y 6/8'] }),
-
-    practicar('Rasgueo en 6/8',
-      ritmo('Seis por ocho', [[120, 6]], { compas: 6 }),
-      { destacado: '↓ ↓ ↓ ↓ ↓ ↓  —  UNO dos tres CUATRO cinco seis',
-        instrucciones: ['Seis golpes por compás, acentuando el 1 y el 4.'],
-        antes: ['12.1 · Rasgueo en 6/8'] }),
-
-    practicar('Canción: Perfect en 6/8',
-      acordes('Perfect', ['Sol', 'Mim', 'Do', 'Re', 'Sol', 'Mim', 'Do', 'Re']),
-      { destacado: 'UNO dos tres CUATRO cinco seis en cada acorde',
-        instrucciones: ['La canción completa en 6/8.'],
-        antes: ['12.1 · Canción: Perfect en 6/8'] }),
-
-    practicar('Canción: Zamba de mi esperanza en 6/8',
-      acordes('Zamba de mi esperanza (simple, en Mi)', ['Mi', 'La', 'Si7', 'Mi', 'La', 'Si7', 'Mi']),
-      { destacado: 'UNO dos tres CUATRO cinco seis en cada acorde',
-        instrucciones: ['La zamba en 6/8.'],
-        antes: ['12.1 · Zamba de mi esperanza con rasguido'] }),
-
-    practicar('Entrar justo en el 1',
-      ritmo('Entrar en el 1', [[80, 2]], { cuenta: 2 }),
-      { instrucciones: ['Entrá en el 1 justo después de la cuenta. Negras.'],
-        antes: ['12.2 · Entrar justo en el 1'] }),
-
-    practicar('Tres minutos sin parar',
-      ritmo('Tres minutos', [[80, 60]], { aprobar: 0.7 }),
-      { instrucciones: ['Tres minutos, sin parar. Si te perdés, volvé a entrar en el 1.'],
-        antes: ['12.2 · Tres minutos sin parar', '12.2 · De música ligera con banda'] }),
-
-    prueba('Prueba de salida: Ritmo y rasgueo',
-      ritmo('Patrón universal a 90', [[90, 8]], { subdivision: 2, patron: PATRON.universal, aprobar: 0.8 }),
-      { instrucciones: ['El patrón universal a 90 BPM.'],
-        antes: ['Prueba de salida: Ritmo y rasgueo'] }),
-  ],
-};
-
-// ═════════════════════════ PUNTEO Y RIFFS ═════════════════════════
-
-const punteo1 = {
-  id: id('05'),
-  nombre: 'Punteo y riffs I',
-  descripcion: 'Notas sueltas con precisión, púa alternada, la pentatónica de Em y dos riffs clásicos.',
-  lecciones: [
-    practicar('Cruce de cuerdas',
-      aTempo('Cruce de cuerdas', [[6, 0], [5, 0], [6, 0], [4, 0], [5, 0], [3, 0], [4, 0], [2, 0], [3, 0], [1, 0]], 60),
-      { instrucciones: ['Golpes hacia abajo, una sola cuerda por vez.'],
-        antes: ['13.1 · Cruce de cuerdas', '13.1 · Cómo puntear notas sueltas', '13.1 · Golpes hacia abajo en la cuerda 6'] }),
-
-    practicar('Púa alternada',
-      aTempo('Púa alternada', [...repetir(8, 6, 0), ...repetir(8, 5, 0)], 60, Array(16).fill(0.5)),
-      { destacado: '↓ ↑ ↓ ↑ ↓ ↑ ↓ ↑  —  1 y 2 y 3 y 4 y',
-        instrucciones: ['Ocho notas en la 6 y ocho en la 5, alternando siempre.'],
-        antes: ['13.2 · Abajo-arriba parejo', '13.2 · Qué es la púa alternada'] }),
-
-    practicar('Cromático con púa alternada',
-      aTempo('Cromático en las cuerdas 6, 5 y 4', [6, 5, 4].flatMap((c) => cromatico(c, 1)), 70, Array(12).fill(0.5)),
-      { instrucciones: ['Trastes 1 a 4 en las cuerdas 6, 5 y 4, alternando la púa.'],
-        antes: ['13.2 · Cromático en las 6 cuerdas'] }),
-
-    practicar('Pentatónica de Em',
-      aTempo('Pentatónica de Mi menor', [[6, 0], [6, 3, 3], [5, 0], [5, 2, 2], [4, 0], [4, 2, 2], [3, 0], [3, 2, 2], [2, 0], [2, 3, 3], [1, 0], [1, 3, 3]], 70),
-      { instrucciones: ['Subí de la cuerda 6 a la 1 con púa alternada.'],
-        antes: ['13.2 · Dos notas por cuerda: pentatónica de Em'] }),
-
-    practicar('Riff: Smoke on the Water',
-      aTempo('Riff de Smoke on the Water', [
-        [6, 3, 3], [5, 1, 1], [5, 3, 3],
-        [6, 3, 3], [5, 1, 1], [5, 4, 4], [5, 3, 3],
-        [6, 3, 3], [5, 1, 1], [5, 3, 3],
-        [5, 1, 1], [6, 3, 3],
-      ], 90, [1, 1, 2, 1, 1, 0.5, 2.5, 1, 1, 2, 1, 3]),
-      { instrucciones: ['Primero nota por nota; después a tempo, apagando las cuerdas que no usás.'],
-        antes: ['13.3 · Riff de Smoke on the Water', '13.3 · Qué es un riff'] }),
-
-    practicar('Riff: Come As You Are',
-      aTempo('Riff de Come As You Are', [[6, 0], [6, 0], [6, 1, 1], [6, 2, 2], [5, 0], [6, 2, 2], [5, 0], [6, 2, 2], [6, 2, 2], [6, 1, 1], [6, 0], [5, 2, 2], [6, 0]],
-        90, [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1]),
-      { instrucciones: ['Primero nota por nota; después a tempo.'],
-        antes: ['13.3 · Riff de Come As You Are', '13.3 · Apagar las cuerdas que no se tocan'] }),
-  ],
-};
-
-const punteo2 = {
-  id: id('51'),
-  nombre: 'Punteo y riffs II',
-  descripcion: 'Tonos y semitonos, las notas del mástil, la escala de Do y una melodía completa.',
-  lecciones: [
-    practicar('Las notas naturales en las cuerdas 6 y 5',
-      secuencia('Notas naturales', notas([[6, 0], [6, 1, 1], [6, 3, 3], [6, 5, 4], [5, 2, 2], [5, 3, 3], [5, 5, 4]])),
-      { destacado: 'Cuerda 6: Mi 0 · Fa 1 · Sol 3 · La 5  —  Cuerda 5: Si 2 · Do 3 · Re 5',
-        instrucciones: ['Tocá y nombrá cada nota en voz alta.'],
-        antes: ['15.2 · Las notas naturales en las cuerdas 6 y 5', '14.2 · Encontrá la nota'] }),
-
-    practicar('La escala de Do',
-      aTempo('Escala de Do mayor, ida y vuelta', [[5, 3, 3], [4, 0], [4, 2, 2], [4, 3, 3], [3, 0], [3, 2, 2], [2, 0], [2, 1, 1], [2, 0], [3, 2, 2], [3, 0], [4, 3, 3], [4, 2, 2], [4, 0], [5, 3, 3]], 70),
-      { instrucciones: ['Subí y bajá la escala. Púa alternada.'],
-        antes: ['15.4 · La escala de Do', '14.1 · La escala de Do', '14.1 · Melodías en posición abierta'] }),
-
-    practicar('Melodía: Cumpleaños feliz',
-      aTempo('Cumpleaños feliz', [
-        [3, 0], [3, 0], [3, 2, 2], [3, 0], [2, 1, 1], [2, 0],
-        [3, 0], [3, 0], [3, 2, 2], [3, 0], [2, 3, 3], [2, 1, 1],
-        [3, 0], [3, 0], [1, 3, 3], [1, 0], [2, 1, 1], [2, 0], [3, 2, 2],
-        [1, 1, 1], [1, 1, 1], [1, 0], [2, 1, 1], [2, 3, 3], [2, 1, 1],
-      ], 100, [
-        0.75, 0.25, 1, 1, 1, 2,
-        0.75, 0.25, 1, 1, 1, 2,
-        0.75, 0.25, 1, 1, 1, 1, 1,
-        0.75, 0.25, 1, 1, 1, 3,
+    // Lleva el video del curso 1 (VIDEO_CURSO_1): se ve antes del afinador. Todavía sin cargar.
+    clase('Afiná tu guitarra',
+      { tipo: 'afinacion', nombre: 'Afinación estándar', toleranciaCents: 10, msEstable: 1000, cuerdas: [6, 5, 4, 3, 2, 1].map((cuerda) => ({ cuerda })) },
+      { objetivo: 'Dejar las 6 cuerdas afinadas.',
+        destacado: 'Girá la clavija de a poco y mirá la aguja. Si se aleja del centro, girá para el otro lado.',
+        instrucciones: ['Tocá la cuerda pedida y girá su clavija despacio hasta que la aguja quede en el centro.'] }),
+
+    clase('Tu primer traste',
+      notasAlAzar('Tu primer traste', { cantidad: 8, cuerdas: [1, 2, 3, 4, 5, 6], trastes: [1, 2, 3, 4], dedo: 1, vecesPorTraste: 2 }),
+      { objetivo: 'Pisar cualquier traste de la primera posición con el índice y que la nota suene limpia.',
+        destacado: 'Punta del dedo, pegado al metal del traste.',
+        instrucciones: ['Pisá con el índice el traste marcado y tocá la cuerda con el pulgar. Esperá el ✓.'] }),
+
+    clase('Smoke on the Water, nota por nota',
+      consignas([
+        consigna(INSTRUCCION_SMOKE, secuencia('Consigna 1 · Frases 1 y 2', notas([...SMOKE.frase1, ...SMOKE.frase2]))),
+        consigna(INSTRUCCION_SMOKE, secuencia('Consigna 2 · Frases 3 y 4', notas([...SMOKE.frase3, ...SMOKE.frase4]))),
+        consigna(INSTRUCCION_SMOKE, secuencia('Consigna 3 · El riff entero', notas(SMOKE_RIFF))),
       ]),
-      { instrucciones: ['Primero nota por nota; después a tempo.'],
-        antes: ['15.5 · Melodía: Cumpleaños feliz', '15.3 · Cumpleaños feliz de oído', '14.1 · Melodía de Muchachos', '14.1 · Melodía y acordes sin cortar'] }),
+      { objetivo: 'Tocar tu primera melodía famosa, sin apuro.',
+        destacado: 'Un solo dedo: el índice va de traste en traste, pegado al metal.' }),
 
-    prueba('Prueba de salida: Punteo y riffs',
-      aTempo('Smoke on the Water a 105 BPM', [
-        [6, 3, 3], [5, 1, 1], [5, 3, 3],
-        [6, 3, 3], [5, 1, 1], [5, 4, 4], [5, 3, 3],
-        [6, 3, 3], [5, 1, 1], [5, 3, 3],
-        [5, 1, 1], [6, 3, 3],
-      ], 105, [1, 1, 2, 1, 1, 0.5, 2.5, 1, 1, 2, 1, 3]),
-      { instrucciones: ['Smoke on the Water a 105 BPM.'],
-        antes: ['Prueba de salida: Punteo y riffs', '14.2 · Tocá y cantá (opcional)'] }),
-  ],
-};
-
-// ═════════════════════════ MUSICALIDAD Y TU PRIMER CONCIERTO ═════════════════════════
-
-const musicalidad1 = {
-  id: id('06'),
-  nombre: 'Musicalidad I',
-  descripcion: 'Por qué suenan como suenan: la escala cromática, afinar de oído por el traste 5, cómo se forma un acorde y la diferencia entre mayor y menor.',
-  nivel: 'intermedio',
-  lecciones: [
-    practicar('La escala cromática',
-      secuencia('Escala cromática', notas([
-        [5, 0], [5, 1, 1], [5, 2, 2], [5, 3, 3], [5, 4, 4],
-        [4, 0], [4, 1, 1], [4, 2, 2], [4, 3, 3], [4, 4, 4],
-        [3, 0], [3, 1, 1], [3, 2, 2],
-      ])),
-      { instrucciones: ['Tocá y nombrá cada nota, de la cuerda 5 a la 3.'],
-        antes: ['15.1 · La escala cromática'] }),
-
-    practicar('Afinar por el traste 5',
-      secuencia('Notas gemelas', notas([[6, 5, 1], [5, 0], [5, 5, 1], [4, 0], [4, 5, 1], [3, 0], [3, 4, 1], [2, 0], [2, 5, 1], [1, 0]])),
-      { destacado: '6 en 5 = 5 al aire · 5 en 5 = 4 · 4 en 5 = 3 · 3 en 4 = 2 · 2 en 5 = 1',
-        instrucciones: ['Tocá cada par: la cuerda pisada y después la siguiente al aire. Escuchá que suenen iguales.'],
-        antes: ['15.1 · Afinar por el traste 5'] }),
-
-    practicar('Cómo se forma un acorde',
-      secuencia('Las notas de Do', [...notas([[5, 3, 3], [4, 2, 2], [3, 0], [2, 1, 1], [1, 0]]), acorde('Do')]),
-      { destacado: 'C = Do + Mi + Sol (raíz, tercera y quinta)',
-        instrucciones: ['Tocá y nombrá cada nota; al final, el acorde completo.'],
-        antes: ['15.2 · Do, Mi y Sol dentro de Do', '15.2 · Cómo se forma un acorde'] }),
-
-    practicar('Mayor y menor',
-      acordes('Mayor y menor', ['Mi', 'Mim', 'La', 'Lam', 'Mi', 'Mim']),
-      { destacado: 'Mayor → menor: la tercera baja un semitono',
-        instrucciones: ['Tocá cada par y escuchá cómo cambia el carácter.'],
-        antes: ['15.2 · Mayor y menor: E / Em y A / Am', '15.3 · ¿Mayor o menor? (difícil)'] }),
-
-    practicar('Bajo y rasgueo',
-      secuencia('Bajo y rasgueo', [nota(5, 3, 3), acorde('Do'), nota(6, 3, 2), acorde('Sol'), nota(5, 0), acorde('Lam'), nota(6, 0), acorde('Mim')]),
-      { destacado: 'bajo ↓ ↓ ↓  —  1 2 3 4',
-        instrucciones: ['Para cada acorde: primero el bajo solo, después el rasgueo.'],
-        antes: ['15.2 · Bajo y rasgueo', '15.3 · Cantar las cuerdas al aire (opcional)'] }),
-  ],
-};
-
-const musicalidad2 = {
-  id: id('61'),
-  nombre: 'Musicalidad II',
-  descripcion: 'El capo, Bm7 (un Si menor sin cejilla), Wonderwall y tu canción jefe: Lamento boliviano.',
-  nivel: 'intermedio',
-  lecciones: [
-    practicar('Acorde perfecto: Bm7',
-      acordePerfecto('Sim7'),
-      { instrucciones: ['Cuerda por cuerda, desde la 5.'],
-        antes: ['17.2 · Acorde perfecto: Bm7', '16.2 · Acorde perfecto: Si menor séptima (Bm7)', '16.2 · Bm7, un Si menor fácil'] }),
-
-    practicar('Em ↔ Bm7',
-      cambio('Mim', 'Sim7'),
-      { meta: 'Meta: 15 cambios en 30 segundos',
-        instrucciones: ['Alterná Em y Bm7.'],
-        antes: ['17.3 · Em ↔ Bm7', '16.2 · Em ↔ Bm7'] }),
-
-    practicar('Canción: Wonderwall',
-      acordes('Wonderwall (simplificada, sin capo)', ['Mim', 'Sol', 'Re', 'La', 'Mim', 'Sol', 'Re', 'La']),
-      { destacado: 'Patrón universal: ↓ · ↓↑ · ↑↓↑ en cada acorde',
-        instrucciones: ['La progresión completa con el patrón universal.'],
-        antes: ['17.4 · Canción: Wonderwall', '16.1 · Canción: Wonderwall con capo 2'] }),
-
-    practicar('Canción jefe: Lamento boliviano',
-      acordes('Lamento boliviano', ['Mim', 'Sim7', 'Lam', 'Si7', 'Mim', 'Sim7', 'Lam', 'Si7', 'Mim']),
-      { destacado: 'Patrón universal: ↓ · ↓↑ · ↑↓↑ en cada acorde',
-        instrucciones: ['La canción completa.'],
-        antes: ['17.5 · Canción jefe: Lamento boliviano', '16.2 · Canción jefe: Lamento boliviano'] }),
-  ],
-};
-
-const concierto = {
-  id: id('62'),
-  nombre: 'Tu primer concierto',
-  descripcion: 'Armá tu repertorio, rendí el examen final y grabá tu primer mini-concierto.',
-  nivel: 'intermedio',
-  lecciones: [
-    practicar('Repertorio: tres canciones seguidas',
-      acordes('Stand By Me, Zombie y Knockin’ on Heaven’s Door', [
-        'Sol', 'Mim', 'Do', 'Re', 'Sol',
-        'Mim', 'Do', 'Sol', 'Re', 'Mim', 'Do', 'Sol', 'Re',
-        'Sol', 'Re', 'Lam', 'Sol', 'Re', 'Do',
+    clase('Smoke on the Water, a tiempo',
+      consignas([
+        // 75% de 115 BPM
+        consigna('Índice en el traste marcado y pulgar en la cuerda 6: tocá cada nota cuando llegue a la línea.',
+          aTempo('Consigna 1 · Más lento', SMOKE_RIFF, 86, SMOKE_DURACIONES)),
+        consigna('Índice en el traste marcado y pulgar en la cuerda 6: tocá cada nota cuando llegue a la línea.',
+          aTempo('Consigna 2 · Velocidad original', SMOKE_RIFF, 115, SMOKE_DURACIONES)),
       ]),
-      { instrucciones: ['Las tres canciones seguidas.'],
-        antes: ['17.1 · Rotación de repertorio', '17.1 · Una canción de memoria'] }),
+      { objetivo: 'Tocar el riff a tiempo, primero más lento y después a la velocidad final.',
+        destacado: `Tocá cada nota justo cuando llega a la línea. Si te perdés una, seguí con la siguiente. ${X05}` }),
+  ],
+};
 
-    prueba('Examen final 1 · Afinación',
-      { ...QUIZZES['Afinación Básica (Standard)'], toleranciaCents: 3 },
-      { instrucciones: ['Afiná las 6 cuerdas. La aguja tiene que quedar bien en el centro.'],
-        antes: ['Examen final'] }),
+// ═════════════════════════ CURSO 2 · SEVEN NATION ARMY ═════════════════════════
 
-    prueba('Examen final 2 · Cambios',
-      acordes('Cambios del examen', ['Do', 'Lam', 'Do', 'Lam', 'Sol4', 'Re', 'Sol4', 'Re', 'Mi', 'Si7', 'Mi', 'Si7']),
-      { instrucciones: ['Los tres pares, sin frenar.'] }),
+// Riff: E E G E D C B (cuerda, traste, dedo)
+const SEVEN_PARTE_1 = [[4, 2, 2], [4, 2, 2], [3, 0], [4, 2, 2]];
+const SEVEN_PARTE_2 = [[4, 0], [5, 3, 3], [5, 2, 2]];
+const SEVEN_RIFF = [...SEVEN_PARTE_1, ...SEVEN_PARTE_2];
+const SEVEN_DOS_VECES = [...SEVEN_RIFF, ...SEVEN_RIFF];
+// Pulsos de cada nota. A CONFIRMAR escuchando el original.
+const SEVEN_DURACIONES = [1.5, 0.5, 0.75, 0.75, 0.5, 2, 2, 1.5, 0.5, 0.75, 0.75, 0.5, 2, 2];
+const INSTRUCCION_SEVEN = 'Pisá el traste marcado con el dedo indicado y tocá la cuerda marcada con el pulgar. Esperá el ✓.';
+// Escalera por las cuerdas 5, 4, 3, 4, 5 en un mismo traste y con el mismo dedo
+const escalera = (traste) => [5, 4, 3, 4, 5].map((cuerda) => [cuerda, traste, traste]);
+const ESCALERA_10 = [...escalera(2), ...escalera(3)];
+const INSTRUCCION_ESCALERA = 'Pisá el traste marcado con el dedo indicado y tocá con el pulgar solo la cuerda marcada.';
 
-    prueba('Examen final 3 · Ritmo',
-      ritmo('Patrón universal a 90', [[90, 8]], { subdivision: 2, patron: PATRON.universal, aprobar: 0.85 }),
-      { instrucciones: ['El patrón universal a 90 BPM.'] }),
+const curso2 = {
+  id: id('72'),
+  nombre: 'Seven Nation Army',
+  descripcion: 'Sumá los dedos 2 y 3 y pasá de una cuerda a otra hasta tocar el riff de Seven Nation Army (The White Stripes).',
+  lecciones: [
+    // Lleva el video del curso 2 (VIDEO_CURSO_2): se ve al empezar la clase. Todavía sin cargar.
+    clase('Dedos 2 y 3',
+      notasAlAzar('Dedos 2 y 3', { cantidad: 9, cuerdas: [3, 4, 5], trastes: [1, 2, 3], dedoPorTraste: true, vecesPorTraste: 3 }),
+      { objetivo: 'Pisar con el dedo que corresponde a cada traste (1, 2 y 3), sumando los dos dedos nuevos.',
+        destacado: 'Un dedo por traste: el 1 en el traste 1, el 2 en el 2 y el 3 en el 3.',
+        instrucciones: ['Pisá el traste marcado con el dedo indicado y tocá la cuerda con el pulgar. Esperá el ✓.'] }),
 
-    prueba('Examen final 4 · Riff',
-      aTempo('Come As You Are a 110 BPM', [[6, 0], [6, 0], [6, 1, 1], [6, 2, 2], [5, 0], [6, 2, 2], [5, 0], [6, 2, 2], [6, 2, 2], [6, 1, 1], [6, 0], [5, 2, 2], [6, 0]],
-        110, [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 1]),
-      { instrucciones: ['Come As You Are a 110 BPM.'] }),
+    clase('De cuerda en cuerda',
+      consignas([
+        consigna(INSTRUCCION_ESCALERA, secuencia('Consigna 1 · Nota por nota', notas(ESCALERA_10))),
+        // Una nota por pulso a 60 BPM
+        consigna(INSTRUCCION_ESCALERA, secuencia('Consigna 2 · A tiempo', notas(ESCALERA_10),
+          { bpm: 60, duraciones: ESCALERA_10.map(() => 1), aprobar: APROBAR_A_TIEMPO })),
+      ]),
+      { objetivo: 'Pasar de una cuerda a otra con el pulgar, tocando solo la cuerda pedida.',
+        destacado: 'El dedo se queda en su traste; solo cambia la cuerda.' }),
 
-    prueba('Examen final 5 · Canción jefe',
-      acordes('Lamento boliviano', ['Mim', 'Sim7', 'Lam', 'Si7', 'Mim', 'Sim7', 'Lam', 'Si7', 'Mim']),
-      { instrucciones: ['La canción completa, sin frenar.'] }),
+    clase('Seven Nation Army, nota por nota',
+      consignas([
+        consigna(INSTRUCCION_SEVEN, secuencia('Consigna 1 · Primera parte (E E G E)', notas(SEVEN_PARTE_1))),
+        consigna(INSTRUCCION_SEVEN, secuencia('Consigna 2 · Segunda parte (D C B)', notas(SEVEN_PARTE_2))),
+        consigna(INSTRUCCION_SEVEN, secuencia('Consigna 3 · El riff entero, dos veces', notas(SEVEN_DOS_VECES))),
+      ]),
+      { objetivo: 'Tocar el riff completo sin apuro.',
+        destacado: 'Traste 2 con el dedo 2, traste 3 con el dedo 3.' }),
 
+    clase('Seven Nation Army, a tiempo',
+      consignas([
+        // 75% de 124 BPM
+        consigna('Pisá el traste marcado con el dedo indicado y tocá cada nota cuando llegue a la línea.',
+          aTempo('Consigna 1 · Más lento', SEVEN_DOS_VECES, 93, SEVEN_DURACIONES)),
+        // A CONFIRMAR: 124 BPM y el ritmo del riff, con la grabación
+        consigna('Pisá el traste marcado con el dedo indicado y tocá cada nota cuando llegue a la línea.',
+          aTempo('Consigna 2 · Velocidad original', SEVEN_DOS_VECES, 124, SEVEN_DURACIONES)), // A CONFIRMAR
+      ]),
+      { objetivo: 'Tocar el riff a tiempo, primero más lento y después a la velocidad final.',
+        destacado: `Tocá cada nota justo cuando llega a la línea. Si te perdés una, seguí con la siguiente. ${X05}` }),
+  ],
+};
+
+// ═════════════════════════ CURSO 3 · PRIMEROS ACORDES ═════════════════════════
+
+const curso3 = {
+  id: id('73'),
+  nombre: 'Primeros acordes',
+  descripcion: 'Armá Mim, Mi, Lam y La, y aprendé a cambiar entre ellos.',
+  lecciones: [
+    // Lleva el video del curso 3 (VIDEO_CURSO_3): se ve al empezar la clase. Todavía sin cargar.
+    // El Mim es el único con textos propios de cada consigna (el recordatorio es uno para toda la clase).
+    claseDeAcorde('Mim', 'Mim', { objetivo: 'Armar el primer acorde y que suenen limpias las 6 cuerdas.', destacado: 'Dedos arqueados: que suenen las 6 cuerdas.', primeraCuerda: 6 }),
+    claseDeAcorde('Mi', 'Mi', { objetivo: 'Armar el Mi y que suenen limpias las 6 cuerdas.', destacado: 'El Mim + el índice en la cuerda 3, traste 1.', primeraCuerda: 6 }),
+    claseDeAcorde('Lam', 'Lam', { objetivo: 'Armar el Lam y que suenen limpias las cuerdas de la 5 a la 1.', destacado: 'La forma de Mi, una cuerda más abajo. La cuerda 6 no se toca.', primeraCuerda: 5 }),
+    claseDeAcorde('La', 'La', { objetivo: 'Armar el La y que suenen limpias las cuerdas de la 5 a la 1.', destacado: 'Tres dedos en fila en el traste 2: cuerdas 4, 3 y 2. La cuerda 6 no se toca.', primeraCuerda: 5 }),
+
+    clase('Cambios fáciles',
+      consignas([
+        consigna('Los dedos 2 y 3 no se mueven: solo entra y sale el índice.', cambio('Mim', 'Mi')),
+        consigna('La forma entera baja o sube una cuerda: los tres dedos se mueven juntos.', cambio('Mi', 'Lam')),
+        consigna('Los dedos 2 y 3 bajan juntos una cuerda y, en Lam, se suma el índice.', cambio('Mim', 'Lam')),
+      ]),
+      { objetivo: 'Cambiar entre Mim, Mi y Lam sin rearmar los acordes, dejando quietos los dedos que se repiten.',
+        destacado: 'Si un dedo está en el mismo lugar en los dos acordes, no lo levantes: se queda fijo.' }),
+
+    claseDeCambioEnBloque('Cambio Mim ↔ La', 'Mim', 'La', 'Cambiar entre Mim y La, el cambio que usa Será en el curso 4.'),
+  ],
+};
+
+// ═════════════════════════ CURSO 4 · PRIMER RASGUEO ═════════════════════════
+
+const INSTRUCCION_PULSO = 'Esperá la cuenta y aplaudí con cada clic.';
+
+const curso4 = {
+  id: id('74'),
+  nombre: 'Primer rasgueo',
+  descripcion: 'Marcá el pulso y tocá el estribillo de Será (Las Pelotas), rasgueando La y Mim a tiempo.',
+  lecciones: [
+    clase('El pulso',
+      consignas([
+        consigna(INSTRUCCION_PULSO, ritmo('Consigna 1 · Un aplauso por clic', [[60, 4]])),
+        consigna('Aplaudí con el clic y acompañá cada subida de velocidad.', ritmo('Consigna 2 · Subir de a poco', [[60, 1], [70, 1], [80, 1]])),
+      ]),
+      { objetivo: 'Aplaudir justo con el clic del metrónomo y acompañarlo cuando acelera.',
+        destacado: 'Aplaudí justo con el clic, ni antes ni después.' }),
+
+    // El documento no trae instrucción para esta clase: texto propuesto
+    clase('Será: acordes y cambio',
+      cancion('sera', 'aprender'),
+      { objetivo: 'Repasar La y Mim dentro de la canción y el cambio entre ellos, sin tiempo.',
+        instrucciones: ['Armá cada acorde de Será y después el cambio entre ellos.'] }),
+
+    clase('Será: el estribillo a tiempo',
+      consignas([
+        // 75% de 128 BPM
+        consigna('Rasgueá una vez con el pulgar cada acorde cuando llegue a la línea.', cancionATiempo('sera', 96)),
+        consigna('Rasgueá una vez con el pulgar cada acorde cuando llegue a la línea.', cancionATiempo('sera', 128)),
+      ]),
+      { objetivo: 'Tocar el estribillo de Será a la velocidad original, con un rasgueo por acorde.',
+        destacado: `Tenés 4 tiempos en cada acorde: usá los últimos para preparar el próximo. ${X05}`,
+        xp: XP_CANCION_TOCAR }),
+  ],
+};
+
+// ═════════════════════════ CURSO 5 · RE Y RASGUEO DE 4 GOLPES ═════════════════════════
+
+const curso5 = {
+  id: id('75'),
+  nombre: 'Re y rasgueo de 4 golpes',
+  descripcion: 'Sumá el Re y pasá de un golpe por acorde a cuatro golpes por compás hasta tocar Horse With No Name (America).',
+  lecciones: [
+    claseDeAcorde('Re', 'Re', { objetivo: 'Armar el Re y que suenen limpias las cuerdas de la 4 a la 1.', destacado: 'Un triángulo en las cuerdas 3, 2 y 1. La 6 y la 5 no se tocan.', primeraCuerda: 4 }),
+
+    claseDeCambioEnBloque('Cambio Mim ↔ Re', 'Mim', 'Re', 'Cambiar entre Mim y Re, el cambio de la canción.'),
+
+    // Lleva el video del curso 5 (VIDEO_CURSO_5): se ve al empezar la clase. Todavía sin cargar.
+    // A CONFIRMAR: 100 BPM queda por ahora
+    clase('Rasgueo de 4 golpes',
+      ritmo('Rasgueo con las cuerdas apagadas', [[100, 4]]), // A CONFIRMAR
+      { objetivo: 'Rasguear un golpe por tiempo, parejo y sin frenar la mano.',
+        destacado: 'Mano que pisa apoyada, sin apretar: que suene seco. Un golpe por clic.',
+        instrucciones: ['Esperá la cuenta y rasgueá con el pulgar un golpe por clic.'] }),
+
+    // El documento no trae instrucción para esta clase: texto propuesto
+    clase('Horse With No Name: aprender',
+      cancion('horse-with-no-name', 'aprender'),
+      { objetivo: 'Repasar Mim y Re dentro de la canción y el cambio entre ellos, sin tiempo.',
+        instrucciones: ['Armá cada acorde de Horse With No Name y después el cambio entre ellos.'] }),
+
+    // A CONFIRMAR: 125 BPM con la grabación (el catálogo tiene la canción a 100, así que la velocidad va en la consigna)
+    clase('Horse With No Name a tiempo',
+      consignas([
+        // 75% de 125 BPM
+        consigna('Rasgueá con el pulgar un golpe por tiempo: cuatro por acorde.', cancionATiempo('horse-with-no-name', 94)),
+        consigna('Rasgueá con el pulgar un golpe por tiempo: cuatro por acorde.', cancionATiempo('horse-with-no-name', 125)), // A CONFIRMAR
+      ]),
+      { objetivo: 'Tocar Horse With No Name con 4 golpes por compás, a la velocidad original.',
+        destacado: `Cuatro golpes por acorde. En el cuarto, ya andá preparando el próximo. ${X05}`,
+        xp: XP_CANCION_TOCAR }),
   ],
 };
 
 // ───────────────────────── Armado final ─────────────────────────
 
-const PLAN = [
-  primerosPasos1, primerosPasos2, primerosPasos3,
-  acordes1, acordes2, acordes3, acordes4, acordes5, cambios,
-  ritmo1, ritmo2, ritmo3, ritmo4,
-  punteo1, punteo2,
-  musicalidad1, musicalidad2, concierto,
-];
-
-// Canción final de cada curso: solo usa los acordes que el curso (o los anteriores) ya enseñó.
-// Los cursos que no están acá no tienen canción final (los de notas sueltas, o sin canción del catálogo que encaje).
-const CANCION_FINAL = new Map([
-  [acordes2, { cancionId: 'horse-with-no-name', titulo: 'Horse With No Name', artista: 'America' }], // Em, D
-  [acordes3, { cancionId: 'three-little-birds', titulo: 'Three Little Birds', artista: 'Bob Marley' }], // A, D, E
-  [acordes4, { cancionId: 'knockin-on-heavens-door', titulo: "Knockin' on Heaven's Door", artista: 'Bob Dylan' }], // G, D, Am, C
-  // La zamba (6/8) no entra en el formato de la app (4/4): Acordes V sigue con Flaca
-  [acordes5, { cancionId: 'flaca', titulo: 'Flaca', artista: 'Andrés Calamaro' }], // G, B7, Em, C, D
-  [cambios, { cancionId: 'de-musica-ligera', titulo: 'De música ligera', artista: 'Soda Stereo' }], // Em, C, G, D
-  [ritmo3, { cancionId: 'stand-by-me', titulo: 'Stand By Me', artista: 'Ben E. King' }], // G, Em, C, D + golpe apagado
-]);
+const PLAN = [curso1, curso2, curso3, curso4, curso5];
 
 function armarCursos() {
   return PLAN.map((curso, i) => {
     const orden = i + 1;
-    let numero = 0;
-    const cancion = CANCION_FINAL.get(curso);
-    const leccionesCurso = cancion ? [...curso.lecciones, ...clasesDeCancion(cancion)] : curso.lecciones;
-    const lecciones = leccionesCurso.map(({ titulo, antes, prueba: esPrueba, ...l }) => ({
+    const lecciones = curso.lecciones.map(({ titulo, ...l }, j) => ({
       ...l,
-      nombre: esPrueba ? titulo : `${orden}.${++numero} · ${titulo}`,
-      nombresAnteriores: antes || [],
+      nombre: `${orden}.${j + 1} · ${titulo}`,
+      nombresAnteriores: [], // todos los alumnos arrancan de cero: no se enlaza ninguna clase vieja
     }));
-    return {
-      id: curso.id,
-      nombre: curso.nombre,
-      descripcion: curso.descripcion,
-      nivel: curso.nivel || 'principiante',
-      orden,
-      lecciones,
-      instrumento_id: GUITARRA,
-    };
+    return { id: curso.id, nombre: curso.nombre, descripcion: curso.descripcion, nivel: 'principiante', orden, lecciones, instrumento_id: GUITARRA };
   });
 }
 
 export const CURSOS = armarCursos();
 
 // ───────────────────────── Controles ─────────────────────────
-// Errores que la base no detecta pero que harían que la app ignore la práctica sin avisar.
+// Errores que la base no detecta pero que harían que la app ignore la práctica sin avisar,
+// o que rompen las reglas del temario.
+
+const textosDeClase = (l) => [
+  l.texto_destacado, ...l.instrucciones,
+  ...(l.practica.tipo === 'consignas' ? l.practica.consignas.map((c) => c.instruccion) : []),
+].filter(Boolean);
+
+const practicasDeClase = (pr) => (pr.tipo === 'consignas' ? pr.consignas : [pr]);
+
+function controlarPractica(nombre, pr, errores) {
+  if (pr.tipo === 'secuencia') {
+    if (pr.pasos.length < 3) errores.push(`${nombre}: una secuencia necesita al menos 3 pasos`);
+    if (pr.pasos.some((paso) => paso.posiciones.some((pos) => pos.cuerda < 1 || pos.cuerda > 6))) errores.push(`${nombre}: cuerda inválida`);
+    if (pr.tempo && pr.tempo.duraciones.length !== pr.pasos.length) errores.push(`${nombre}: el tempo tiene ${pr.tempo.duraciones.length} duraciones para ${pr.pasos.length} notas`);
+    if (pr.tempo && pr.pasos.some((paso) => paso.tipo !== 'nota')) errores.push(`${nombre}: un riff a tempo solo puede tener notas sueltas`);
+  }
+  if (pr.tipo === 'ritmo' && pr.patron && pr.patron.length !== pr.compas * (pr.subdivision || 1)) errores.push(`${nombre}: el patrón no coincide con el compás`);
+  if (pr.tipo === 'notasAlAzar') {
+    if (pr.vecesPorTraste * pr.trastes.length !== pr.cantidad) errores.push(`${nombre}: ${pr.cantidad} notas no se reparten parejo entre ${pr.trastes.length} trastes`);
+    if (pr.cuerdas.length * pr.trastes.length < 2) errores.push(`${nombre}: con una sola nota posible no se puede evitar repetirla`);
+  }
+}
+
 (() => {
   const errores = [];
   const nombres = new Set();
-  const anteriores = new Set();
   for (const curso of CURSOS) {
     for (const l of curso.lecciones) {
       if (nombres.has(l.nombre)) errores.push(`Nombre repetido: ${l.nombre}`);
       nombres.add(l.nombre);
-      for (const a of l.nombresAnteriores) {
-        if (anteriores.has(a)) errores.push(`Nombre anterior usado dos veces: ${a}`);
-        anteriores.add(a);
-      }
-      const pr = l.practica;
-      if (pr?.tipo === 'secuencia') {
-        if (pr.pasos.length < 3) errores.push(`${l.nombre}: una secuencia necesita al menos 3 pasos`);
-        if (pr.pasos.some((paso) => paso.posiciones.some((pos) => pos.cuerda < 1 || pos.cuerda > 6))) errores.push(`${l.nombre}: cuerda inválida`);
-        if (pr.tempo && pr.tempo.duraciones.length !== pr.pasos.length) errores.push(`${l.nombre}: el tempo tiene ${pr.tempo.duraciones.length} duraciones para ${pr.pasos.length} notas`);
-        if (pr.tempo && pr.pasos.some((paso) => paso.tipo !== 'nota')) errores.push(`${l.nombre}: un riff a tempo solo puede tener notas sueltas`);
-      }
-      if (pr?.tipo === 'ritmo') {
-        const partes = pr.compas * (pr.subdivision || 1);
-        if (pr.patron && pr.patron.length !== partes) errores.push(`${l.nombre}: el patrón tiene ${pr.patron.length} partes y el compás ${partes}`);
-      }
       if (l.instrucciones.length === 0) errores.push(`${l.nombre}: faltan instrucciones`);
+      // Regla del temario: los textos en pantalla nunca dicen "la app"
+      for (const texto of [...textosDeClase(l), ...practicasDeClase(l.practica).map((c) => c.nombre)].filter(Boolean)) {
+        if (/\bla app\b/i.test(texto)) errores.push(`${l.nombre}: un texto en pantalla dice "la app": ${texto}`);
+      }
+      const partes = practicasDeClase(l.practica);
+      if (l.practica.tipo === 'consignas' && partes.some((c) => !c.instruccion)) errores.push(`${l.nombre}: hay una consigna sin instrucción`);
+      partes.forEach((pr, i) => controlarPractica(`${l.nombre} (consigna ${i + 1})`, pr, errores));
+      // Regla del temario: toda clase a tiempo termina el recordatorio con «¿Te cuesta? Probala a x0.5.»
+      const permiteX05 = partes.some((pr) => pr.escalon || pr.tempo?.escalon);
+      if (permiteX05 && !l.texto_destacado?.endsWith(X05)) errores.push(`${l.nombre}: el recordatorio tiene que terminar con «${X05}»`);
     }
   }
   if (errores.length) throw new Error(`Cursos de guitarra con errores:\n- ${errores.join('\n- ')}`);
