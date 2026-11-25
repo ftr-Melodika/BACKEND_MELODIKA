@@ -7,8 +7,10 @@
 // - Hay un video por curso (clases 1.1, 2.1, 3.1 y 5.3). Quedan preparadas pero sin video cargado:
 //   `youtube_id` queda vacío y los puntos del video están en VIDEO_CURSO_n, solo como referencia.
 // - Canciones y riffs a velocidad original; la consigna 1 al 75% y la 2 a la original. Se puede practicar
-//   a x0.5 (`escalon: 0.5`), pero la clase se aprueba solo a velocidad original.
-// - El recordatorio de toda clase a tiempo termina con «¿Te cuesta? Probala a x0.5.»
+//   a x0.5 (`escalon: 0.5`), pero la clase se aprueba solo a velocidad original. Excepción: la 1.4 lleva
+//   `aprobarLento: true` (arranca en x0.5 y aprueba a x0.5 o a x1).
+// - El recordatorio de toda clase a tiempo termina con «¿Te cuesta? Probala a x0.5.»; con `aprobarLento`,
+//   con «Cuando te salga, probala a x1.»
 //
 // Formato de cada práctica (lo valida practica_valida en la base; migraciones 001, 007 y 008):
 // - `consignas`: varias prácticas seguidas en una clase; cada una lleva su `instruccion`.
@@ -49,9 +51,13 @@ const secuencia = (nombre, pasos, tempo) => ({ tipo: 'secuencia', nombre, pasos,
 const APROBAR_A_TIEMPO = 0.75;
 // Selector x0.5: para practicar. Solo aprueba la velocidad de la consigna.
 const ESCALON_PRACTICA = 0.5;
-// Riff a tiempo: una duración (en pulsos) por nota. Con `escalon` se puede practicar a x0.5 pero no aprueba.
-const aTempo = (nombre, lista, bpm, duraciones) =>
-  secuencia(nombre, notas(lista), { bpm, duraciones, aprobar: APROBAR_A_TIEMPO, escalon: ESCALON_PRACTICA });
+// Riff a tiempo: una duración (en pulsos) por nota. Con `escalon` se puede practicar a x0.5 pero no aprueba,
+// salvo con `aprobarLento`: la clase arranca en x0.5 y se aprueba en cualquiera de las dos velocidades.
+const aTempo = (nombre, lista, bpm, duraciones, { aprobarLento = false } = {}) =>
+  secuencia(nombre, notas(lista), {
+    bpm, duraciones, aprobar: APROBAR_A_TIEMPO, escalon: ESCALON_PRACTICA,
+    ...(aprobarLento ? { aprobarLento } : {}),
+  });
 
 // Notas al azar: el curso indica cuántas, en qué cuerdas y trastes y con qué dedo.
 const notasAlAzar = (nombre, { cantidad, cuerdas, trastes, dedo, dedoPorTraste, vecesPorTraste }) => ({
@@ -89,6 +95,7 @@ const consignas = (lista) => ({ tipo: 'consignas', consignas: lista });
 const XP_PRACTICA = 50;
 const XP_CANCION_TOCAR = 100;
 const X05 = '¿Te cuesta? Probala a x0.5.';
+const X1 = 'Cuando te salga, probala a x1.';
 
 // Una clase. `objetivo` queda como descripción. Sin teoría en pantalla: la explicación va en el video del curso.
 // Si no se pasan instrucciones, se usa la de la primera consigna.
@@ -192,12 +199,12 @@ const curso1 = {
       consignas([
         // 75% de 115 BPM
         consigna('Índice en el traste marcado y pulgar en la cuerda 6: tocá cada nota cuando llegue a la línea.',
-          aTempo('Consigna 1 · Más lento', SMOKE_RIFF, 86, SMOKE_DURACIONES)),
+          aTempo('Consigna 1 · Más lento', SMOKE_RIFF, 86, SMOKE_DURACIONES, { aprobarLento: true })),
         consigna('Índice en el traste marcado y pulgar en la cuerda 6: tocá cada nota cuando llegue a la línea.',
-          aTempo('Consigna 2 · Velocidad original', SMOKE_RIFF, 115, SMOKE_DURACIONES)),
+          aTempo('Consigna 2 · Velocidad original', SMOKE_RIFF, 115, SMOKE_DURACIONES, { aprobarLento: true })),
       ]),
       { objetivo: 'Tocar el riff a tiempo, primero más lento y después a la velocidad final.',
-        destacado: `Tocá cada nota justo cuando llega a la línea. Si te perdés una, seguí con la siguiente. ${X05}` }),
+        destacado: `Tocá cada nota justo cuando llega a la línea. Si te perdés una, seguí con la siguiente. ${X1}` }),
   ],
 };
 
@@ -417,9 +424,10 @@ function controlarPractica(nombre, pr, errores) {
       const partes = practicasDeClase(l.practica);
       if (l.practica.tipo === 'consignas' && partes.some((c) => !c.instruccion)) errores.push(`${l.nombre}: hay una consigna sin instrucción`);
       partes.forEach((pr, i) => controlarPractica(`${l.nombre} (consigna ${i + 1})`, pr, errores));
-      // Regla del temario: toda clase a tiempo termina el recordatorio con «¿Te cuesta? Probala a x0.5.»
+      // Regla del temario: toda clase con x0.5 cierra el recordatorio invitando a la otra velocidad
       const permiteX05 = partes.some((pr) => pr.escalon || pr.tempo?.escalon);
-      if (permiteX05 && !l.texto_destacado?.endsWith(X05)) errores.push(`${l.nombre}: el recordatorio tiene que terminar con «${X05}»`);
+      const cierre = partes.some((pr) => pr.tempo?.aprobarLento) ? X1 : X05;
+      if (permiteX05 && !l.texto_destacado?.endsWith(cierre)) errores.push(`${l.nombre}: el recordatorio tiene que terminar con «${cierre}»`);
     }
   }
   if (errores.length) throw new Error(`Cursos de guitarra con errores:\n- ${errores.join('\n- ')}`);

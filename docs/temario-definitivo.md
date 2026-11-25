@@ -28,8 +28,8 @@ Valen para todos los cursos. Se pueden cambiar, pero si cambia una, hay que revi
 **Velocidad de canciones y riffs:** siempre la original de la grabación.
 
 - Toda clase a tiempo tiene dos consignas: la 1 al **75%** (escalón) y la 2 a la **velocidad original**.
-- El alumno puede practicar a **x0.5** todas las veces que quiera, pero la clase se aprueba solo a velocidad original.
-- El recordatorio de toda clase a tiempo termina con: «¿Te cuesta? Probala a x0.5.»
+- El alumno puede practicar a **x0.5** todas las veces que quiera, pero la clase se aprueba solo a velocidad original (excepción: la 1.4 arranca en x0.5 y se aprueba a x0.5 o a x1).
+- El recordatorio de toda clase a tiempo termina con: «¿Te cuesta? Probala a x0.5.» (en la 1.4: «Cuando te salga, probala a x1.»)
 
 **Aprender y tocar, separados:** cuando un curso termina con una canción o un riff, una clase lo enseña (nota por nota, o acordes y cambios, sin tiempo) y otra lo toca a tiempo. **La clase a tiempo no repite el aprender:** arranca directo con el mástil en movimiento, sin un paso previo de notas una por una ni de acordes sueltos.
 
@@ -150,7 +150,7 @@ Valen para todos los cursos. Se pueden cambiar, pero si cambia una, hay que revi
 
 **Texto en pantalla:**
 
-- **Recordatorio:** Tocá cada nota justo cuando llega a la línea. Si te perdés una, seguí con la siguiente. ¿Te cuesta? Probala a x0.5.
+- **Recordatorio:** Tocá cada nota justo cuando llega a la línea. Si te perdés una, seguí con la siguiente. Cuando te salga, probala a x1.
 - **Instrucción:** Índice en el traste marcado y pulgar en la cuerda 6: tocá cada nota cuando llegue a la línea.
 
 **Ritmo del riff** (pulsos que dura cada nota hasta la siguiente; a verificar escuchando el original al programarlo):
