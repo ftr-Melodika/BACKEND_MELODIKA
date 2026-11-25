@@ -434,7 +434,7 @@ El curso termina en la 3.6: el alumno arma Mim, Mi, Lam y La y cambia entre ello
 **Práctica:** con palmas, sin guitarra. La app escucha cada aplauso.
 
 1. **Consigna 1 · Un aplauso por clic:** 60 BPM, 4 compases (16 aplausos).
-2. **Consigna 2 · Subir de a poco:** 60, 70 y 80 BPM, 1 compás cada uno: 4 aplausos y sube, 4 y sube, 4 (12 aplausos).
+2. **Consigna 2 · Subir de a poco:** 60, 70 y 80 BPM, 4 compases cada uno (48 aplausos).
 
 **Aprobación:** en cada consigna, el **75% de los aplausos a tiempo**.
 
@@ -553,7 +553,8 @@ Misma estructura que la 4.2: la fase «aprender» de la canción, que repasa Mim
 
 Misma estructura que la 4.3, pero con **4 golpes por compás** (uno por tiempo, con el pulgar).
 
-**Una sola consigna, a 94 BPM** (75% del original de ~125). A 125 BPM es demasiado para un principiante, así que se sacó.
+1. **Consigna 1 · Más lento:** a **94 BPM** (75%).
+2. **Consigna 2 · Velocidad original:** a **125 BPM** (a confirmar con la grabación).
 
 **Aprobación:** en cada consigna, el **75% de los acordes a tiempo** (6 de 8).
 
@@ -569,6 +570,815 @@ Misma estructura que la 4.3, pero con **4 golpes por compás** (uno por tiempo, 
 El curso termina en la 5.5: el alumno toca *Horse With No Name* rasgueando un golpe por tiempo. Son 5 clases.
 
 **Curso 5 cerrado** el 22 de noviembre de 2026.
+
+## Curso 6 · Sol y Do
+
+**Meta del curso:** tocar *El fantasma* (Árbol), en una versión simplificada con Sol, Re, Mim y Do, rasgueando **un golpe por compás**, como en el curso 4. Todo el esfuerzo va a los acordes nuevos y a sus cambios.
+
+**Lo nuevo:** los acordes Sol (3 · 2 · 0 · 0 · 0 · 3, dedos 2, 1 y 3) y Do (x · 3 · 2 · 0 · 1 · 0, dedos 3, 2 y 1).
+
+**La canción:** el ciclo principal, Sol · Re · Mim · Do. El original usa Re con Fa# en el bajo; acá va el Re común. Se deja afuera la parte que sube un tono y medio (Sib · Fa · Solm · Mib). Cuántos compases dura cada acorde, a confirmar con la grabación ([LaCuerda](https://acordes.lacuerda.net/arbol/el_fantasma.shtml)).
+
+**Velocidad final:** la original. No está publicada: hay que medirla con la grabación.
+
+**Video:** ninguno. Leer acordes, dedos arqueados y el rasgueo único ya están en el video del curso 3.
+
+| # | Clase | Qué se logra | Estado |
+| --- | --- | --- | --- |
+| 6.1 | Sol | El primer acorde nuevo | Cerrada |
+| 6.2 | Do | El segundo acorde nuevo | Cerrada |
+| 6.3 | Cambio Sol ↔ Re | El primer cambio de la canción | Cerrada |
+| 6.4 | Cambio Do ↔ Sol | El cambio que cierra el ciclo | Cerrada |
+| 6.5 | *El fantasma*: aprender | Los cuatro acordes y todos los cambios dentro de la canción | Cerrada |
+| 6.6 | *El fantasma* a tiempo | Un golpe por compás, al 75% y a la velocidad original | Cerrada |
+
+### 6.1 · Sol
+
+Misma estructura que las clases de acordes del curso 3.
+
+**Objetivo:** armar el Sol y que suenen limpias las 6 cuerdas.
+
+**Acorde:** 3 · 2 · 0 · 0 · 0 · 3. Dedo 2 en la cuerda 6 (traste 3), dedo 1 en la cuerda 5 (traste 2) y dedo 3 en la cuerda 1 (traste 3). Es la forma que ya dibuja la app.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Sol armado, tocar cada cuerda con el pulgar, de la 6 a la 1.
+2. **Un rasgueo, tres veces:** armar el Sol, rasguearlo una vez y soltar la mano. Tres veces.
+
+**Aprobación:** consigna 1, las 6 cuerdas correctas. Consigna 2, el acorde completo las 3 veces.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Dedos 2 y 1 en las cuerdas 6 y 5, el 3 en la 1. Arqueados: que suenen las 3 del medio.
+- **Instrucción (consigna 1):** Armá el Sol y tocá cada cuerda con el pulgar, de la 6 a la 1.
+- **Instrucción (consigna 2):** Armá el Sol, rasgueá una vez y soltá la mano. Tres veces.
+
+**Límite de la app:** igual que en la 3.1, no puede saber si el alumno soltó la mano entre un rasgueo y otro.
+
+### 6.2 · Do
+
+Misma estructura que la 6.1.
+
+**Objetivo:** armar el Do y que suenen limpias las cuerdas 5 a 1.
+
+**Acorde:** x · 3 · 2 · 0 · 1 · 0. Dedo 3 en la cuerda 5 (traste 3), dedo 2 en la cuerda 4 (traste 2) y dedo 1 en la cuerda 2 (traste 1). Los dedos 1 y 2 están igual que en el Lam: solo cambia el dedo 3.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Do armado, tocar cada cuerda con el pulgar, de la 5 a la 1.
+2. **Un rasgueo, tres veces:** armar el Do, rasguearlo una vez y soltar la mano. Tres veces.
+
+**Aprobación:** consigna 1, las 5 cuerdas correctas. Consigna 2, el acorde completo las 3 veces.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Como el Lam, pero el dedo 3 va a la cuerda 5, traste 3. La cuerda 6 no se toca.
+- **Instrucción (consigna 1):** Armá el Do y tocá cada cuerda con el pulgar, de la 5 a la 1.
+- **Instrucción (consigna 2):** Armá el Do, rasgueá una vez y soltá la mano. Tres veces.
+
+### 6.3 · Cambio Sol ↔ Re
+
+Misma estructura que la 3.6 y la 5.2. No queda ningún dedo fijo: Sol usa las cuerdas 6, 5 y 1, y Re las cuerdas 3, 2 y 1.
+
+**Objetivo:** pasar de Sol a Re y volver, sin frenar entre acorde y acorde.
+
+**Práctica:** una consigna de 4 cambios (Sol → Re → Sol → Re → Sol), con un rasgueo por acorde.
+
+**Aprobación:** cada acorde completo, en orden.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Mové los dedos juntos, como un bloque, no de a uno.
+- **Instrucción:** Armá el Sol, rasgueá una vez y pasá al Re con los tres dedos a la vez.
+
+### 6.4 · Cambio Do ↔ Sol
+
+Misma estructura que la 6.3. No queda ningún dedo fijo. Arranca por el Do porque en la canción el cambio va de Do a Sol.
+
+**Objetivo:** pasar de Do a Sol y volver, sin frenar entre acorde y acorde.
+
+**Práctica:** una consigna de 4 cambios (Do → Sol → Do → Sol → Do), con un rasgueo por acorde.
+
+**Aprobación:** cada acorde completo, en orden.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Mové los dedos juntos, como un bloque, no de a uno.
+- **Instrucción:** Armá el Do, rasgueá una vez y pasá al Sol con los tres dedos a la vez.
+
+### 6.5 · *El fantasma*: aprender
+
+Misma estructura que la 4.2 y la 5.4: la fase «aprender» de la canción, sin tiempo.
+
+**Objetivo:** repasar Sol, Re, Mim y Do dentro de la canción y todos sus cambios.
+
+**Práctica:**
+
+1. **Los acordes:** Sol, Re, Mim y Do, cada uno cuerda por cuerda y después rasgueado.
+2. **Los cambios:** los 4 de la canción, cada uno ida y vuelta dos veces: Sol ↔ Re, Re ↔ Mim, Mim ↔ Do y Do ↔ Sol.
+
+**Aprobación:** la de la fase «aprender»: cada acorde completo y cada cambio.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Mové los dedos juntos, como un bloque, no de a uno.
+- **Instrucción:** Aprendé cada acorde de *El fantasma* y después los cambios entre acordes.
+
+**Cambio en el código:** cargar *El fantasma* en el catálogo de canciones (ver «Cambios en la app»).
+
+### 6.6 · *El fantasma* a tiempo
+
+Misma estructura que la 4.3: un golpe por acorde. Arranca directo a tiempo: no repite el «aprender» de la 6.5.
+
+**Objetivo:** tocar *El fantasma* a la velocidad original, con un rasgueo por acorde.
+
+**Práctica:** la fase «tocar» de la canción: los acordes avanzan por el mástil y se rasguean cuando llegan a la línea. El ciclo Sol · Re · Mim · Do cuatro veces: 16 compases.
+
+**Rasgueo:** **un golpe por acorde** con el pulgar, al empezar cada compás.
+
+1. **Consigna 1 · Más lento:** al **75%** de la velocidad original.
+2. **Consigna 2 · Velocidad original:** a medir con la grabación.
+
+**Aprobación:** en cada consigna, el **75% de los acordes a tiempo** (12 de 16).
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Tenés 4 tiempos en cada acorde: usá los últimos para preparar el próximo. ¿Te cuesta? Probala a x0.5.
+- **Instrucción:** Rasgueá una vez con el pulgar cada acorde cuando llegue a la línea.
+
+### Fin del curso 6
+
+El curso termina en la 6.6: el alumno toca *El fantasma* con Sol, Re, Mim y Do, un golpe por compás. Son 6 clases.
+
+**Curso 6 cerrado** el 25 de noviembre de 2026.
+
+## Curso 7 · Rem y Fa7M
+
+**Meta del curso:** tocar la estrofa y el estribillo de *When I Was Your Man* (Bruno Mars), rasgueando **4 golpes por compás**, como en el curso 5. El Fa de la canción se toca como Fa7M.
+
+**Lo nuevo:** los acordes Rem (x · x · 0 · 2 · 3 · 1, dedos 2, 3 y 1) y Fa7M (x · x · 3 · 2 · 1 · 0, dedos 3, 2 y 1), la forma fácil del Fa, sin cejilla. El rasgueo abajo-arriba queda para un curso más adelante.
+
+**La canción:** en Do mayor, 4/4, **73 BPM**. Estrofa: Lam · Do · Rem · Sol · Do. Estribillo: Fa7M · Sol · Do. Se deja afuera el pre-estribillo (Lam · Mim · Sib · Do/Sol · Sol), porque lleva Sib. Cuántos compases dura cada acorde, a confirmar con la grabación ([Hooktheory](https://www.hooktheory.com/theorytab/view/bruno-mars/when-i-was-your-man), [SongBPM](https://songbpm.com/@bruno-mars/when-i-was-your-man)).
+
+**Video:** ninguno. Leer acordes y el rasgueo de 4 golpes ya están en los cursos 3 y 5.
+
+| # | Clase | Qué se logra | Estado |
+| --- | --- | --- | --- |
+| 7.1 | Rem | El primer acorde nuevo | Cerrada |
+| 7.2 | Fa7M | El segundo acorde nuevo | Cerrada |
+| 7.3 | Cambios con Rem | Do ↔ Rem y Rem ↔ Sol | Cerrada |
+| 7.4 | Cambios con Fa7M | Do ↔ Fa7M y Fa7M ↔ Sol | Cerrada |
+| 7.5 | *When I Was Your Man*: aprender | Los acordes y todos los cambios dentro de la canción | Cerrada |
+| 7.6 | *When I Was Your Man* a tiempo | 4 golpes por compás, al 75% y a la velocidad original | Cerrada |
+
+### 7.1 · Rem
+
+Misma estructura que las clases de acordes del curso 3.
+
+**Objetivo:** armar el Rem y que suenen limpias las cuerdas 4 a 1.
+
+**Acorde:** x · x · 0 · 2 · 3 · 1. Dedo 2 en la cuerda 3 (traste 2), dedo 3 en la cuerda 2 (traste 3) y dedo 1 en la cuerda 1 (traste 1). Es la forma que ya dibuja la app. El dedo 3 está igual que en el Re.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Rem armado, tocar cada cuerda con el pulgar, de la 4 a la 1.
+2. **Un rasgueo, tres veces:** armar el Rem, rasguearlo una vez y soltar la mano. Tres veces.
+
+**Aprobación:** consigna 1, las 4 cuerdas correctas. Consigna 2, el acorde completo las 3 veces.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** El dedo 3 va como en el Re. Las cuerdas 6 y 5 no se tocan.
+- **Instrucción (consigna 1):** Armá el Rem y tocá cada cuerda con el pulgar, de la 4 a la 1.
+- **Instrucción (consigna 2):** Armá el Rem, rasgueá una vez y soltá la mano. Tres veces.
+
+### 7.2 · Fa7M
+
+Misma estructura que la 7.1. Es la forma fácil del Fa, sin cejilla, y la que se usa en la canción.
+
+**Objetivo:** armar el Fa7M y que suenen limpias las cuerdas 4 a 1.
+
+**Acorde:** x · x · 3 · 2 · 1 · 0. Dedo 3 en la cuerda 4 (traste 3), dedo 2 en la cuerda 3 (traste 2) y dedo 1 en la cuerda 2 (traste 1). La cuerda 1 suena al aire. El dedo 1 está igual que en el Do; los dedos 3 y 2 bajan una cuerda.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Fa7M armado, tocar cada cuerda con el pulgar, de la 4 a la 1.
+2. **Un rasgueo, tres veces:** armar el Fa7M, rasguearlo una vez y soltar la mano. Tres veces.
+
+**Aprobación:** consigna 1, las 4 cuerdas correctas. Consigna 2, el acorde completo las 3 veces.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Como el Do, pero los dedos 3 y 2 bajan una cuerda. La cuerda 1 suena al aire.
+- **Instrucción (consigna 1):** Armá el Fa7M y tocá cada cuerda con el pulgar, de la 4 a la 1.
+- **Instrucción (consigna 2):** Armá el Fa7M, rasgueá una vez y soltá la mano. Tres veces.
+
+**Cambio en el código:** la app todavía no tiene el Fa7M (ver «Cambios en la app»).
+
+### 7.3 · Cambios con Rem
+
+Misma estructura que la 3.5: una consigna por cambio, en el orden en que aparecen en la estrofa. En ninguno de los dos queda un dedo fijo.
+
+**Objetivo:** pasar de Do a Rem y de Rem a Sol sin frenar entre acorde y acorde.
+
+**Práctica:** en cada consigna, armar un acorde, rasguearlo una vez, pasar al otro y rasguearlo. **4 cambios** por consigna (A → B → A → B → A).
+
+| Consigna | Cambio | Instrucción |
+| --- | --- | --- |
+| 1 | Do ↔ Rem | Los dedos 1 y 2 bajan una cuerda en el mismo traste; el 3 salta a la cuerda 2. |
+| 2 | Rem ↔ Sol | Se mueve toda la mano: los tres dedos juntos, como un bloque. |
+
+**Aprobación:** cada acorde completo, en orden, en las 2 consignas.
+
+**Recordatorio:** Mové los dedos juntos, como un bloque, no de a uno.
+
+### 7.4 · Cambios con Fa7M
+
+Misma estructura que la 7.3. Va primero el cambio más fácil, que tiene un dedo fijo.
+
+**Objetivo:** pasar de Do a Fa7M y de Fa7M a Sol sin frenar entre acorde y acorde.
+
+**Práctica:** en cada consigna, armar un acorde, rasguearlo una vez, pasar al otro y rasguearlo. **4 cambios** por consigna (A → B → A → B → A).
+
+| Consigna | Cambio | Instrucción |
+| --- | --- | --- |
+| 1 | Do ↔ Fa7M | El dedo 1 no se mueve: los dedos 3 y 2 bajan juntos una cuerda. |
+| 2 | Fa7M ↔ Sol | Se mueve toda la mano: los tres dedos juntos, como un bloque. |
+
+**Aprobación:** cada acorde completo, en orden, en las 2 consignas.
+
+**Recordatorio:** Si un dedo está en el mismo lugar en los dos acordes, no lo levantes: se queda fijo.
+
+### 7.5 · *When I Was Your Man*: aprender
+
+Misma estructura que la 6.5: la fase «aprender» de la canción, sin tiempo.
+
+**Objetivo:** repasar Lam, Do, Rem, Sol y Fa7M dentro de la canción y todos sus cambios.
+
+**Práctica:**
+
+1. **Los acordes:** Lam, Do, Rem, Sol y Fa7M, cada uno cuerda por cuerda y después rasgueado.
+2. **Los cambios:** los 6 de la canción, cada uno ida y vuelta dos veces: Lam ↔ Do, Do ↔ Rem, Rem ↔ Sol, Sol ↔ Do, Do ↔ Fa7M y Fa7M ↔ Sol. Lam ↔ Do aparece acá por primera vez: es fácil, porque los dedos 1 y 2 quedan en el mismo lugar.
+
+**Aprobación:** la de la fase «aprender»: cada acorde completo y cada cambio.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Si un dedo se repite, dejalo fijo. Si no, mové los dedos juntos, como un bloque.
+- **Instrucción:** Aprendé cada acorde de *When I Was Your Man* y después los cambios entre acordes.
+
+**Cambio en el código:** cargar *When I Was Your Man* en el catálogo de canciones, con el Fa como Fa7M (ver «Cambios en la app»).
+
+### 7.6 · *When I Was Your Man* a tiempo
+
+Misma estructura que la 5.5: **4 golpes por compás** (uno por tiempo, con el pulgar). Arranca directo a tiempo: no repite el «aprender» de la 7.5.
+
+**Objetivo:** tocar la estrofa y el estribillo de *When I Was Your Man* a la velocidad original, rasgueando un golpe por tiempo.
+
+**Práctica:** la fase «tocar» de la canción: los acordes avanzan por el mástil y se rasguean cuando llegan a la línea. Una vuelta de estrofa (Lam · Do · Rem · Sol · Do) y estribillo (Fa7M · Sol · Do). Compases por acorde, a confirmar con la grabación.
+
+1. **Consigna 1 · Más lento:** a **55 BPM** (75%).
+2. **Consigna 2 · Velocidad original:** a **73 BPM**.
+
+**Aprobación:** en cada consigna, el **75% de los acordes a tiempo** (6 de 8, si cada acorde dura un compás).
+
+**Límite de la app:** evalúa el primer golpe de cada acorde; los otros tres se muestran como guía.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Cuatro golpes por acorde. En el cuarto, ya andá preparando el próximo. ¿Te cuesta? Probala a x0.5.
+- **Instrucción:** Rasgueá con el pulgar un golpe por tiempo: cuatro por acorde.
+
+### Fin del curso 7
+
+El curso termina en la 7.6: el alumno toca la estrofa y el estribillo de *When I Was Your Man* con Lam, Do, Rem, Sol y Fa7M, cuatro golpes por compás. Son 6 clases.
+
+**Curso 7 cerrado** el 25 de noviembre de 2026.
+
+## Curso 8 · Mi7 y Si7
+
+**Meta del curso:** tocar *Flaca* (Andrés Calamaro) y *Cuando no estás* (Andrés Calamaro) rasgueando **un golpe por compás**, como en el curso 6. *Flaca* usa el Si7 y *Cuando no estás* el Mi7.
+
+**Lo nuevo:** los acordes Mi7 (0 · 2 · 0 · 1 · 0 · 0, dedos 2 y 1: el Mi sin el dedo 3) y Si7 (x · 2 · 1 · 2 · 0 · 2, dedos 2, 1, 3 y 4). El Si7 es el primer acorde con el meñique.
+
+**Las canciones:**
+
+- ***Flaca*** (ya está en el catálogo, a 109 BPM): en Sol, sin capo. Toda la canción repite Sol · Si7 · Mim · Do · Sol · Re · Sol · Re, un acorde por compás. Las fuentes dan un tempo variable, de unos 110 BPM ([LaCuerda](https://acordes.lacuerda.net/andres_calamaro/flaca-2.shtml), [Karaoke Version](https://www.karaoke-version.com/karaoke/andres-calamaro/flaca.html)). El catálogo la tiene con rasgueo abajo-arriba (D-DU-UDU); en este curso va un golpe por compás.
+- ***Cuando no estás***, estrofa y estribillo. Estrofa: Do · Lam / Do · Lam · Rem · Sol / Do · Mi7 · Lam · Fa7M. Estribillo: Do · Mi7 · Fa7M · Sol. El Fa se toca como Fa7M, como en el curso 7. El tempo no está publicado: a medir con la grabación, igual que los compases por acorde ([LaCuerda](https://chords.lacuerda.net/andres_calamaro/cuando_no_estas.shtml)).
+
+**Video:** ninguno. El meñique ya se presentó en el curso 1 (los dedos 1 a 4).
+
+| # | Clase | Qué se logra | Estado |
+| --- | --- | --- | --- |
+| 8.1 | Mi7 | El acorde nuevo y el cambio Mi ↔ Mi7 | Cerrada |
+| 8.2 | Si7 | El primer acorde con el meñique | Cerrada |
+| 8.3 | Cambios con Mi7 | Mi7 ↔ Lam, Do ↔ Mi7 y Mi7 ↔ Fa7M | Cerrada |
+| 8.4 | Cambios con Si7 | Mim ↔ Si7 y Sol ↔ Si7 | Cerrada |
+| 8.5 | *Flaca*: aprender | Los acordes y todos los cambios dentro de la canción | Cerrada |
+| 8.6 | *Flaca* a tiempo | Un golpe por compás, al 75% y a la velocidad original | Cerrada |
+| 8.7 | *Cuando no estás*: aprender | Los acordes y todos los cambios dentro de la canción, con el Mi7 | Cerrada |
+| 8.8 | *Cuando no estás* a tiempo | Un golpe por compás, al 75% y a la velocidad original | Cerrada |
+
+### 8.1 · Mi7
+
+Misma estructura que las clases de acordes del curso 3, más una consigna de cambio desde el Mi.
+
+**Objetivo:** armar el Mi7 y que suenen limpias las 6 cuerdas, y pasar del Mi al Mi7 levantando un solo dedo.
+
+**Acorde:** 0 · 2 · 0 · 1 · 0 · 0. Dedo 2 en la cuerda 5 (traste 2) y dedo 1 en la cuerda 3 (traste 1). Es el Mi sin el dedo 3: la cuerda 4 suena al aire. Es la forma que ya dibuja la app.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Mi7 armado, tocar cada cuerda con el pulgar, de la 6 a la 1.
+2. **Un rasgueo, tres veces:** armar el Mi7, rasguearlo una vez y soltar la mano. Tres veces.
+3. **Cambio Mi ↔ Mi7:** 4 cambios (Mi → Mi7 → Mi → Mi7 → Mi), un rasgueo por acorde.
+
+**Aprobación:** consigna 1, las 6 cuerdas correctas. Consigna 2, el acorde completo las 3 veces. Consigna 3, cada acorde completo, en orden.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Es el Mi sin el dedo 3. Los dedos 2 y 1 no se mueven.
+- **Instrucción (consigna 1):** Armá el Mi7 y tocá cada cuerda con el pulgar, de la 6 a la 1.
+- **Instrucción (consigna 2):** Armá el Mi7, rasgueá una vez y soltá la mano. Tres veces.
+- **Instrucción (consigna 3):** Armá el Mi y rasgueá. Levantá el dedo 3 y rasgueá el Mi7. Volvé a apoyarlo.
+
+**Cambio en el código:** usa «Varias consignas en una clase» (ver «Cambios en la app»), con una consigna de acorde y una de cambio en la misma clase.
+
+### 8.2 · Si7
+
+Misma estructura que las clases de acordes del curso 3. Es el primer acorde con cuatro dedos y con el meñique.
+
+**Objetivo:** armar el Si7 y que suenen limpias las cuerdas 5 a 1.
+
+**Acorde:** x · 2 · 1 · 2 · 0 · 2. Dedo 2 en la cuerda 5 (traste 2), dedo 1 en la cuerda 4 (traste 1), dedo 3 en la cuerda 3 (traste 2) y dedo 4 en la cuerda 1 (traste 2). La cuerda 2 suena al aire. Es la forma que ya dibuja la app.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Si7 armado, tocar cada cuerda con el pulgar, de la 5 a la 1.
+2. **Un rasgueo, tres veces:** armar el Si7, rasguearlo una vez y soltar la mano. Tres veces.
+
+**Aprobación:** consigna 1, las 5 cuerdas correctas. Consigna 2, el acorde completo las 3 veces.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** El meñique va en la cuerda 1, traste 2. Dedos arqueados: la cuerda 2 tiene que sonar al aire.
+- **Instrucción (consigna 1):** Armá el Si7 y tocá cada cuerda con el pulgar, de la 5 a la 1.
+- **Instrucción (consigna 2):** Armá el Si7, rasgueá una vez y soltá la mano. Tres veces.
+
+### 8.3 · Cambios con Mi7
+
+Misma estructura que la 3.5: una consigna por cambio, del más fácil al más difícil. Son los tres cambios con Mi7 de *Cuando no estás*.
+
+**Objetivo:** pasar del Mi7 al Lam, del Do al Mi7 y del Mi7 al Fa7M sin frenar entre acorde y acorde.
+
+**Práctica:** en cada consigna, armar un acorde, rasguearlo una vez, pasar al otro y rasguearlo. **4 cambios** por consigna (A → B → A → B → A).
+
+| Consigna | Cambio | Instrucción |
+| --- | --- | --- |
+| 1 | Mi7 ↔ Lam | Como Mi ↔ Lam: los dedos 2 y 1 bajan juntos una cuerda y en el Lam se suma el dedo 3. |
+| 2 | Do ↔ Mi7 | Se mueve toda la mano: los dedos juntos, como un bloque. |
+| 3 | Mi7 ↔ Fa7M | Se mueve toda la mano: los dedos juntos, como un bloque. |
+
+**Aprobación:** cada acorde completo, en orden, en las 3 consignas.
+
+**Recordatorio:** Mové los dedos juntos, como un bloque, no de a uno.
+
+### 8.4 · Cambios con Si7
+
+Misma estructura que la 7.4. Va primero el cambio más fácil, que tiene un dedo fijo, aunque en la canción primero viene Sol → Si7.
+
+**Objetivo:** pasar de Mim a Si7 y de Sol a Si7 sin frenar entre acorde y acorde.
+
+**Práctica:** en cada consigna, armar un acorde, rasguearlo una vez, pasar al otro y rasguearlo. **4 cambios** por consigna (A → B → A → B → A).
+
+| Consigna | Cambio | Instrucción |
+| --- | --- | --- |
+| 1 | Mim ↔ Si7 | El dedo 2 no se mueve de la cuerda 5: los otros entran y salen. |
+| 2 | Sol ↔ Si7 | Se mueve toda la mano: los dedos juntos, como un bloque. |
+
+**Aprobación:** cada acorde completo, en orden, en las 2 consignas.
+
+**Recordatorio:** Si un dedo está en el mismo lugar en los dos acordes, no lo levantes: se queda fijo.
+
+### 8.5 · *Flaca*: aprender
+
+Misma estructura que la 6.5: la fase «aprender» de la canción, sin tiempo.
+
+**Objetivo:** repasar Sol, Si7, Mim, Do y Re dentro de la canción y todos sus cambios.
+
+**Práctica:**
+
+1. **Los acordes:** Sol, Si7, Mim, Do y Re, cada uno cuerda por cuerda y después rasgueado.
+2. **Los cambios:** los 5 de la canción, cada uno ida y vuelta dos veces: Sol ↔ Si7, Si7 ↔ Mim, Mim ↔ Do, Do ↔ Sol y Sol ↔ Re.
+
+**Aprobación:** la de la fase «aprender»: cada acorde completo y cada cambio.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Si un dedo se repite, dejalo fijo. Si no, mové los dedos juntos, como un bloque.
+- **Instrucción:** Aprendé cada acorde de *Flaca* y después los cambios entre acordes.
+
+**Cambio en el código:** *Flaca* ya está en el catálogo, pero con rasgueo abajo-arriba (D-DU-UDU). Para la 8.6 hace falta tocarla con un golpe por compás (ver «Cambios en la app»).
+
+### 8.6 · *Flaca* a tiempo
+
+Misma estructura que la 6.6: un golpe por acorde. Arranca directo a tiempo: no repite el «aprender» de la 8.5.
+
+**Objetivo:** tocar *Flaca* a la velocidad original, con un rasgueo por acorde.
+
+**Práctica:** la fase «tocar» de la canción: los acordes avanzan por el mástil y se rasguean cuando llegan a la línea. El ciclo Sol · Si7 · Mim · Do · Sol · Re · Sol · Re dos veces: 16 compases.
+
+**Rasgueo:** **un golpe por acorde** con el pulgar, al empezar cada compás.
+
+1. **Consigna 1 · Más lento:** a **82 BPM** (75%).
+2. **Consigna 2 · Velocidad original:** a **109 BPM**, la del catálogo.
+
+**Aprobación:** en cada consigna, el **75% de los acordes a tiempo** (12 de 16).
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Tenés 4 tiempos en cada acorde: usá los últimos para preparar el próximo. ¿Te cuesta? Probala a x0.5.
+- **Instrucción:** Rasgueá una vez con el pulgar cada acorde cuando llegue a la línea.
+
+### 8.7 · *Cuando no estás*: aprender
+
+Misma estructura que la 8.5: la fase «aprender» de la canción, sin tiempo.
+
+**Objetivo:** repasar Do, Lam, Rem, Sol, Mi7 y Fa7M dentro de la canción y todos sus cambios.
+
+**Práctica:**
+
+1. **Los acordes:** Do, Lam, Rem, Sol, Mi7 y Fa7M, cada uno cuerda por cuerda y después rasgueado.
+2. **Los cambios:** los 10 de la canción, cada uno ida y vuelta dos veces: Do ↔ Lam, Lam ↔ Rem, Rem ↔ Sol, Sol ↔ Do, Do ↔ Mi7, Mi7 ↔ Lam, Lam ↔ Fa7M, Fa7M ↔ Do, Mi7 ↔ Fa7M y Fa7M ↔ Sol. Dos aparecen acá por primera vez: Lam ↔ Fa7M (el dedo 1 queda fijo) y Lam ↔ Rem.
+
+**Aprobación:** la de la fase «aprender»: cada acorde completo y cada cambio.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Si un dedo se repite, dejalo fijo. Si no, mové los dedos juntos, como un bloque.
+- **Instrucción:** Aprendé cada acorde de *Cuando no estás* y después los cambios entre acordes.
+
+**Cambio en el código:** cargar *Cuando no estás* en el catálogo de canciones, con el Fa como Fa7M (ver «Cambios en la app»).
+
+### 8.8 · *Cuando no estás* a tiempo
+
+Misma estructura que la 8.6: un golpe por acorde. Arranca directo a tiempo: no repite el «aprender» de la 8.7.
+
+**Objetivo:** tocar la estrofa y el estribillo de *Cuando no estás* a la velocidad original, con un rasgueo por acorde.
+
+**Práctica:** la fase «tocar» de la canción: los acordes avanzan por el mástil y se rasguean cuando llegan a la línea. Una vuelta de estrofa (Do · Lam / Do · Lam · Rem · Sol / Do · Mi7 · Lam · Fa7M) y estribillo (Do · Mi7 · Fa7M · Sol): 14 acordes.
+
+**Rasgueo:** **un golpe por acorde** con el pulgar, al empezar cada compás.
+
+1. **Consigna 1 · Más lento:** al **75%** de la velocidad original.
+2. **Consigna 2 · Velocidad original:** a medir con la grabación.
+
+**Aprobación:** en cada consigna, el **75% de los acordes a tiempo** (11 de 14, si cada acorde dura un compás).
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Tenés 4 tiempos en cada acorde: usá los últimos para preparar el próximo. ¿Te cuesta? Probala a x0.5.
+- **Instrucción:** Rasgueá una vez con el pulgar cada acorde cuando llegue a la línea.
+
+### Fin del curso 8
+
+El curso termina en la 8.8: el alumno toca *Flaca* y *Cuando no estás* con Mi7 y Si7, un golpe por compás. Son 8 clases.
+
+**Curso 8 cerrado** el 25 de noviembre de 2026.
+
+## Curso 9 · Rasgueo abajo-arriba
+
+**Meta del curso:** tocar *Flaca* con el fogonero, **D-DU-UD-** (abajo, -, abajo, arriba, -, arriba, abajo, -), a 109 BPM. Es el rasgueo del catálogo (D-DU-UDU) sin el último arriba: ese hueco deja tiempo para cambiar de acorde. Los acordes y los cambios ya se aprendieron en el curso 8: todo el foco va al rasgueo.
+
+**Lo nuevo:** el rasgueo abajo-arriba. Sin acordes nuevos.
+
+**Cómo se rasguea:** el alumno elige una de tres formas: índice abajo y pulgar arriba, pulgar abajo y pulgar arriba, o con púa.
+
+**Límite de la app:** mide cada golpe a tiempo, pero no distingue si fue hacia abajo o hacia arriba, ni con qué dedo. Cuenta los golpes de más (tocar en un hueco), pero no restan para aprobar.
+
+**Video:** en la 9.1.
+
+| # | Clase | Qué se logra | Estado |
+| --- | --- | --- | --- |
+| 9.1 | Las formas de rasguear | Video: las tres formas de rasguear y cómo se agarra la púa | Cerrada |
+| 9.2 | Abajo-arriba parejo | Bajar en cada tiempo y subir en cada «y», sin cortar | Cerrada |
+| 9.3 | El fogonero | D-DU-UD- sobre un acorde | Cerrada |
+| 9.4 | El patrón D-D-UUDD | ↓ · ↓ · ↑ ↑ ↓ ↓ sobre un acorde | Cerrada |
+| 9.5 | *Flaca* con el fogonero | La canción con D-DU-UD-, al 75% y a la velocidad original | Cerrada |
+
+### 9.1 · Las formas de rasguear
+
+Clase de solo video, sin práctica.
+
+**Objetivo:** conocer las tres formas de rasguear abajo-arriba y elegir una.
+
+**Video:**
+
+1. **Las tres formas:** índice abajo y pulgar arriba, pulgar abajo y arriba, o púa.
+2. **Cómo agarrar la púa:** entre el pulgar y el costado del índice, con poca punta afuera.
+3. **El movimiento:** la mano sube y baja todo el tiempo, como un péndulo. Hacia arriba alcanza con las cuerdas más finas.
+
+**Aprobación:** ver el video.
+
+**Cambio en el código:** una clase con video y sin práctica (ver «Cambios en la app»).
+
+### 9.2 · Abajo-arriba parejo
+
+**Objetivo:** rasguear abajo en cada tiempo y arriba en cada «y», con la mano en movimiento constante.
+
+**Práctica:** el ejercicio de ritmo en corcheas (8 golpes por compás: ↓ ↑ ↓ ↑ ↓ ↑ ↓ ↑), con el Mim armado. La app mide cada golpe.
+
+1. **Consigna 1 · Despacio:** 4 compases a 60 BPM.
+2. **Consigna 2 · Más rápido:** 4 compases a 80 BPM.
+
+**Aprobación:** en cada consigna, el **75% de los golpes a tiempo**.
+
+**Límite de la app:** no distingue si el golpe fue hacia abajo o hacia arriba.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** La mano no para: baja en cada número y sube en cada «y».
+- **Instrucción:** Armá el Mim y rasgueá abajo y arriba siguiendo las flechas.
+
+### 9.3 · El fogonero
+
+**Objetivo:** rasguear el fogonero, **D-DU-UD-** (↓ · ↓ ↑ · ↑ ↓ ·), con la mano en movimiento constante. Es el rasgueo de *Flaca* sin el último arriba: ese hueco deja tiempo para cambiar de acorde.
+
+**Práctica:** el ejercicio de ritmo en corcheas, con el Mim armado. La pantalla muestra solo las flechas de los golpes que suenan.
+
+1. **Consigna 1 · Despacio:** 4 compases a 60 BPM.
+2. **Consigna 2 · Más rápido:** 4 compases a 80 BPM.
+
+**Aprobación:** en cada consigna, el **75% de los golpes a tiempo**.
+
+**Límite de la app:** no distingue si el golpe fue hacia abajo o hacia arriba. Cuenta los golpes de más (tocar en un hueco), pero no restan para aprobar.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** En los huecos la mano se mueve igual, pero pasa sin tocar las cuerdas.
+- **Instrucción:** Armá el Mim y rasgueá siguiendo las flechas.
+
+### 9.4 · El patrón D-D-UUDD
+
+Misma estructura que la 9.3.
+
+**Objetivo:** rasguear **D-D-UUDD** con la mano firme.
+
+**El patrón:**
+
+| 1 | y | 2 | y | 3 | y | 4 | y |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ↓ | · | ↓ | · | ↑ | ↑ | ↓ | ↓ |
+
+A diferencia del fogonero, no es un vaivén parejo: hay dos golpes hacia arriba seguidos (en el 3 y su «y») y dos hacia abajo seguidos (en el 4 y su «y»).
+
+**Práctica:** el ejercicio de ritmo en corcheas, con el Mim armado.
+
+1. **Consigna 1 · Despacio:** 4 compases a 60 BPM.
+2. **Consigna 2 · Más rápido:** 4 compases a 80 BPM.
+
+**Aprobación:** en cada consigna, el **75% de los golpes a tiempo**.
+
+**Límite de la app:** no distingue si el golpe fue hacia abajo o hacia arriba. Cuenta los golpes de más, pero no restan para aprobar.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Dos arriba seguidos y dos abajo seguidos: la mano no va y viene pareja. Mirá las flechas.
+- **Instrucción:** Armá el Mim y rasgueá siguiendo las flechas.
+
+**Cambio en el código:** hoy la app pone ↓ en los números y ↑ en las «y». Este patrón necesita que el ejercicio de ritmo acepte la dirección de cada golpe (ver «Cambios en la app»).
+
+### 9.5 · *Flaca* con el fogonero
+
+Misma estructura que la 8.6, pero con el fogonero en vez de un golpe por compás. Arranca directo a tiempo: los acordes y los cambios ya se aprendieron en la 8.5.
+
+**Objetivo:** tocar *Flaca* a la velocidad original con el fogonero.
+
+**Práctica:** la fase «tocar» de la canción: los acordes avanzan por el mástil y se rasguean cuando llegan a la línea. El ciclo Sol · Si7 · Mim · Do · Sol · Re · Sol · Re dos veces: 16 compases.
+
+**Rasgueo:** el fogonero, **D-DU-UD-** (↓ · ↓ ↑ · ↑ ↓ ·), en cada compás.
+
+1. **Consigna 1 · Más lento:** a **82 BPM** (75%).
+2. **Consigna 2 · Velocidad original:** a **109 BPM**.
+
+**Aprobación:** en cada consigna, el **75% de los acordes a tiempo** (12 de 16).
+
+**Límite de la app:** evalúa el primer golpe de cada acorde; los demás se muestran como guía.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Usá el hueco del final para cambiar de acorde. ¿Te cuesta? Probala a x0.5.
+- **Instrucción:** Rasgueá el fogonero en cada acorde, siguiendo las flechas.
+
+**Cambio en el código:** *Flaca* con el fogonero (ver «Cambios en la app»).
+
+### Fin del curso 9
+
+El curso termina en la 9.5: el alumno toca *Flaca* con el fogonero. Aprendió el abajo-arriba, el fogonero (D-DU-UD-) y el D-D-UUDD. Son 5 clases.
+
+**Curso 9 cerrado** el 25 de noviembre de 2026.
+
+## Curso 10 · Cejilla
+
+**Meta del curso:** sin canción. El curso enseña las versiones del Fa, una por clase, y el alumno llega hasta donde pueda.
+
+**Lo nuevo:** la cejilla, de a pasos, hasta el Fa completo:
+
+1. Fa7M (x · x · 3 · 2 · 1 · 0), de repaso.
+2. Fa con el dedo 1 apretando las cuerdas 1 y 2 (x · x · 3 · 2 · 1 · 1). Es el Fa que ya dibuja la app.
+3. Fa con bajo en la 5 (x · 3 · 3 · 2 · 1 · 1).
+4. Fa completo, con cejilla en las 6 cuerdas (1 · 3 · 3 · 2 · 1 · 1).
+
+**Siempre:** cada clase avisa que la cejilla es difícil y que, si no sale, se vuelve otro día.
+
+**Botón «No me sale»:** cada clase del curso tiene un botón «No me sale». Abre un aviso que tranquiliza (no pasa nada, la cejilla lleva tiempo, volvé otro día) y lleva a la 10.6, que practica los cambios con el Fa más difícil que el alumno ya aprobó. Así nadie queda trabado: llega hasta donde pueda y sigue con lo que le sale.
+
+| # | Clase | Qué se logra | Estado |
+| --- | --- | --- | --- |
+| 10.1 | Qué es la cejilla | Video: cómo se apoya y se aprieta una cejilla | Cerrada |
+| 10.2 | Fa7M | Repaso: el punto de partida del Fa | Cerrada |
+| 10.3 | Fa con cejilla en 1 y 2 | La primera cejilla, de dos cuerdas | Cerrada |
+| 10.4 | Fa con bajo en la 5 | Cinco cuerdas, con el meñique | Cerrada |
+| 10.5 | Fa completo | Cejilla en las 6 cuerdas | Cerrada |
+| 10.6 | Cambios con Fa | Los cambios más comunes con el Fa más difícil que ya sale | Cerrada |
+
+### 10.1 · Qué es la cejilla
+
+Clase de solo video, sin práctica, igual que la 9.1.
+
+**Objetivo:** entender qué es una cejilla y cómo se arma, antes de probarla.
+
+**Video:**
+
+1. **Qué es:** un solo dedo, el 1, aprieta varias cuerdas a la vez en el mismo traste.
+2. **Cómo se apoya:** el dedo 1 bien derecho, pegado al traste y apenas de costado, del lado del pulgar.
+3. **El pulgar:** detrás del mástil, a la altura del dedo 2, para hacer de pinza.
+4. **La fuerza:** sale de la pinza y del peso del brazo, no de apretar con todo el dedo.
+5. **Paciencia:** a todos les cuesta al principio. Lleva días o semanas, y está bien volver otro día.
+
+**Aprobación:** ver el video.
+
+**Cambio en el código:** usa la «Clase de solo video» (ver «Cambios en la app»).
+
+### 10.2 · Fa7M
+
+Misma estructura que la 7.2.
+
+**Objetivo:** volver a armar el Fa7M, el punto de partida de todos los Fa del curso.
+
+**Acorde:** x · x · 3 · 2 · 1 · 0. Dedo 3 en la cuerda 4 (traste 3), dedo 2 en la cuerda 3 (traste 2) y dedo 1 en la cuerda 2 (traste 1). La cuerda 1 suena al aire.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Fa7M armado, tocar cada cuerda con el pulgar, de la 4 a la 1.
+2. **Un rasgueo, tres veces:** armar el Fa7M, rasguearlo una vez y soltar la mano. Tres veces.
+
+**Aprobación:** consigna 1, las 4 cuerdas correctas. Consigna 2, el acorde completo las 3 veces.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Desde acá sale cada Fa del curso: el dedo 2 se queda siempre en la cuerda 3, traste 2.
+- **Instrucción (consigna 1):** Armá el Fa7M y tocá cada cuerda con el pulgar, de la 4 a la 1.
+- **Instrucción (consigna 2):** Armá el Fa7M, rasgueá una vez y soltá la mano. Tres veces.
+
+### 10.3 · Fa con cejilla en 1 y 2
+
+Misma estructura que la 10.2. Es la primera cejilla: un solo dedo aprieta dos cuerdas.
+
+**Objetivo:** apretar las cuerdas 1 y 2 con el dedo 1 y que suenen limpias las cuerdas 4 a 1.
+
+**Acorde:** x · x · 3 · 2 · 1 · 1. Igual que el Fa7M, pero el dedo 1 se acuesta en el traste 1 y aprieta las cuerdas 2 y 1. Es el Fa que ya dibuja la app.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Fa armado, tocar cada cuerda con el pulgar, de la 4 a la 1.
+2. **Un rasgueo, tres veces:** armar el Fa, rasguearlo una vez y soltar la mano. Tres veces.
+3. **Cambio Fa7M ↔ Fa:** 4 cambios (Fa7M → Fa → Fa7M → Fa → Fa7M), un rasgueo por acorde, acostando y levantando el dedo 1.
+
+**Aprobación:** consigna 1, las 4 cuerdas correctas. Consigna 2, el acorde completo las 3 veces. Consigna 3, cada acorde completo, en orden.
+
+**Botón «No me sale»:** lleva a la 10.6 con el Fa7M.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Armá el Fa7M y acostá el dedo 1 hasta la cuerda 1. Apretá cerca del traste. Es difícil: si no sale, volvé otro día.
+- **Instrucción (consigna 1):** Armá el Fa y tocá cada cuerda con el pulgar, de la 4 a la 1.
+- **Instrucción (consigna 2):** Armá el Fa, rasgueá una vez y soltá la mano. Tres veces.
+- **Instrucción (consigna 3):** Armá el Fa7M y rasgueá. Acostá el dedo 1 hasta la cuerda 1 y rasgueá el Fa. Volvé a levantarlo.
+
+### 10.4 · Fa con bajo en la 5
+
+Misma estructura que la 10.3. Se suma el bajo en la cuerda 5 y, con eso, el meñique.
+
+**Objetivo:** armar el Fa de 5 cuerdas y que suenen limpias las cuerdas 5 a 1.
+
+**Acorde:** x · 3 · 3 · 2 · 1 · 1. Dedo 1 acostado en el traste 1 (cuerdas 2 y 1), dedo 2 en la cuerda 3 (traste 2), dedo 4 en la cuerda 4 (traste 3) y dedo 3 en la cuerda 5 (traste 3). Respecto de la 10.3, el dedo 3 baja a la cuerda 5 y el meñique ocupa su lugar en la 4.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Fa armado, tocar cada cuerda con el pulgar, de la 5 a la 1.
+2. **Un rasgueo, tres veces:** armar el Fa, rasguearlo una vez y soltar la mano. Tres veces.
+3. **Cambio Fa (1 y 2) ↔ Fa con bajo en la 5:** 4 cambios, un rasgueo por acorde.
+
+**Aprobación:** consigna 1, las 5 cuerdas correctas. Consigna 2, el acorde completo las 3 veces. Consigna 3, cada acorde completo, en orden.
+
+**Botón «No me sale»:** lleva a la 10.6 con el Fa de la 10.3.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** El dedo 3 baja a la cuerda 5 y el meñique toma su lugar en la 4. Es difícil: si no sale, volvé otro día.
+- **Instrucción (consigna 1):** Armá el Fa y tocá cada cuerda con el pulgar, de la 5 a la 1.
+- **Instrucción (consigna 2):** Armá el Fa, rasgueá una vez y soltá la mano. Tres veces.
+- **Instrucción (consigna 3):** Pasá del Fa de la clase anterior al Fa con bajo y volvé, rasgueando cada uno.
+
+**Cambio en el código:** esta forma del Fa va como forma propia de la clase (la app ya lo permite).
+
+### 10.5 · Fa completo
+
+Misma estructura que la 10.4. El último paso: la cejilla en las 6 cuerdas.
+
+**Objetivo:** armar el Fa completo y que suenen limpias las 6 cuerdas.
+
+**Acorde:** 1 · 3 · 3 · 2 · 1 · 1. Igual que el Fa de la 10.4, pero el dedo 1 se acuesta en todo el traste 1, de la cuerda 6 a la 1.
+
+**Consignas:**
+
+1. **Cuerda por cuerda:** con el Fa armado, tocar cada cuerda con el pulgar, de la 6 a la 1.
+2. **Un rasgueo, tres veces:** armar el Fa, rasguearlo una vez y soltar la mano. Tres veces.
+3. **Cambio Fa con bajo en la 5 ↔ Fa completo:** 4 cambios, un rasgueo por acorde.
+
+**Aprobación:** consigna 1, las 6 cuerdas correctas. Consigna 2, el acorde completo las 3 veces. Consigna 3, cada acorde completo, en orden.
+
+**Botón «No me sale»:** lleva a la 10.6 con el Fa de la 10.4.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** El dedo 1 bien derecho sobre el traste 1, apenas de costado. Es la cejilla más difícil: si no sale, volvé otro día.
+- **Instrucción (consigna 1):** Armá el Fa y tocá cada cuerda con el pulgar, de la 6 a la 1.
+- **Instrucción (consigna 2):** Armá el Fa, rasgueá una vez y soltá la mano. Tres veces.
+- **Instrucción (consigna 3):** Pasá del Fa de 5 cuerdas al Fa completo y volvé, rasgueando cada uno.
+
+**Cambio en el código:** esta forma del Fa va como forma propia de la clase (la app ya lo permite).
+
+### 10.6 · Cambios con Fa
+
+Se llega desde la 10.5 aprobada o desde el botón «No me sale» de cualquier clase del curso. Usa el Fa más difícil que el alumno ya aprobó: Fa7M, Fa en 1 y 2, Fa con bajo en la 5 o Fa completo.
+
+**Objetivo:** pasar del Fa a los acordes que más lo acompañan sin frenar entre acorde y acorde.
+
+**Práctica:** misma estructura que la 3.5: una consigna por cambio, del más fácil al más difícil. **4 cambios** por consigna (A → B → A → B → A), un rasgueo por acorde.
+
+| Consigna | Cambio | Instrucción |
+| --- | --- | --- |
+| 1 | Do ↔ Fa | El dedo 1 no se mueve de la cuerda 2, traste 1: los otros cambian de lugar. |
+| 2 | Lam ↔ Fa | El dedo 1 tampoco se mueve: los otros cambian de lugar. |
+| 3 | Fa ↔ Sol | Se mueve toda la mano: los dedos juntos, como un bloque. |
+
+**Aprobación:** cada acorde completo, en orden, en las 3 consignas.
+
+**Texto en pantalla:**
+
+- **Recordatorio:** Si un dedo está en el mismo lugar en los dos acordes, no lo levantes: se queda fijo.
+- **Aviso del botón «No me sale»** (en las clases 10.2 a 10.5): No pasa nada: la cejilla lleva tiempo y a todos les cuesta al principio. Seguí practicando los cambios con el Fa que ya te sale y volvé a esta clase otro día.
+
+**Cambio en el código:** usa el Fa más difícil aprobado y el botón «No me sale» (ver «Cambios en la app»).
+
+### Fin del curso 10
+
+El curso termina en la 10.6: el alumno practica los cambios con el Fa más difícil que le salió. No tiene canción. Son 6 clases.
+
+**Curso 10 cerrado** el 25 de noviembre de 2026.
+
+## Canciones a agregar
+
+Canciones elegidas para sumar al catálogo y a los cursos. Todavía no están asignadas a ningún curso. Los acordes vienen de cancioneros de la web; la tonalidad y el tempo, de sitios de análisis o de karaoke. Todo lo marcado «a confirmar» se verifica escuchando la grabación antes de cargarla.
+
+### Canciones
+
+| Canción | Artista | Acordes | Rasgueo | Tempo |
+| --- | --- | --- | --- | --- |
+| *Cuando no estás* | Andrés Calamaro | Intro: Do · Lam. Estrofa: Do Lam / Do Lam Rem Sol / Do Mi7 Lam Fa. Estribillo («Cuando no estás, conmigo»): Do · Mi7 · Fa · Sol. Usa Rem, Mi7 y Fa (tocado como Fa7M) | Un golpe por compás con el pulgar (curso 8) | No publicado: a medir con la grabación |
+| *El fantasma* (simplificada) | Árbol | Ciclo principal: Sol · Re · Mim · Do (el original usa Re con Fa# en el bajo; acá va el Re común). Se deja afuera la parte que sube un tono y medio (Sib · Fa · Solm · Mib) | Sin dato en las fuentes: a definir escuchando | No publicado: a medir con la grabación |
+| *When I Was Your Man* | Bruno Mars | En Do mayor. Estrofa: Lam · Do · Rem · Sol · Do. Estribillo: Fa · Sol · Do. El pre-estribillo lleva Mim, Sib y Do/Sol. Pide Rem, Fa y Sib | 4 golpes por compás con el pulgar (curso 7). El Fa se toca como Fa7M y se deja afuera el pre-estribillo | 73 BPM |
+| *Chachachá* | Jósean Log | Original en Fa. Con capo en el traste 5: estrofa Do · Lam · Mim · Mi; estribillo Fa · Sol · Do · Mi. Sin capo: Fa · Rem · Lam · La7 y Sib · Do · Fa · La7. Pide capo (nuevo) y Fa | Las fuentes dan un ritmo con golpes abajo, arriba y cuerdas apagadas: a transcribir escuchando | ~112 BPM (a confirmar) |
+
+Fuentes: *Cuando no estás* ([LaCuerda](https://chords.lacuerda.net/andres_calamaro/cuando_no_estas.shtml)); *El fantasma* ([LaCuerda](https://acordes.lacuerda.net/arbol/el_fantasma.shtml), [tab](https://acordes.lacuerda.net/arbol/el_fantasma-2.shtml)); *When I Was Your Man* ([Hooktheory](https://www.hooktheory.com/theorytab/view/bruno-mars/when-i-was-your-man), [SongBPM](https://songbpm.com/@bruno-mars/when-i-was-your-man)); *Chachachá* ([LaCuerda, capo 5](https://acordes.lacuerda.net/josean_log/chachacha.shtml), [LaCuerda, sin capo y ritmo](https://acordes.lacuerda.net/josean_log/chachacha-2.shtml), [Karaoke Version](https://www.karaoke-version.com/karaoke/josean-log/chachacha.html)).
+
+### Riffs (agregar próximamente)
+
+Las notas de cada riff se transcriben cuando se diseñe la clase que lo use.
+
+| Riff | Artista | Tonalidad | Tempo |
+| --- | --- | --- | --- |
+| *Flaca* | Andrés Calamaro | Sol (la canción usa Sol · Si7 · Mim · Do · Re) | 109 BPM (el del catálogo de la app) |
+| *El fantasma* | Árbol | El riff del «pianito» (min 1:29) y los punteos del final (min 3:05) | A medir con la grabación |
+| *Tu cárcel* | Los Enanitos Verdes | Re | ~118 BPM (a confirmar) |
+| *Love Yourself* | Justin Bieber | Mi | 100 BPM |
+| *Say You Won't Let Go* | James Arthur | Sib (se suele tocar con capo) | 95 BPM |
+| *Creo* (intro) | Callejeros | Re | 94 BPM (las fuentes dan 94 o 188: es la misma velocidad contada al doble) |
+| *Rezo por vos* | Charly García | Re | ~119 BPM en la versión en vivo con Spinetta; falta la de estudio |
+
+Fuentes: [El fantasma, tab](https://acordes.lacuerda.net/arbol/el_fantasma-2.shtml); [Tu cárcel](https://www.karaoke-version.com/custombackingtrack/los-enanitos-verdes/tu-carcel.html); [Love Yourself](https://songs.klang.io/en/s/Justin%20Bieber/Love%20Yourself/oyEuk8j8imI); [Say You Won't Let Go](https://www.karaoke-version.com/custombackingtrack/james-arthur/say-you-won-t-let-go.html); [Creo](https://songbpm.com/@callejeros/creo); [Rezo por vos](https://www.karaoke-version.com/mp3-backingtrack/luis-alberto-spinetta/rezo-por-vos-live-estadio-velez-sarsfield.html).
 
 ## Más adelante
 
@@ -610,5 +1420,15 @@ Se programan más adelante, antes de pasar los cursos al código.
 - [ ] **Afinación con tolerancia de 10 cents** (clase 1.1): ya se puede configurar por clase; solo hay que cargarlo.
 - [ ] **Cargar *Será* en el catálogo** (curso 4): estribillo en La – Mim, sin letra.
 - [ ] **Selector x0.5 en los riffs a tiempo** (clases 1.4 y 2.4): hoy solo existe en las canciones.
+- [ ] **Cargar *El fantasma* (Árbol) en el catálogo** (curso 6): versión simplificada, ciclo Sol · Re · Mim · Do, un golpe por compás, a la velocidad original (a medir con la grabación).
+- [ ] **Sumar Fa7M a las formas de acordes de la app** (curso 7): hoy la app dibuja y detecta Rem, pero no Fa7M (x · x · 3 · 2 · 1 · 0, dedos 3, 2 y 1).
+- [ ] **Cargar *When I Was Your Man* (Bruno Mars) en el catálogo** (curso 7): estrofa Lam · Do · Rem · Sol · Do y estribillo Fa7M · Sol · Do, sin el pre-estribillo. Do mayor, 4/4, 73 BPM. Compases por acorde, a medir con la grabación.
+- [ ] ***Flaca* con un golpe por compás** (curso 8): el catálogo la tiene con rasgueo D-DU-UDU. La clase 8.6 la necesita con un golpe por compás, sin cambiar la versión del catálogo (por ejemplo, un rasgueo propio de la clase).
+- [ ] **Cargar *Cuando no estás* (Calamaro) en el catálogo** (curso 8): estrofa Do · Lam / Do · Lam · Rem · Sol / Do · Mi7 · Lam · Fa7M y estribillo Do · Mi7 · Fa7M · Sol, un golpe por compás. Tempo y compases por acorde, a medir con la grabación.
+- [ ] **Clase de solo video** (clases 9.1 y 10.1): una clase que es solo un video, sin práctica, y se aprueba al verlo. Hoy cada clase tiene una práctica que la app mide.
+- [ ] **Dirección de cada golpe en el ejercicio de ritmo** (clase 9.4): hoy la flecha sale de la posición (↓ en los números, ↑ en las «y»). El patrón D-D-UUDD tiene ↑ en el 3 y ↓ en la «y» del 4, así que la práctica tiene que poder indicar la dirección de cada golpe.
+- [ ] ***Flaca* con el fogonero** (clase 9.5): la clase la necesita con D-DU-UD- en vez del D-DU-UDU del catálogo, igual que la 8.6 la necesita con un golpe por compás. Un rasgueo propio de la clase, sin cambiar la versión del catálogo.
+- [ ] **Botón «No me sale»** (curso 10): en cada clase, un botón que abre un aviso (no pasa nada, lleva tiempo, volvé otro día) y lleva a la 10.6 sin aprobar la clase actual.
+- [ ] **Clase que usa el Fa más difícil aprobado** (clase 10.6): los cambios se practican con la forma del último Fa que el alumno aprobó (Fa7M, Fa en 1 y 2, Fa con bajo en la 5 o Fa completo). Hoy cada clase tiene una forma fija.
 - [ ] **x0.5 no aprueba la clase:** se puede practicar a x0.5, pero la clase se aprueba solo a velocidad original.
 - [ ] **Las clases a tiempo arrancan directo a tiempo** (clases 1.4 y 2.4, y todo riff a tiempo): hoy un riff con tempo primero hace tocar las notas una por una y después a tempo. Hay que sacar ese primer paso (y el aviso «Primero las notas una por una…» y la instrucción «Primero nota por nota; después a tempo»). Las canciones (4.3 y 5.5) ya arrancan directo.
