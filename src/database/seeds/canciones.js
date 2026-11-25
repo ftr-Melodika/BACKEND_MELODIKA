@@ -41,7 +41,7 @@ export const FORMAS = {
 // Todos los compases con el mismo rasgueo
 const conRasgueo = (rasgueo, compases) => compases.map((acordes) => ({ acordes, rasgueo }));
 
-export const CANCIONES = [
+const CANCIONES_BASE = [
   {
     id: 'de-musica-ligera', titulo: 'De música ligera', artista: 'Soda Stereo', bpm: 124, capo: 0, // original
     // En semicorcheas, 2 tiempos cada acorde. El primero: ↓ en el 1 y ↓ en el 2. El segundo, más
@@ -139,3 +139,25 @@ export const CANCIONES = [
     consejo: 'Cinco acordes en una progresión clásica: tocala suave y dejá sonar cada acorde.',
   },
 ];
+
+// Género y dificultad de cada canción (la portada es una URL y queda vacía hasta tener las imágenes).
+// dificultad: 'facil' | 'intermedia' | 'dificil'. La app arma los filtros con los géneros distintos.
+const DATOS_EXTRA = {
+  'de-musica-ligera': { genero: 'Rock nacional', dificultad: 'intermedia' },
+  'lamento-boliviano': { genero: 'Rock nacional', dificultad: 'intermedia' },
+  flaca: { genero: 'Rock nacional', dificultad: 'intermedia' },
+  arrancarmelo: { genero: 'Hip hop', dificultad: 'dificil' }, // cejillas: F, Fm y Gm
+  wonderwall: { genero: 'Rock alternativo', dificultad: 'intermedia' },
+  creep: { genero: 'Rock alternativo', dificultad: 'intermedia' },
+  riptide: { genero: 'Pop', dificultad: 'facil' },
+  'stand-by-me': { genero: 'Soul', dificultad: 'facil' },
+  'horse-with-no-name': { genero: 'Folk rock', dificultad: 'facil' },
+  sera: { genero: 'Rock nacional', dificultad: 'facil' },
+  'oye-como-va': { genero: 'Latin rock', dificultad: 'facil' },
+  'three-little-birds': { genero: 'Reggae', dificultad: 'facil' },
+  'knockin-on-heavens-door': { genero: 'Folk rock', dificultad: 'facil' },
+  zombie: { genero: 'Rock alternativo', dificultad: 'facil' },
+  'wish-you-were-here': { genero: 'Rock', dificultad: 'facil' },
+};
+
+export const CANCIONES = CANCIONES_BASE.map((c) => ({ portada: null, ...DATOS_EXTRA[c.id], ...c }));

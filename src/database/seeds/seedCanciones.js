@@ -1,5 +1,5 @@
 // Archivo: src/database/seeds/seedCanciones.js
-// Pone en la base las canciones de canciones.js (tabla canciones_practica, la crea la migración 002_canciones.sql).
+// Pone en la base las canciones de canciones.js (tabla canciones_practica, la crea la migración 002_canciones.sql; género, portada y dificultad, la 009).
 //
 //   npm run seed:canciones -- --probar     Solo valida el archivo, sin conectarse a la base
 //   npm run seed:canciones -- --simular    Hace todo y lo deshace: muestra qué cambiaría
@@ -19,6 +19,7 @@ const simular = args.includes('--simular');
 
 const CORCHEAS_POR_COMPAS = 8;
 // 8 corcheas o 16 semicorcheas, sin contar los "|" que marcan dónde cambia el acorde
+const DIFICULTADES = ['facil', 'intermedia', 'dificil'];
 const RASGUEO_VALIDO = /^([DUX-]{8}|[DUX-]{16})$/;
 
 const acordesDeCompas = (compas) => compas.acordes.split(' ').filter(Boolean);
@@ -41,6 +42,8 @@ function validar() {
     ids.add(c.id);
     if (!c.id || !c.titulo || !c.artista || !c.consejo) errores.push(`${donde}: faltan datos`);
     if (!Number.isInteger(c.bpm) || c.bpm < 40 || c.bpm > 220) errores.push(`${donde}: tempo inválido`);
+    if (c.dificultad != null && !DIFICULTADES.includes(c.dificultad)) errores.push(`${donde}: dificultad inválida (facil, intermedia o dificil)`);
+    if (c.portada != null && !/^https?:\/\//.test(c.portada)) errores.push(`${donde}: la portada tiene que ser una URL`);
     if (!Number.isInteger(c.capo) || c.capo < 0 || c.capo > 7) errores.push(`${donde}: capo inválido`);
     if (!Array.isArray(c.progresion) || c.progresion.length === 0) {
       errores.push(`${donde}: sin progresión`);
@@ -92,13 +95,14 @@ try {
 
   for (const [orden, c] of CANCIONES.entries()) {
     await client.query(
-      `INSERT INTO canciones_practica (id, titulo, artista, bpm, capo, progresion, formas, nota_rasgueo, consejo, orden)
-       VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8, $9, $10)
+      `INSERT INTO canciones_practica (id, titulo, artista, bpm, capo, progresion, formas, nota_rasgueo, consejo, orden, genero, portada, dificultad)
+       VALUES ($1, $2, $3, $4, $5, $6::jsonb, $7::jsonb, $8, $9, $10, $11, $12, $13)
        ON CONFLICT (id) DO UPDATE SET titulo = EXCLUDED.titulo, artista = EXCLUDED.artista, bpm = EXCLUDED.bpm,
          capo = EXCLUDED.capo, progresion = EXCLUDED.progresion, formas = EXCLUDED.formas,
-         nota_rasgueo = EXCLUDED.nota_rasgueo, consejo = EXCLUDED.consejo, orden = EXCLUDED.orden`,
+         nota_rasgueo = EXCLUDED.nota_rasgueo, consejo = EXCLUDED.consejo, orden = EXCLUDED.orden,
+         genero = EXCLUDED.genero, portada = EXCLUDED.portada, dificultad = EXCLUDED.dificultad`,
       [c.id, c.titulo, c.artista, c.bpm, c.capo, JSON.stringify(c.progresion), JSON.stringify(formasDeCancion(c)),
-        c.notaRasgueo ?? null, c.consejo, orden + 1],
+        c.notaRasgueo ?? null, c.consejo, orden + 1, c.genero ?? null, c.portada ?? null, c.dificultad ?? null],
     );
     console.log(`${antes.has(c.id) ? 'Actualizada' : 'Nueva'}: ${c.titulo}`);
   }

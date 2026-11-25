@@ -146,12 +146,12 @@ test('5.3: ritmo a 100 BPM durante 4 compases', () => {
     assert.deepEqual(pr.etapas, [{ bpm: 100, compases: 4 }]);
 });
 
-test('5.4 y 5.5: Horse With No Name; 5.5 a 94 y 125 BPM', () => {
+test('5.4 y 5.5: Horse With No Name; 5.5 solo a 94 BPM', () => {
     assert.equal(clase(5, 4).practica.cancionId, 'horse-with-no-name');
     assert.equal(clase(5, 4).practica.fase, 'aprender');
     const cs = consignasDe(5, 5);
     assert.ok(cs.every((c) => c.cancionId === 'horse-with-no-name' && c.fase === 'tocar'));
-    assert.deepEqual(cs.map((c) => c.bpm), [94, 125]);
+    assert.deepEqual(cs.map((c) => c.bpm), [94]);
 });
 
 test('toda canción usada en los cursos existe en el catálogo', () => {

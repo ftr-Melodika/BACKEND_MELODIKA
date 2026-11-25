@@ -1252,10 +1252,166 @@
           "Canciones"
         ],
         "summary": "Listar canciones",
-        "description": "Cada canción: { id, titulo, artista, bpm, capo, progresion: [{ acordes: \"Em C\", rasgueo: \"D-D-UUDD\" }], formas, notaRasgueo, consejo }. El rasgueo son 8 corcheas (D abajo, U arriba, X apagado, - sin tocar); con dos acordes, las 4 primeras son del primero.",
+        "description": "Cada canción: { id, titulo, artista, bpm, capo, progresion: [{ acordes: \"Em C\", rasgueo: \"D-D-UUDD\" }], formas, notaRasgueo, consejo, genero, portada, dificultad }. genero, portada (URL) y dificultad (\"facil\" | \"intermedia\" | \"dificil\") pueden ser null. El rasgueo son 8 corcheas (D abajo, U arriba, X apagado, - sin tocar); con dos acordes, las 4 primeras son del primero.",
         "responses": {
           "default": {
             "description": ""
+          }
+        }
+      }
+    },
+    "/api/canciones/perfil/{perfilId}/favoritas": {
+      "get": {
+        "tags": [
+          "Canciones"
+        ],
+        "summary": "Listar canciones favoritas del perfil",
+        "description": "Devuelve la lista de ids de canciones favoritas, de la más nueva a la más vieja. Lista vacía si no hay ninguna.",
+        "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/canciones/perfil/{perfilId}/{cancionId}/favorita": {
+      "post": {
+        "tags": [
+          "Canciones"
+        ],
+        "summary": "Marcar canción como favorita",
+        "description": "",
+        "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cancionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Canciones"
+        ],
+        "summary": "Quitar canción de favoritas",
+        "description": "",
+        "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cancionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/canciones/perfil/{perfilId}/estrellas": {
+      "get": {
+        "tags": [
+          "Canciones"
+        ],
+        "summary": "Estrellas del perfil por canción",
+        "description": "Objeto { idCancion: estrellas } (1 a 3) solo con las canciones que el perfil ya tocó. Vacío si no tocó ninguna.",
+        "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/api/canciones/perfil/{perfilId}/{cancionId}/estrellas": {
+      "put": {
+        "tags": [
+          "Canciones"
+        ],
+        "summary": "Guardar estrellas de una canción",
+        "description": "Body { estrellas: 1 | 2 | 3 }. Se guarda solo el mejor resultado: si ya tenía más estrellas, no baja. Devuelve las que quedaron.",
+        "parameters": [
+          {
+            "name": "perfilId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "cancionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        },
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "estrellas": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }

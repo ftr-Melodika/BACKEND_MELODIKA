@@ -348,14 +348,12 @@ const curso5 = {
       { objetivo: 'Repasar Mim y Re dentro de la canción y el cambio entre ellos, sin tiempo.',
         instrucciones: ['Armá cada acorde de Horse With No Name y después el cambio entre ellos.'] }),
 
-    // A CONFIRMAR: 125 BPM con la grabación (el catálogo tiene la canción a 100, así que la velocidad va en la consigna)
+    // Una sola consigna, a 94 BPM (75% de los 125 del original): a 125 es demasiado para un principiante
     clase('Horse With No Name a tiempo',
       consignas([
-        // 75% de 125 BPM
         consigna('Rasgueá con el pulgar un golpe por tiempo: cuatro por acorde.', cancionATiempo('horse-with-no-name', 94)),
-        consigna('Rasgueá con el pulgar un golpe por tiempo: cuatro por acorde.', cancionATiempo('horse-with-no-name', 125)), // A CONFIRMAR
       ]),
-      { objetivo: 'Tocar Horse With No Name con 4 golpes por compás, a la velocidad original.',
+      { objetivo: 'Tocar Horse With No Name con 4 golpes por compás, a un tempo cómodo para empezar.',
         destacado: `Cuatro golpes por acorde. En el cuarto, ya andá preparando el próximo. ${X05}`,
         xp: XP_CANCION_TOCAR }),
   ],

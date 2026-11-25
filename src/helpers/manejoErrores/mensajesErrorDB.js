@@ -27,5 +27,10 @@ export const MENSAJES_ERROR_DB = {
     REGISTRAR_LECCION_OMITIDA: "No se pudo registrar la lección omitida.",
     RECUPERAR_XP_OMITIDA: "No se pudo recuperar el XP de la lección omitida.",
     OBTENER_CANCIONES: "Error al obtener las canciones.",
-    OBTENER_CANCION: "Error al obtener la canción."
+    OBTENER_CANCION: "Error al obtener la canción.",
+    OBTENER_FAVORITAS: "Error al obtener las canciones favoritas.",
+    AGREGAR_FAVORITA: "No se pudo marcar la canción como favorita.",
+    QUITAR_FAVORITA: "No se pudo quitar la canción de favoritas.",
+    OBTENER_ESTRELLAS: "Error al obtener las estrellas de las canciones.",
+    GUARDAR_ESTRELLAS: "No se pudieron guardar las estrellas de la canción."
 };

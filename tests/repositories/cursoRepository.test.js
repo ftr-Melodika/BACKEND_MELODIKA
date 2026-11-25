@@ -149,6 +149,7 @@ describe('CursoRepository consultas de progreso', () => {
 
 describe('CursoRepository.registrarProgresoYSumarXP', () => {
     test('transacción: BEGIN, INSERT progreso, UPDATE xp, COMMIT; devuelve el xp total', async () => {
+        pool.responder(/INSERT INTO progreso_ejercicios/, { rows: [{ perfil_id: 'p1' }], rowCount: 1 });
         pool.responder(/UPDATE perfiles/, { rows: [{ xp: 150 }] });
         assert.equal(await repo.registrarProgresoYSumarXP('p1', 'e1', 50), 150);
         assert.deepEqual(verbos(), ['BEGIN', 'INSERT', 'UPDATE', 'COMMIT']);
@@ -157,7 +158,13 @@ describe('CursoRepository.registrarProgresoYSumarXP', () => {
         assert.equal(liberados, 1);
     });
     test('si el UPDATE no devuelve fila, devuelve el xp ganado', async () => {
+        pool.responder(/INSERT INTO progreso_ejercicios/, { rows: [{ perfil_id: 'p1' }], rowCount: 1 });
         assert.equal(await repo.registrarProgresoYSumarXP('p1', 'e1', 50), 50);
+    });
+    test('si otro pedido ya guardó la lección: ROLLBACK, no suma XP y devuelve null', async () => {
+        assert.equal(await repo.registrarProgresoYSumarXP('p1', 'e1', 50), null);
+        assert.deepEqual(verbos(), ['BEGIN', 'INSERT', 'ROLLBACK']);
+        assert.equal(liberados, 1);
     });
     test('error (p. ej. ya completado): ROLLBACK, libera y lanza el error traducido', async () => {
         pool.responder(/INSERT INTO progreso_ejercicios/, errorBD('23505'));

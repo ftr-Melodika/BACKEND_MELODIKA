@@ -553,8 +553,7 @@ Misma estructura que la 4.2: la fase «aprender» de la canción, que repasa Mim
 
 Misma estructura que la 4.3, pero con **4 golpes por compás** (uno por tiempo, con el pulgar).
 
-1. **Consigna 1 · Más lento:** a **94 BPM** (75%).
-2. **Consigna 2 · Velocidad original:** a **125 BPM** (a confirmar con la grabación).
+**Una sola consigna, a 94 BPM** (75% del original de ~125). A 125 BPM es demasiado para un principiante, así que se sacó.
 
 **Aprobación:** en cada consigna, el **75% de los acordes a tiempo** (6 de 8).
 
