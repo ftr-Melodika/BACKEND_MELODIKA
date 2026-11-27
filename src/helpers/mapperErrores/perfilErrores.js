@@ -54,6 +54,10 @@ export function mapPerfilError(error) {
             mensajeUsuario = "Hubo un problema al procesar la solicitud. Intentá de nuevo más tarde.";
             codigoEstado = status.INTERNAL_SERVER_ERROR;
             break;
+        case "No se pudo enviar el mensaje. Probá de nuevo en unos minutos.":
+            mensajeUsuario = error.message;
+            codigoEstado = status.INTERNAL_SERVER_ERROR;
+            break;
         default:
             mensajeUsuario = codigoEstado >= 500
                 ? "Hubo un error interno en el servidor"
