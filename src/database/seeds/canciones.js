@@ -36,6 +36,9 @@ export const FORMAS = {
   Em7: [p(6, 0), p(5, 2, 1), p(4, 2, 2), p(3, 0), p(2, 3, 3), p(1, 3, 4)],
   Dsus4: [p(4, 0), p(3, 2, 1), p(2, 3, 3), p(1, 3, 4)],
   A7sus4: [p(5, 0), p(4, 2, 1), p(3, 0), p(2, 3, 3), p(1, 3, 4)],
+  Dm: [p(4, 0), p(3, 2, 2), p(2, 3, 3), p(1, 1, 1)],
+  E7: [p(6, 0), p(5, 2, 2), p(4, 0), p(3, 1, 1), p(2, 0), p(1, 0)],
+  Fmaj7: [p(4, 3, 3), p(3, 2, 2), p(2, 1, 1), p(1, 0)],
 };
 
 // Todos los compases con el mismo rasgueo
@@ -138,6 +141,22 @@ const CANCIONES_BASE = [
     progresion: conRasgueo('D-D-D-D-', ['Em', 'G', 'C', 'D', 'Am', 'G', 'D', 'C', 'Am', 'G']),
     consejo: 'Cinco acordes en una progresión clásica: tocala suave y dejá sonar cada acorde.',
   },
+  // Canciones de los cursos 6 a 8
+  {
+    id: 'el-fantasma', titulo: 'El fantasma', artista: 'Árbol', bpm: 139, capo: 0,
+    progresion: conRasgueo('D-------', ['G', 'D', 'Em', 'C']),
+    consejo: 'Sol, Re, Mim y Do, siempre en ese orden: un solo golpe hacia abajo al empezar cada compás. Usá los últimos tiempos para preparar el cambio.',
+  },
+  {
+    id: 'when-i-was-your-man', titulo: 'When I Was Your Man', artista: 'Bruno Mars', bpm: 73, capo: 0,
+    progresion: conRasgueo('D-D-D-D-', ['Am', 'C', 'Dm', 'G', 'C', 'Fmaj7', 'G', 'C']),
+    consejo: 'Cuatro golpes hacia abajo por compás, uno por tiempo. El Fa va como Fa7M, sin cejilla: al pasar desde el Do, el dedo 1 no se mueve.',
+  },
+  {
+    id: 'cuando-no-estas', titulo: 'Cuando no estás', artista: 'Andrés Calamaro', bpm: 104, capo: 0,
+    progresion: conRasgueo('D-------', ['C', 'Am', 'C', 'Am', 'Dm', 'G', 'C', 'E7', 'Am', 'Fmaj7', 'C', 'E7', 'Fmaj7', 'G']),
+    consejo: 'Un solo golpe hacia abajo por compás. El Mi7 es el Mi sin el dedo 3, y el Fa va como Fa7M, sin cejilla.',
+  },
 ];
 
 // Género y dificultad de cada canción (la portada es una URL y queda vacía hasta tener las imágenes).
@@ -158,6 +177,9 @@ const DATOS_EXTRA = {
   'knockin-on-heavens-door': { genero: 'Folk rock', dificultad: 'facil' },
   zombie: { genero: 'Rock alternativo', dificultad: 'facil' },
   'wish-you-were-here': { genero: 'Rock', dificultad: 'facil' },
+  'el-fantasma': { genero: 'Rock nacional', dificultad: 'facil' },
+  'when-i-was-your-man': { genero: 'Pop', dificultad: 'intermedia' },
+  'cuando-no-estas': { genero: 'Rock nacional', dificultad: 'intermedia' },
 };
 
 export const CANCIONES = CANCIONES_BASE.map((c) => ({ portada: null, ...DATOS_EXTRA[c.id], ...c }));

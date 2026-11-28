@@ -1,8 +1,9 @@
 // Archivo: src/database/seeds/cursosGuitarra.js
 // Contenido de los cursos de guitarra. Lo carga seedCursos.js.
 //
-// Fuente: docs/temario-definitivo.md (cursos 1 a 5, diseñados clase por clase). Los textos son los
-// del documento, tal cual. Reglas que se cumplen en todas las clases:
+// Fuente: docs/temario-definitivo.md (cursos 1 a 5, diseñados clase por clase). Los cursos 6 a 10 y
+// algunos cambios en los cursos 1 a 5 se recuperaron de la base (28/11/2026): se había perdido el código
+// que los cargó. Reglas que se cumplen en todas las clases:
 // - Los textos en pantalla nunca dicen "la app".
 // - Hay un video por curso (clases 1.1, 2.1, 3.1 y 5.3). Quedan preparadas pero sin video cargado:
 //   `youtube_id` queda vacío y los puntos del video están en VIDEO_CURSO_n, solo como referencia.
@@ -17,6 +18,8 @@
 // - `notasAlAzar`: el curso dice cuántas notas, qué cuerdas, qué trastes y qué dedo; las notas se arman
 //   distintas cada vez que se entra a la clase.
 // - `secuencia` con `tempo`: riff a tiempo. `cancion` con `bpm`: pisa el tempo de la canción en esa consigna.
+// - Campos que la base no revisa y que interpreta el frontend: `vueltas`, `rasgueo`, `acordesNuevos`,
+//   `con`, `direcciones`, `noMeSale`, `formaAprendida` y `acordeSegunAprobado`.
 //
 // El nombre de cada lección se arma solo: "<n° de curso>.<n° de lección> · <título>". Es lo que la
 // identifica en la base.
@@ -42,8 +45,19 @@ const ACORDES = {
   Lam: [p(5, 0), p(4, 2, 2), p(3, 2, 3), p(2, 1, 1), p(1, 0)],
   La: [p(5, 0), p(4, 2, 1), p(3, 2, 2), p(2, 2, 3), p(1, 0)],
   Re: [p(4, 0), p(3, 2, 1), p(2, 3, 3), p(1, 2, 2)],
+  Sol: [p(6, 3, 2), p(5, 2, 1), p(4, 0), p(3, 0), p(2, 0), p(1, 3, 3)],
+  Do: [p(5, 3, 3), p(4, 2, 2), p(3, 0), p(2, 1, 1), p(1, 0)],
+  Rem: [p(4, 0), p(3, 2, 2), p(2, 3, 3), p(1, 1, 1)],
+  Fa7M: [p(4, 3, 3), p(3, 2, 2), p(2, 1, 1), p(1, 0)],
+  Mi7: [p(6, 0), p(5, 2, 2), p(4, 0), p(3, 1, 1), p(2, 0), p(1, 0)],
+  Si7: [p(5, 2, 2), p(4, 1, 1), p(3, 2, 3), p(2, 0), p(1, 2, 4)],
+  // Las formas de Fa con cejilla del curso 10, de menor a mayor
+  'Fa (1 y 2)': [p(4, 3, 3), p(3, 2, 2), p(2, 1, 1), p(1, 1, 1)],
+  'Fa con bajo en la 5': [p(5, 3, 3), p(4, 3, 4), p(3, 2, 2), p(2, 1, 1), p(1, 1, 1)],
+  'Fa completo': [p(6, 1, 1), p(5, 3, 3), p(4, 3, 4), p(3, 2, 2), p(2, 1, 1), p(1, 1, 1)],
 };
-const acorde = (nombre) => ({ tipo: 'acorde', nombre, posiciones: ACORDES[nombre] });
+// `forma` permite mostrar un nombre con las posiciones de otro (ej. «Fa» con la forma «Fa completo»)
+const acorde = (nombre, forma = nombre) => ({ tipo: 'acorde', nombre, posiciones: ACORDES[forma] });
 
 const secuencia = (nombre, pasos, tempo) => ({ tipo: 'secuencia', nombre, pasos, ...(tempo ? { tempo } : {}) });
 
@@ -55,7 +69,7 @@ const ESCALON_PRACTICA = 0.5;
 // salvo con `aprobarLento`: la clase arranca en x0.5 y se aprueba en cualquiera de las dos velocidades.
 const aTempo = (nombre, lista, bpm, duraciones, { aprobarLento = false } = {}) =>
   secuencia(nombre, notas(lista), {
-    bpm, duraciones, aprobar: APROBAR_A_TIEMPO, escalon: ESCALON_PRACTICA,
+    bpm, duraciones, aprobar: APROBAR_A_TIEMPO, escalon: ESCALON_PRACTICA, vueltas: 1,
     ...(aprobarLento ? { aprobarLento } : {}),
   });
 
@@ -68,23 +82,30 @@ const notasAlAzar = (nombre, { cantidad, cuerdas, trastes, dedo, dedoPorTraste, 
   sinRepetirSeguidas: true, // nunca la misma nota dos veces seguidas
 });
 
-// Cambio entre dos acordes: A → B → A → B → A (4 cambios), con un rasgueo por acorde
-const cambio = (a, b) => secuencia(`${a} ↔ ${b}`, [a, b, a, b, a].map(acorde));
+// Cambio entre dos acordes: A → B → A → B → A (4 cambios), con un rasgueo por acorde.
+// Cada acorde se pasa por su nombre o ya armado con acorde(nombre, forma).
+const comoAcorde = (x) => (typeof x === 'string' ? acorde(x) : x);
+function cambio(a, b) {
+  const [uno, otro] = [a, b].map(comoAcorde);
+  return secuencia(`${uno.nombre} ↔ ${otro.nombre}`, [uno, otro, uno, otro, uno]);
+}
 // Acorde: cuerda por cuerda (con el pulgar, de la más grave a la 1) y un rasgueo tres veces
-const cuerdaPorCuerda = (nombre) =>
-  secuencia(`${nombre}: cuerda por cuerda`, [...ACORDES[nombre]].sort((a, b) => b.cuerda - a.cuerda).map((pos) => ({ tipo: 'nota', nombre: nombreNota(pos.cuerda, pos.traste), posiciones: [pos] })));
-const rasgueoTresVeces = (nombre) => secuencia(`${nombre}: un rasgueo, tres veces`, [acorde(nombre), acorde(nombre), acorde(nombre)]);
+const cuerdaPorCuerda = (nombre, forma = nombre) =>
+  secuencia(`${nombre}: cuerda por cuerda`, [...ACORDES[forma]].sort((a, b) => b.cuerda - a.cuerda).map((pos) => ({ tipo: 'nota', nombre: nombreNota(pos.cuerda, pos.traste), posiciones: [pos] })));
+const rasgueoTresVeces = (nombre, forma = nombre) => secuencia(`${nombre}: un rasgueo, tres veces`, Array.from({ length: 3 }, () => acorde(nombre, forma)));
 
-// Ejercicio de tempo con metrónomo. etapas: [[bpm, compases], …]
-const ritmo = (nombre, etapas, { compas = 4 } = {}) => ({
+// Ejercicio de tempo con metrónomo. etapas: [[bpm, compases], …]. `opciones`: con, subdivision, patron, direcciones.
+const ritmo = (nombre, etapas, { compas = 4, ...opciones } = {}) => ({
   tipo: 'ritmo', nombre, compas,
   etapas: etapas.map(([bpm, compases]) => ({ bpm, compases })),
   aprobar: APROBAR_A_TIEMPO,
+  ...opciones,
 });
 
 // Canción del catálogo (canciones_practica). `bpm` pisa el tempo de la canción en esa consigna.
 const cancion = (cancionId, fase, opciones = {}) => ({ tipo: 'cancion', cancionId, fase, ...opciones });
-const cancionATiempo = (cancionId, bpm) => cancion(cancionId, 'tocar', { bpm, aprobar: APROBAR_A_TIEMPO, escalon: ESCALON_PRACTICA });
+const cancionATiempo = (cancionId, bpm, { vueltas = 1, ...opciones } = {}) =>
+  cancion(cancionId, 'tocar', { bpm, aprobar: APROBAR_A_TIEMPO, escalon: ESCALON_PRACTICA, vueltas, ...opciones });
 
 // Una consigna de una clase: la práctica más su instrucción
 const consigna = (instruccion, practica) => ({ ...practica, instruccion });
@@ -107,12 +128,14 @@ function clase(titulo, practica, { objetivo, destacado = null, instrucciones, xp
   };
 }
 
-// Clases de acordes: consigna 1 cuerda por cuerda y consigna 2 un rasgueo tres veces
-function claseDeAcorde(titulo, nombre, { objetivo, destacado, primeraCuerda }) {
-  return clase(titulo, consignas([
-    consigna(`Armá el ${nombre} y tocá cada cuerda con el pulgar, de la ${primeraCuerda} a la 1.`, cuerdaPorCuerda(nombre)),
-    consigna(`Armá el ${nombre}, rasgueá una vez y soltá la mano. Tres veces.`, rasgueoTresVeces(nombre)),
-  ]), { objetivo, destacado });
+// Clases de acordes: consigna 1 cuerda por cuerda y consigna 2 un rasgueo tres veces.
+// `extra`: consignas que se suman después. `datos`: campos que se agregan a la práctica.
+function claseDeAcorde(titulo, nombre, { objetivo, destacado, primeraCuerda, forma = nombre, extra = [], datos = {} }) {
+  return clase(titulo, { ...consignas([
+    consigna(`Armá el ${nombre} y tocá cada cuerda con el pulgar, de la ${primeraCuerda} a la 1.`, cuerdaPorCuerda(nombre, forma)),
+    consigna(`Armá el ${nombre}, rasgueá una vez y soltá la mano. Tres veces.`, rasgueoTresVeces(nombre, forma)),
+    ...extra,
+  ]), ...datos }, { objetivo, destacado });
 }
 
 // Clase de cambio entre dos acordes sin dedos fijos (3.6 y 5.2)
@@ -152,7 +175,7 @@ const VIDEO_CURSO_5 = [
   'Cómo apagar las cuerdas: la mano que pisa apoyada sobre las cuerdas, sin apretar, para que suenen secas, como un tambor.',
   'Rasguear parejo con el pulgar: la mano no se frena entre golpe y golpe.',
 ];
-export const VIDEOS_PENDIENTES = { 'Primeros pasos I': VIDEO_CURSO_1, 'Seven Nation Army': VIDEO_CURSO_2, 'Primeros acordes': VIDEO_CURSO_3, 'Re y rasgueo de 4 golpes': VIDEO_CURSO_5 };
+export const VIDEOS_PENDIENTES = { 'Primeros pasos I': VIDEO_CURSO_1, 'Seven Nation Army': VIDEO_CURSO_2, 'Acordes básicos I': VIDEO_CURSO_3, 'Rasgueos en tiempo': VIDEO_CURSO_5 };
 
 // ═════════════════════════ CURSO 1 · PRIMEROS PASOS I ═════════════════════════
 
@@ -196,15 +219,10 @@ const curso1 = {
         destacado: 'Un solo dedo: el índice va de traste en traste, pegado al metal.' }),
 
     clase('Smoke on the Water, a tiempo',
-      consignas([
-        // 75% de 115 BPM
-        consigna('Índice en el traste marcado y pulgar en la cuerda 6: tocá cada nota cuando llegue a la línea.',
-          aTempo('Consigna 1 · Más lento', SMOKE_RIFF, 86, SMOKE_DURACIONES, { aprobarLento: true })),
-        consigna('Índice en el traste marcado y pulgar en la cuerda 6: tocá cada nota cuando llegue a la línea.',
-          aTempo('Consigna 2 · Velocidad original', SMOKE_RIFF, 115, SMOKE_DURACIONES, { aprobarLento: true })),
-      ]),
-      { objetivo: 'Tocar el riff a tiempo, primero más lento y después a la velocidad final.',
-        destacado: `Tocá cada nota justo cuando llega a la línea. Si te perdés una, seguí con la siguiente. ${X1}` }),
+      aTempo('Velocidad original', SMOKE_RIFF, 115, SMOKE_DURACIONES, { aprobarLento: true }),
+      { objetivo: 'Tocar el riff a tiempo a la velocidad final.',
+        destacado: `Tocá cada nota justo cuando llega a la línea. Si te perdés una, seguí con la siguiente. ${X1}`,
+        instrucciones: ['Índice en el traste marcado y pulgar en la cuerda 6: tocá cada nota cuando llegue a la línea.'] }),
   ],
 };
 
@@ -240,7 +258,7 @@ const curso2 = {
         consigna(INSTRUCCION_ESCALERA, secuencia('Consigna 1 · Nota por nota', notas(ESCALERA_10))),
         // Una nota por pulso a 60 BPM
         consigna(INSTRUCCION_ESCALERA, secuencia('Consigna 2 · A tiempo', notas(ESCALERA_10),
-          { bpm: 60, duraciones: ESCALERA_10.map(() => 1), aprobar: APROBAR_A_TIEMPO })),
+          { bpm: 60, duraciones: ESCALERA_10.map(() => 1), aprobar: APROBAR_A_TIEMPO, vueltas: 1 })),
       ]),
       { objetivo: 'Pasar de una cuerda a otra con el pulgar, tocando solo la cuerda pedida.',
         destacado: 'El dedo se queda en su traste; solo cambia la cuerda.' }),
@@ -268,11 +286,11 @@ const curso2 = {
   ],
 };
 
-// ═════════════════════════ CURSO 3 · PRIMEROS ACORDES ═════════════════════════
+// ═════════════════════════ CURSO 3 · ACORDES BÁSICOS I ═════════════════════════
 
 const curso3 = {
   id: id('73'),
-  nombre: 'Primeros acordes',
+  nombre: 'Acordes básicos I',
   descripcion: 'Armá Mim, Mi, Lam y La, y aprendé a cambiar entre ellos.',
   lecciones: [
     // Lleva el video del curso 3 (VIDEO_CURSO_3): se ve al empezar la clase. Todavía sin cargar.
@@ -315,8 +333,8 @@ const curso4 = {
     // El documento no trae instrucción para esta clase: texto propuesto
     clase('Será: acordes y cambio',
       cancion('sera', 'aprender'),
-      { objetivo: 'Repasar La y Mim dentro de la canción y el cambio entre ellos, sin tiempo.',
-        instrucciones: ['Armá cada acorde de Será y después el cambio entre ellos.'] }),
+      { objetivo: 'Repasar La y Mim dentro de la canción y tocarla una vez, sin tiempo.',
+        instrucciones: ['Tocá cada acorde de Será y después la canción entera una vez.'] }),
 
     clase('Será: el estribillo a tiempo',
       consignas([
@@ -330,11 +348,11 @@ const curso4 = {
   ],
 };
 
-// ═════════════════════════ CURSO 5 · RE Y RASGUEO DE 4 GOLPES ═════════════════════════
+// ═════════════════════════ CURSO 5 · RASGUEOS EN TIEMPO ═════════════════════════
 
 const curso5 = {
   id: id('75'),
-  nombre: 'Re y rasgueo de 4 golpes',
+  nombre: 'Rasgueos en tiempo',
   descripcion: 'Sumá el Re y pasá de un golpe por acorde a cuatro golpes por compás hasta tocar Horse With No Name (America).',
   lecciones: [
     claseDeAcorde('Re', 'Re', { objetivo: 'Armar el Re y que suenen limpias las cuerdas de la 4 a la 1.', destacado: 'Un triángulo en las cuerdas 3, 2 y 1. La 6 y la 5 no se tocan.', primeraCuerda: 4 }),
@@ -344,16 +362,16 @@ const curso5 = {
     // Lleva el video del curso 5 (VIDEO_CURSO_5): se ve al empezar la clase. Todavía sin cargar.
     // A CONFIRMAR: 100 BPM queda por ahora
     clase('Rasgueo de 4 golpes',
-      ritmo('Rasgueo con las cuerdas apagadas', [[100, 4]]), // A CONFIRMAR
+      ritmo('Rasgueo con las cuerdas apagadas', [[100, 4]], { con: 'guitarra' }), // A CONFIRMAR
       { objetivo: 'Rasguear un golpe por tiempo, parejo y sin frenar la mano.',
         destacado: 'Mano que pisa apoyada, sin apretar: que suene seco. Un golpe por clic.',
         instrucciones: ['Esperá la cuenta y rasgueá con el pulgar un golpe por clic.'] }),
 
     // El documento no trae instrucción para esta clase: texto propuesto
     clase('Horse With No Name: aprender',
-      cancion('horse-with-no-name', 'aprender'),
-      { objetivo: 'Repasar Mim y Re dentro de la canción y el cambio entre ellos, sin tiempo.',
-        instrucciones: ['Armá cada acorde de Horse With No Name y después el cambio entre ellos.'] }),
+      cancion('horse-with-no-name', 'aprender', { acordesNuevos: ['D'] }),
+      { objetivo: 'Repasar Mim y Re dentro de la canción y tocarla una vez, sin tiempo.',
+        instrucciones: ['Tocá cada acorde de Horse With No Name y después la canción entera una vez.'] }),
 
     // Una sola consigna, a 94 BPM (75% de los 125 del original): a 125 es demasiado para un principiante
     clase('Horse With No Name a tiempo',
@@ -366,9 +384,190 @@ const curso5 = {
   ],
 };
 
+// ───────────────────── Textos y ayudas de los cursos 6 a 10 ─────────────────────
+
+const EN_BLOQUE = 'Mové los dedos juntos, como un bloque, no de a uno.';
+const DEDO_FIJO = 'Si un dedo está en el mismo lugar en los dos acordes, no lo levantes: se queda fijo.';
+const FIJO_O_BLOQUE = 'Si un dedo se repite, dejalo fijo. Si no, mové los dedos juntos, como un bloque.';
+const TODA_LA_MANO = 'Se mueve toda la mano: los dedos juntos, como un bloque.';
+const TRES_EN_BLOQUE = 'Se mueve toda la mano: los tres dedos juntos, como un bloque.';
+const UN_RASGUEO_POR_ACORDE = 'Rasgueá una vez con el pulgar cada acorde cuando llegue a la línea.';
+const CUATRO_TIEMPOS = `Tenés 4 tiempos en cada acorde: usá los últimos para preparar el próximo. ${X05}`;
+
+// Clase de varios cambios de acordes: [[instrucción, acordeA, acordeB], …]
+const claseDeCambios = (titulo, cambios, { objetivo, destacado }) =>
+  clase(titulo, consignas(cambios.map(([instruccion, a, b]) => consigna(instruccion, cambio(a, b)))), { objetivo, destacado });
+
+// Clase para repasar una canción sin tiempo
+const claseDeAprenderCancion = (titulo, cancionId, acordesNuevos, { nombreCancion, objetivo, destacado }) =>
+  clase(titulo, cancion(cancionId, 'aprender', { acordesNuevos }), {
+    objetivo,
+    destacado,
+    instrucciones: [`Tocá cada acorde de ${nombreCancion} y después la canción entera una vez.`],
+  });
+
+// Clase de una canción a tiempo: consigna 1 más lenta y consigna 2 a la velocidad original
+const claseDeCancionATiempo = (titulo, cancionId, tempos, { instruccion, objetivo, destacado, ...opciones }) =>
+  clase(titulo, consignas(tempos.map((bpm) => consigna(instruccion, cancionATiempo(cancionId, bpm, opciones)))),
+    { objetivo, destacado, xp: XP_CANCION_TOCAR });
+
+// ═════════════════════════ CURSO 6 · ACORDES BÁSICOS II ═════════════════════════
+
+const curso6 = {
+  id: id('76'),
+  nombre: 'Acordes básicos II',
+  descripcion: 'Sumá el Sol y el Do y cambiá entre ellos hasta tocar El fantasma (Árbol), con un golpe por compás.',
+  lecciones: [
+    claseDeAcorde('Sol', 'Sol', { objetivo: 'Armar el Sol y que suenen limpias las 6 cuerdas.', destacado: 'Dedos 2 y 1 en las cuerdas 6 y 5, el 3 en la 1. Arqueados: que suenen las 3 del medio.', primeraCuerda: 6 }),
+    claseDeAcorde('Do', 'Do', { objetivo: 'Armar el Do y que suenen limpias las cuerdas 5 a 1.', destacado: 'Como el Lam, pero el dedo 3 va a la cuerda 5, traste 3. La cuerda 6 no se toca.', primeraCuerda: 5 }),
+    claseDeCambioEnBloque('Cambio Sol ↔ Re', 'Sol', 'Re', 'Pasar de Sol a Re y volver, sin frenar entre acorde y acorde.'),
+    claseDeCambioEnBloque('Cambio Do ↔ Sol', 'Do', 'Sol', 'Pasar de Do a Sol y volver, sin frenar entre acorde y acorde.'),
+    claseDeAprenderCancion('El fantasma: aprender', 'el-fantasma', ['G', 'C'], { nombreCancion: 'El fantasma', objetivo: 'Repasar Sol, Re, Mim y Do dentro de la canción y tocarla una vez, sin tiempo.', destacado: EN_BLOQUE }),
+    // 75% de 139 BPM y velocidad original
+    claseDeCancionATiempo('El fantasma a tiempo', 'el-fantasma', [104, 139], { instruccion: UN_RASGUEO_POR_ACORDE, vueltas: 4, objetivo: 'Tocar El fantasma a la velocidad original, con un rasgueo por acorde.', destacado: CUATRO_TIEMPOS }),
+  ],
+};
+
+// ═════════════════════════ CURSO 7 · ACORDES BÁSICOS III ═════════════════════════
+
+const curso7 = {
+  id: id('77'),
+  nombre: 'Acordes básicos III',
+  descripcion: 'Sumá el Rem y el Fa7M, el Fa fácil, hasta tocar la estrofa y el estribillo de When I Was Your Man (Bruno Mars), con cuatro golpes por compás.',
+  lecciones: [
+    claseDeAcorde('Rem', 'Rem', { objetivo: 'Armar el Rem y que suenen limpias las cuerdas 4 a 1.', destacado: 'El dedo 3 va como en el Re. Las cuerdas 6 y 5 no se tocan.', primeraCuerda: 4 }),
+    claseDeAcorde('Fa7M', 'Fa7M', { objetivo: 'Armar el Fa7M y que suenen limpias las cuerdas 4 a 1.', destacado: 'Como el Do, pero los dedos 3 y 2 bajan una cuerda. La cuerda 1 suena al aire.', primeraCuerda: 4 }),
+    claseDeCambios('Cambios con Rem', [
+      ['Los dedos 1 y 2 bajan una cuerda en el mismo traste; el 3 salta a la cuerda 2.', 'Do', 'Rem'],
+      [TRES_EN_BLOQUE, 'Rem', 'Sol'],
+    ], { objetivo: 'Pasar de Do a Rem y de Rem a Sol sin frenar entre acorde y acorde.', destacado: EN_BLOQUE }),
+    claseDeCambios('Cambios con Fa7M', [
+      ['El dedo 1 no se mueve: los dedos 3 y 2 bajan juntos una cuerda.', 'Do', 'Fa7M'],
+      [TRES_EN_BLOQUE, 'Fa7M', 'Sol'],
+    ], { objetivo: 'Pasar de Do a Fa7M y de Fa7M a Sol sin frenar entre acorde y acorde.', destacado: DEDO_FIJO }),
+    claseDeAprenderCancion('When I Was Your Man: aprender', 'when-i-was-your-man', ['Dm', 'Fmaj7'], { nombreCancion: 'When I Was Your Man', objetivo: 'Repasar Lam, Do, Rem, Sol y Fa7M dentro de la canción y tocarla una vez, sin tiempo.', destacado: FIJO_O_BLOQUE }),
+    claseDeCancionATiempo('When I Was Your Man a tiempo', 'when-i-was-your-man', [55, 73], {
+      instruccion: 'Rasgueá con el pulgar un golpe por tiempo: cuatro por acorde.',
+      objetivo: 'Tocar la estrofa y el estribillo de When I Was Your Man a la velocidad original, rasgueando un golpe por tiempo.',
+      destacado: `Cuatro golpes por acorde. En el cuarto, ya andá preparando el próximo. ${X05}`,
+    }),
+  ],
+};
+
+// ═════════════════════════ CURSO 8 · ACORDES SÉPTIMA I ═════════════════════════
+
+const curso8 = {
+  id: id('78'),
+  nombre: 'Acordes séptima I',
+  descripcion: 'Sumá el Mi7 y el Si7 hasta tocar Flaca y Cuando no estás (Andrés Calamaro), con un golpe por compás.',
+  lecciones: [
+    claseDeAcorde('Mi7', 'Mi7', {
+      objetivo: 'Armar el Mi7 y que suenen limpias las 6 cuerdas, y pasar del Mi al Mi7 levantando un solo dedo.',
+      destacado: 'Es el Mi sin el dedo 3. Los dedos 2 y 1 no se mueven.',
+      primeraCuerda: 6,
+      extra: [consigna('Armá el Mi y rasgueá. Levantá el dedo 3 y rasgueá el Mi7. Volvé a apoyarlo.', cambio('Mi', 'Mi7'))],
+    }),
+    claseDeAcorde('Si7', 'Si7', { objetivo: 'Armar el Si7 y que suenen limpias las cuerdas 5 a 1.', destacado: 'El meñique va en la cuerda 1, traste 2. Dedos arqueados: la cuerda 2 tiene que sonar al aire.', primeraCuerda: 5 }),
+    claseDeCambios('Cambios con Mi7', [
+      ['Como Mi ↔ Lam: los dedos 2 y 1 bajan juntos una cuerda y en el Lam se suma el dedo 3.', 'Mi7', 'Lam'],
+      [TODA_LA_MANO, 'Do', 'Mi7'],
+      [TODA_LA_MANO, 'Mi7', 'Fa7M'],
+    ], { objetivo: 'Pasar del Mi7 al Lam, del Do al Mi7 y del Mi7 al Fa7M sin frenar entre acorde y acorde.', destacado: EN_BLOQUE }),
+    claseDeCambios('Cambios con Si7', [
+      ['El dedo 2 no se mueve de la cuerda 5: los otros entran y salen.', 'Mim', 'Si7'],
+      [TODA_LA_MANO, 'Sol', 'Si7'],
+    ], { objetivo: 'Pasar de Mim a Si7 y de Sol a Si7 sin frenar entre acorde y acorde.', destacado: DEDO_FIJO }),
+    claseDeAprenderCancion('Flaca: aprender', 'flaca', ['B7'], { nombreCancion: 'Flaca', objetivo: 'Repasar Sol, Si7, Mim, Do y Re dentro de la canción y tocarla una vez, sin tiempo.', destacado: FIJO_O_BLOQUE }),
+    // `rasgueo` pisa el de la canción: un solo golpe por compás
+    claseDeCancionATiempo('Flaca a tiempo', 'flaca', [82, 109], { instruccion: UN_RASGUEO_POR_ACORDE, rasgueo: 'D-------', vueltas: 2, objetivo: 'Tocar Flaca a la velocidad original, con un rasgueo por acorde.', destacado: CUATRO_TIEMPOS }),
+    claseDeAprenderCancion('Cuando no estás: aprender', 'cuando-no-estas', ['E7'], { nombreCancion: 'Cuando no estás', objetivo: 'Repasar Do, Lam, Rem, Sol, Mi7 y Fa7M dentro de la canción y tocarla una vez, sin tiempo.', destacado: FIJO_O_BLOQUE }),
+    claseDeCancionATiempo('Cuando no estás a tiempo', 'cuando-no-estas', [78, 104], { instruccion: UN_RASGUEO_POR_ACORDE, objetivo: 'Tocar la estrofa y el estribillo de Cuando no estás a la velocidad original, con un rasgueo por acorde.', destacado: CUATRO_TIEMPOS }),
+  ],
+};
+
+// ═════════════════════════ CURSO 9 · RASGUEOS MIXTOS ═════════════════════════
+
+const FLECHAS = 'Armá el Mim y rasgueá siguiendo las flechas.';
+
+// Clase de un patrón de rasgueo en corcheas: despacio y más rápido
+const claseDeRasgueo = (titulo, patron, { instruccion = FLECHAS, direcciones, objetivo, destacado }) =>
+  clase(titulo, consignas([['Consigna 1 · Despacio', 60], ['Consigna 2 · Más rápido', 80]].map(([nombre, bpm]) =>
+    consigna(instruccion, ritmo(nombre, [[bpm, 4]], { con: 'guitarra', subdivision: 2, patron, ...(direcciones ? { direcciones } : {}) })))),
+  { objetivo, destacado });
+
+const curso9 = {
+  id: id('79'),
+  nombre: 'Rasgueos mixtos',
+  descripcion: 'Aprendé el rasgueo abajo-arriba hasta tocar Flaca (Andrés Calamaro) con el fogonero.',
+  lecciones: [
+    claseDeRasgueo('Abajo-arriba parejo', [1, 1, 1, 1, 1, 1, 1, 1], {
+      instruccion: 'Armá el Mim y rasgueá abajo y arriba siguiendo las flechas.',
+      objetivo: 'Rasguear abajo en cada tiempo y arriba en cada «y», con la mano en movimiento constante.',
+      destacado: 'La mano no para: baja en cada número y sube en cada «y».',
+    }),
+    claseDeRasgueo('El fogonero', [1, 0, 1, 1, 0, 1, 1, 0], {
+      objetivo: 'Rasguear el fogonero, D-DU-UD- (↓ · ↓ ↑ · ↑ ↓ ·), con la mano en movimiento constante.',
+      destacado: 'En los huecos la mano se mueve igual, pero pasa sin tocar las cuerdas.',
+    }),
+    // `direcciones`: este patrón no alterna abajo y arriba de forma pareja
+    claseDeRasgueo('El patrón D-D-UUDD', [1, 0, 1, 0, 1, 1, 1, 1], {
+      direcciones: ['D', null, 'D', null, 'U', 'U', 'D', 'D'],
+      objetivo: 'Rasguear D-D-UUDD con la mano firme.',
+      destacado: 'Dos arriba seguidos y dos abajo seguidos: la mano no va y viene pareja. Mirá las flechas.',
+    }),
+    claseDeCancionATiempo('Flaca con el fogonero', 'flaca', [82, 109], {
+      instruccion: 'Rasgueá el fogonero en cada acorde, siguiendo las flechas.', rasgueo: 'D-DU-UD-', vueltas: 2,
+      objetivo: 'Tocar Flaca a la velocidad original con el fogonero.',
+      destacado: `Usá el hueco del final para cambiar de acorde. ${X05}`,
+    }),
+  ],
+};
+
+// ═════════════════════════ CURSO 10 · ACORDES CON CEJILLA I ═════════════════════════
+
+// Estas clases se pueden dejar con «no me sale»; `formaAprendida` es la forma de Fa que enseña cada una
+const datosDeFa = (forma) => ({ noMeSale: true, formaAprendida: { acorde: 'Fa', posiciones: ACORDES[forma] } });
+// En los cambios finales se llama «Fa» y trae la forma fácil como base (ver `acordeSegunAprobado`)
+const FA_FINAL = acorde('Fa', 'Fa7M');
+
+const curso10 = {
+  id: id('80'),
+  nombre: 'Acordes con cejilla I',
+  descripcion: 'Aprendé la cejilla de a pasos, desde el Fa7M hasta el Fa completo, y llegá hasta donde puedas.',
+  lecciones: [
+    claseDeAcorde('Fa7M', 'Fa7M', { objetivo: 'Volver a armar el Fa7M, el punto de partida de todos los Fa del curso.', destacado: 'Desde acá sale cada Fa del curso: el dedo 2 se queda siempre en la cuerda 3, traste 2.', primeraCuerda: 4, datos: datosDeFa('Fa7M') }),
+    claseDeAcorde('Fa con cejilla en 1 y 2', 'Fa', {
+      forma: 'Fa (1 y 2)', primeraCuerda: 4, datos: datosDeFa('Fa (1 y 2)'),
+      objetivo: 'Apretar las cuerdas 1 y 2 con el dedo 1 y que suenen limpias las cuerdas 4 a 1.',
+      destacado: 'Armá el Fa7M y acostá el dedo 1 hasta la cuerda 1. Apretá cerca del traste. Es difícil: si no sale, volvé otro día.',
+      extra: [consigna('Armá el Fa7M y rasgueá. Acostá el dedo 1 hasta la cuerda 1 y rasgueá el Fa. Volvé a levantarlo.', cambio('Fa7M', acorde('Fa', 'Fa (1 y 2)')))],
+    }),
+    claseDeAcorde('Fa con bajo en la 5', 'Fa', {
+      forma: 'Fa con bajo en la 5', primeraCuerda: 5, datos: datosDeFa('Fa con bajo en la 5'),
+      objetivo: 'Armar el Fa de 5 cuerdas y que suenen limpias las cuerdas 5 a 1.',
+      destacado: 'El dedo 3 baja a la cuerda 5 y el meñique toma su lugar en la 4. Es difícil: si no sale, volvé otro día.',
+      extra: [consigna('Pasá del Fa de la clase anterior al Fa con bajo y volvé, rasgueando cada uno.', cambio('Fa (1 y 2)', 'Fa con bajo en la 5'))],
+    }),
+    claseDeAcorde('Fa completo', 'Fa', {
+      forma: 'Fa completo', primeraCuerda: 6, datos: datosDeFa('Fa completo'),
+      objetivo: 'Armar el Fa completo y que suenen limpias las 6 cuerdas.',
+      destacado: 'El dedo 1 bien derecho sobre el traste 1, apenas de costado. Es la cejilla más difícil: si no sale, volvé otro día.',
+      extra: [consigna('Pasá del Fa de 5 cuerdas al Fa completo y volvé, rasgueando cada uno.', cambio('Fa con bajo en la 5', 'Fa completo'))],
+    }),
+    // `acordeSegunAprobado`: se usa la forma de Fa más avanzada que el alumno haya aprobado
+    clase('Cambios con Fa',
+      { ...consignas([
+        consigna('El dedo 1 no se mueve de la cuerda 2, traste 1: los otros cambian de lugar.', cambio('Do', FA_FINAL)),
+        consigna('El dedo 1 tampoco se mueve: los otros cambian de lugar.', cambio('Lam', FA_FINAL)),
+        consigna(TODA_LA_MANO, cambio(FA_FINAL, 'Sol')),
+      ]), acordeSegunAprobado: 'Fa' },
+      { objetivo: 'Pasar del Fa a los acordes que más lo acompañan sin frenar entre acorde y acorde.', destacado: DEDO_FIJO }),
+  ],
+};
+
 // ───────────────────────── Armado final ─────────────────────────
 
-const PLAN = [curso1, curso2, curso3, curso4, curso5];
+const PLAN = [curso1, curso2, curso3, curso4, curso5, curso6, curso7, curso8, curso9, curso10];
 
 function armarCursos() {
   return PLAN.map((curso, i) => {
